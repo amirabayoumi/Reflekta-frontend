@@ -6,7 +6,7 @@ import { Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white fixed bottom-0 w-full font-alef">
+    <footer className="bg-black text-white  w-full font-alef">
       <div className="container mx-auto p-4 md:p-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 text-center md:text-left">
           <div className="mx-auto md:mx-0 max-w-sm">
