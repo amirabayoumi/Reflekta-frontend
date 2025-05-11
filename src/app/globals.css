@@ -13,6 +13,10 @@
   --font-mono: var(--font-geist-mono);
   --font-alef: "Alef", sans-serif;
   --color-pink: #f7d2d2;
+  --color-beige: #dad5c7;
+  --color-lavender: #bca6c9;
+  --color-purple: #937195;
+  --color-plum: #553a5c;
 }
 
 @media (prefers-color-scheme: dark) {
