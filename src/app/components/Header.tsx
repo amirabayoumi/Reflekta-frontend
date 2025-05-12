@@ -25,21 +25,18 @@ const Header = () => {
 
   return (
     <header className="my-2 backdrop-blur-xs bg-black/50 text-white fixed z-50 w-full shadow-md font-alef ">
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between px-4 ">
         <div className="flex items-center my-3">
           {" "}
-          <Image
-            src="/R (4).png"
-            alt="Logo"
-            width={50}
-            height={70}
-            className="mr-2 rounded-full object-cover"
-          />
-          <Link
-            href="/"
-            className="text-2xl font-bold font-alef text-shadow-sm  "
-          >
-            Reflekta
+          <Link href="/" className="flex items-center space-x-3">
+            <Image
+              src="/R (4).png"
+              alt="Reflekta Logo"
+              width={42}
+              height={42}
+              className="rounded-full"
+            />
+            <span className="text-2xl font-semibold text-white">Reflekta</span>
           </Link>
         </div>
 
@@ -123,7 +120,7 @@ const Header = () => {
 
         <div className="md:flex md:items-center hidden">
           <Link
-            href="/user-dashboard"
+            href="/community-hub"
             className="mr-6 text-lg hover:text-pink  transition-colors text-shadow-sm"
           >
             {t("startHere")}
@@ -196,7 +193,10 @@ const Header = () => {
             >
               {t("contact")}
             </Link>
-            <Link href="/jobs" className="hover:text-pink  transition-colors">
+            <Link
+              href="/community-hub"
+              className="hover:text-pink  transition-colors"
+            >
               {t("startHere")}
             </Link>
           </div>

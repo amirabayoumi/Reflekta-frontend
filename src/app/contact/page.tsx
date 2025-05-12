@@ -3,9 +3,12 @@ import ContactForm from "../components/ContactForm";
 import { MdEmail } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
 import { IoIosPin } from "react-icons/io";
-
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 export default function Contact() {
   return (
+    <>
+    <Header />
     <main className="bg-gradient-to-br from-purple to-black font-alef text-white">
       <section className="min-h-screen px-6 py-12 md:px-12">
         <div className="mt-25 grid grid-cols-1 gap-12 md:grid-cols-2 max-w-7xl mx-auto place-self-center">
@@ -45,5 +48,6 @@ export default function Contact() {
         </div>
       </section>
     </main>
+    <Footer /></>
   );
 }

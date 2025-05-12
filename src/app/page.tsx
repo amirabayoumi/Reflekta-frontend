@@ -3,7 +3,9 @@
 import Image from "next/image";
 import ArrowButton from "@/app/components/ArrowButton";
 import { useLanguage } from "@/app/contexts/LanguageContext";
-
+import Link from "next/link";
+import Header from "@/app/components/Header";
+import Footer from "./components/Footer";
 import Carousel3D from "./components/Carousel3D";
 
 export default function Home() {
@@ -11,6 +13,7 @@ export default function Home() {
 
   return (
     <>
+    <Header/>
       <div className="min-h-screen h-screen w-full relative overflow-hidden font-alef">
         <main className="">
           <div className="w-full h-full absolute -z-10">
@@ -28,19 +31,22 @@ export default function Home() {
             <h1 className="text-white text-8xl drop-shadow-[0_8px_8px_rgba(0,0,0,0.8)] font-bold">
               {t("reflektaTitle")}
             </h1>
-            <p className="text-white text-2xl mt-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)]">
+            <p className="text-white text-2xl mt-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)] mb-5">
               {t("reflektaDescription")}
             </p>
-            <p className="text-white text-2xl drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)]"></p>
-            <button className="bg-pink text-black px-4 py-2 rounded-full mt-4">
-              {t("signUpNow")}
-            </button>
+           
+            <Link 
+              className="bg-pink text-black px-4 py-2 rounded-full mt-4"
+              href="/community-hub">
+           Join the Community
+            </Link>
           </div>
 
           <ArrowButton />
+
+          {/* Add LoginForm modal */}
         </main>
       </div>
-
       <section id="web-sections" className="min-h-screen bg-black p-8">
         <h2 className="text-4xl text-pink mt-15 text-center font-alef">
           One world, Many reflections.
@@ -57,7 +63,9 @@ export default function Home() {
 
           <div className="flex justify-center space-x-8 mt-6"></div>
         </div>
-      </section>
+      </section>{" "}
+      <Footer />
+      
     </>
   );
 }
