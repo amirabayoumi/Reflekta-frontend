@@ -6,22 +6,35 @@ import { Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-white  w-full font-alef">
-      <div className="container mx-auto p-4 md:p-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 text-center md:text-left">
-          <div className="mx-auto md:mx-0 max-w-sm">
-            <h3 className="text-4xl font-bold mb-3">Reflekta</h3>
-            <p className="mb-4 text-2xl md:text-3xl">
-              One world, Many reflections.
+    <footer className="bg-black text-white pt-12 font-alef relative overflow-hidden">
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Update grid for better small screen layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
+          {/* Center align on mobile */}
+          <div className="text-center md:text-left">
+            <h3 className="text-2xl font-semibold mb-4">Reflekta</h3>
+            <p className="text-white/80 text-xl md:text-3xl">
+              One World, Many Reflection
             </p>
           </div>
-          <div className="mx-auto md:mx-0">
-            <h3 className="text-xl font-bold mb-3">Quick Links</h3>
-            <ul className="space-y-2">
+
+          {/* Make all sections centered on mobile */}
+          <div className="text-center md:text-left">
+            <h4 className="font-medium mb-4">Quick Links</h4>
+            <ul className="space-y-3 text-sm text-white/80">
+              <li>
+                <Link
+                  href="/"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
+                >
+                  Home
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-pink transition-colors"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
                 >
                   About Us
                 </Link>
@@ -29,45 +42,92 @@ const Footer = () => {
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-pink transition-colors"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
                 >
                   Contact
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
-          <div className="mx-auto md:mx-0">
-            <h3 className="text-xl font-bold mb-3">Connect</h3>
-            <div className="flex space-x-4 justify-center md:justify-start">
+
+          <div className="text-center md:text-left">
+            <h4 className="font-medium mb-4">Community</h4>
+            <ul className="space-y-3 text-sm text-white/80">
+              <li>
+                <Link
+                  href="/community-hub/events"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
+                >
+                  Events
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/community-hub/jobs"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
+                >
+                  Jobs Board
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/community-hub/stories"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
+                >
+                  Stories
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/community-hub/legal-faq"
+                  className="hover:text-[#bca6c9] transition-colors duration-200"
+                >
+                  Legal FAQ
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="text-center md:text-left">
+            <h4 className="font-medium mb-4">Connect</h4>
+            {/* Center social icons on mobile */}
+            <div className="flex justify-center md:justify-start space-x-6 mb-4">
               <a
                 href="#"
-                aria-label="Facebook"
-                className="hover:text-pink transition-colors"
+                className="text-white/80 hover:text-[#bca6c9] transition-colors duration-200"
               >
-                <Facebook />
+                <Facebook size={24} />
               </a>
               <a
                 href="#"
-                aria-label="Twitter"
-                className="hover:text-pink transition-colors"
+                className="text-white/80 hover:text-[#bca6c9] transition-colors duration-200"
               >
-                <Twitter />
+                <Instagram size={24} />
               </a>
               <a
                 href="#"
-                aria-label="Instagram"
-                className="hover:text-pink transition-colors"
+                className="text-white/80 hover:text-[#bca6c9] transition-colors duration-200"
               >
-                <Instagram />
+                <Twitter size={24} />
               </a>
             </div>
           </div>
         </div>
-        <div className="mt-6 md:mt-8 border-t border-gray-700 pt-4 text-center">
-          <p>
-            &copy; {new Date().getFullYear()} Reflekta. All rights reserved.
-          </p>
-        </div>
+      </div>
+
+      {/* Copyright Section - Made more prominent */}
+      <div className="border-t border-gray-800 py-6 text-center">
+        <p className="text-sm md:text-base text-white/60">
+          © 2023 Reflekta. All rights reserved.
+        </p>
       </div>
     </footer>
   );

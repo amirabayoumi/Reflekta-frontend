@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Alef } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "./contexts/LanguageContext";
-import Headers from "./components/Header";
-import Footer from "./components/Footer";
+
 
 const alef = Alef({
   subsets: ["latin"],
@@ -23,11 +22,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Add this to avoid unnecessary preloading */}
+        <meta name="next-size-adjust" />
+      </head>
       <body className={`${alef.variable}  antialiased`}>
         <LanguageProvider>
-          <Headers />
+       
           {children}
-          <Footer />
+      
         </LanguageProvider>
       </body>
     </html>
