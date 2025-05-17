@@ -5,6 +5,8 @@ import HubFooter from "@/app/components/HubFooter";
 import HubHeader from "../components/HubHeader";
 import CommunitySections from "../components/CommunitySections";
 import UserProfileSummary from "../components/UserProfileSummary";
+import SectionNav from "../components/SectionNav";
+
 const CommunityHub = () => {
   const featuredEvents = [
     {
@@ -23,18 +25,18 @@ const CommunityHub = () => {
     },
   ];
 
-  const featuredJobs = [
+  const featuredHelp = [
     {
       id: 1,
-      title: "Community Liaison Officer",
-      company: "Unity Belgium",
-      type: "Full-time",
+      title: "Dutch Language Conversation Partner",
+      helper: "Jan V.",
+      type: "Weekly",
     },
     {
       id: 2,
-      title: "Cultural Event Assistant",
-      company: "Together Org",
-      type: "Part-time",
+      title: "School Enrollment Assistance",
+      helper: "Marie D.",
+      type: "As needed",
     },
   ];
 
@@ -45,7 +47,7 @@ const CommunityHub = () => {
       <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
         <h1 className="text-4xl text-center"> Community Hub</h1>
       </div>
-
+      <SectionNav />
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <UserProfileSummary />
@@ -82,7 +84,7 @@ const CommunityHub = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-semibold text-[#553a5c]">
-                Featured Jobs
+                Help & Be Helped
               </h2>
               <Link
                 href="/community-hub/jobs"
@@ -92,27 +94,27 @@ const CommunityHub = () => {
               </Link>
             </div>
             <div className="space-y-4">
-              {featuredJobs.map((job) => (
+              {featuredHelp.map((help) => (
                 <div
-                  key={job.id}
+                  key={help.id}
                   className="border-b border-gray-200 pb-4 last:border-b-0"
                 >
-                  <h3 className="font-medium text-gray-700">{job.title}</h3>
+                  <h3 className="font-medium text-gray-700">{help.title}</h3>
                   <p className="text-gray-500 text-sm">
-                    {job.company} • {job.type}
+                    {help.helper} • {help.type}
                   </p>
                   <button className="mt-2 text-[#553a5c] text-sm font-medium hover:underline">
-                    View job
+                    Learn more
                   </button>
                 </div>
               ))}
             </div>
             <div className="mt-6 pt-4 border-t border-gray-200 text-center">
               <Link
-                href="/community-hub/jobs/post"
+                href="/community-hub/jobs"
                 className="bg-[#886f80]/10 text-[#553a5c] px-4 py-2 rounded-md hover:bg-[#886f80]/20 transition-colors inline-block"
               >
-                + Post a Job
+                + Offer Help
               </Link>
             </div>
           </div>

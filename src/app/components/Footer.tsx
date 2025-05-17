@@ -7,7 +7,6 @@ import { Instagram } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="bg-black text-white pt-12 font-alef relative overflow-hidden">
-      {/* Main Footer Content */}
       <div className="container mx-auto px-4 relative z-10">
         {/* Update grid for better small screen layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
@@ -123,7 +122,6 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Copyright Section - Made more prominent */}
       <div className="border-t border-gray-800 py-6 text-center">
         <p className="text-sm md:text-base text-white/60">
           © 2023 Reflekta. All rights reserved.
