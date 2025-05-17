@@ -26,25 +26,25 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
       imageUrl:
         "https://res.cloudinary.com/djuqnuesr/image/upload/v1746638924/sasun-bughdaryan-oA1aVtEcWaE-unsplash_bmf4ce.jpg",
       title: "Legal FAQ",
-      link: "/legal",
+      link: "/community-hub/legal",
     },
     {
       imageUrl:
         "https://res.cloudinary.com/djuqnuesr/image/upload/v1746638739/mike-erskine-S_VbdMTsdiA-unsplash_iqgjlg.jpg",
       title: "Cultural Exchange Events",
-      link: "/events",
+      link: "/community-hub/events",
     },
     {
       imageUrl:
         "https://res.cloudinary.com/djuqnuesr/image/upload/v1746628369/maegan-martin-6nsGg3Iw37c-unsplash_rmkejz.jpg",
       title: "The Power of Story ",
-      link: "/culture",
+      link: "/community-hub/stories",
     },
     {
       imageUrl:
         "https://res.cloudinary.com/djuqnuesr/image/upload/v1746640099/austin-kehmeier-lyiKExA4zQA-unsplash_zqwlm0.jpg",
-      title: "One-time jobs",
-      link: "/jobs",
+      title: "Give & Get Help",
+      link: "/community-hub/help",
     },
     {
       imageUrl:

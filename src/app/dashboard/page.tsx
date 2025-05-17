@@ -3,7 +3,6 @@ import { useState } from "react";
 import Image from "next/image";
 
 const UserDashboard = () => {
-  // Sample user data - would come from API in real application
   const user = {
     name: "Alex Johnson",
     username: "@alexj",
@@ -15,7 +14,6 @@ const UserDashboard = () => {
     following: 97,
   };
 
-  // Sample activity feed
   const activities = [
     {
       id: 1,
@@ -48,19 +46,16 @@ const UserDashboard = () => {
     },
   ];
 
-  // Active tab state management
   const [activeTab, setActiveTab] = useState("activity");
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#121212] via-[#281e2a] to-[#121212] text-white font-alef ">
       <div className="container mx-auto py-12 px-4 md:px-6">
         <h1 className="text-4xl md:text-5xl font-light mb-8 text-center mt-20">
-        Profile Dashboard
+          Profile Dashboard
         </h1>
 
-        {/* Dashboard Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Sidebar - User Profile */}
           <div className="bg-[#1d1a20]/80 p-6 rounded-lg shadow-lg backdrop-blur-sm border border-gray-700/30">
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 mb-4">
@@ -98,9 +93,7 @@ const UserDashboard = () => {
             </div>
           </div>
 
-          {/* Main Content Area */}
           <div className="lg:col-span-2 bg-[#1d1a20]/80 rounded-lg shadow-lg backdrop-blur-sm border border-gray-700/30">
-            {/* Navigation Tabs */}
             <div className="flex border-b border-gray-700">
               <button
                 onClick={() => setActiveTab("activity")}
@@ -134,7 +127,6 @@ const UserDashboard = () => {
               </button>
             </div>
 
-            {/* Tab Content */}
             <div className="p-6">
               {activeTab === "activity" && (
                 <div>
@@ -182,7 +174,7 @@ const UserDashboard = () => {
                   <p className="text-gray-300">
                     Your posts, comments, and contributions will appear here.
                   </p>
-                  {/* Content would be loaded here */}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                     {[1, 2, 3, 4].map((item) => (
                       <div key={item} className="bg-[#2a242c] p-4 rounded-md">
@@ -206,7 +198,7 @@ const UserDashboard = () => {
                   <p className="text-gray-300">
                     Content you&#39;ve saved for later will appear here.
                   </p>
-                  {/* Placeholder for saved content */}
+
                   <div className="mt-8 text-center py-6">
                     <p className="text-gray-400">
                       You haven&#39;t saved any items yet
@@ -221,7 +213,6 @@ const UserDashboard = () => {
           </div>
         </div>
 
-        {/* Community Recommendations */}
         <div className="mt-10 bg-[#1d1a20]/80 p-6 rounded-lg shadow-lg backdrop-blur-sm border border-gray-700/30">
           <h3 className="text-xl mb-6">Recommended Communities</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
