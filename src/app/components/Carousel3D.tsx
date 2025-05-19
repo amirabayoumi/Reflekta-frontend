@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/Carousel3D.module.css";
 import Link from "next/link";
 
@@ -18,7 +18,9 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
   items = [],
   fixedRadius = true,
 }) => {
-  const initialRadius = useRef(240);
+  const [radius, setRadius] = useState(240);
+  const [imageWidth, setImageWidth] = useState(200);
+  const [imageHeight, setImageHeight] = useState(300);
 
   // Default carousel items if none provided
   const defaultItems: CarouselItem[] = [
@@ -62,12 +64,47 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
 
   const displayItems = items.length > 0 ? items : defaultItems;
 
+  // Update dimensions based on screen size
+  const updateDimensions = () => {
+    const width = window.innerWidth;
+
+    if (width < 640) {
+      // Mobile
+      setRadius(140);
+      setImageWidth(120);
+      setImageHeight(180);
+    } else if (width < 1024) {
+      // Tablet
+      setRadius(200);
+      setImageWidth(160);
+      setImageHeight(240);
+    } else if (width < 1536) {
+      // Desktop
+      setRadius(240);
+      setImageWidth(200);
+      setImageHeight(300);
+    } else {
+      // Large Desktop
+      setRadius(300);
+      setImageWidth(250);
+      setImageHeight(350);
+    }
+  };
+
   useEffect(() => {
-    let radius = initialRadius.current;
+    // Initial update
+    updateDimensions();
+
+    // Add resize listener
+    window.addEventListener("resize", updateDimensions);
+
+    // Clean up
+    return () => window.removeEventListener("resize", updateDimensions);
+  }, []);
+
+  useEffect(() => {
     const autoRotate = true;
     const rotateSpeed = -60;
-    const imageWidth = 200;
-    const imageHeight = 300;
 
     setTimeout(init, 1000);
 
@@ -99,6 +136,10 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
         }deg) translateZ(${radius}px)`;
         elements[i].style.transition = "transform 1s";
         elements[i].style.transitionDelay = `${(elements.length - i) / 4}s`;
+
+        // Set width and height for each carousel item
+        elements[i].style.width = `${imageWidth}px`;
+        elements[i].style.height = `${imageHeight}px`;
       }
     }
 
@@ -190,7 +231,11 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
 
             const minRadius = 150;
             const maxRadius = 350;
-            radius = Math.max(minRadius, Math.min(maxRadius, radius + d));
+            const newRadius = Math.max(
+              minRadius,
+              Math.min(maxRadius, radius + d)
+            );
+            setRadius(newRadius);
 
             init();
           }, 50) as unknown as number;
@@ -209,7 +254,7 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
         dragContainer.removeEventListener("wheel", () => {});
       }
     };
-  }, [fixedRadius]);
+  }, [fixedRadius, radius, imageWidth, imageHeight]);
 
   return (
     <div id="drag-container" className={styles["drag-container"]}>
@@ -220,6 +265,8 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
             className={styles["carousel-item"]}
             style={{
               backgroundImage: `url(${item.imageUrl})`,
+              width: `${imageWidth}px`,
+              height: `${imageHeight}px`,
             }}
           >
             <div className={styles["carousel-overlay"]}>
@@ -233,7 +280,11 @@ const Carousel3D: React.FC<Carousel3DProps> = ({
           </div>
         ))}
       </div>
-      <div id="ground" className={styles.ground}></div>
+      <div
+        id="ground"
+        className={styles.ground}
+        style={{ width: `${radius * 3}px`, height: `${radius * 3}px` }}
+      ></div>
     </div>
   );
 };

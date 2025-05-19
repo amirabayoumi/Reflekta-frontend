@@ -19,11 +19,13 @@ export default function Home() {
           <div className="w-full h-full absolute -z-10">
             <Image
               src="https://res.cloudinary.com/djuqnuesr/image/upload/q_auto,f_auto,w_1200/mario-purisic-jG1z5o7NCq4-unsplash_cqpwkj.jpg"
-              fill
+     
               priority
               sizes="100vw"
               alt="Background"
               className="object-cover w-full h-full"
+              width={2000}
+              height={1200}
             />
           </div>
 
