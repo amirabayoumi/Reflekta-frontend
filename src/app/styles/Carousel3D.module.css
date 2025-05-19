@@ -24,6 +24,38 @@
   height: 100%;
   justify-content: center;
   align-items: center;
+  min-height: 460px;
+  user-select: none;
+  margin-top: 3rem; /* Default margin for larger screens */
+}
+
+@media (min-width: 1536px) {
+  .drag-container {
+    min-height: 600px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .drag-container {
+    min-height: 400px;
+    margin-top: 2rem; /* Slightly smaller margin for tablets */
+  }
+}
+
+@media (max-width: 640px) {
+  .drag-container {
+    min-height: 300px;
+    margin-top: 1rem; /* Much smaller margin for mobile */
+  }
+
+  .carousel-title {
+    font-size: 1rem !important;
+  }
+
+  .carousel-link {
+    font-size: 0.8rem !important;
+    padding: 4px 8px !important;
+  }
 }
 
 .spin-container {
