@@ -3,23 +3,14 @@ import { useState } from "react";
 import HubHeader from "@/app/components/HubHeader";
 import HubFooter from "@/app/components/HubFooter";
 import SectionNav from "@/app/components/SectionNav";
-import {
-  Heart,
-  MessageCircle,
-  Share2,
-  Search,
-  Filter,
-  ArrowUp,
-  ArrowDown,
-} from "lucide-react";
+import FloatingCircles from "@/app/components/FloatingCircles";
+import { Heart, MessageCircle, Share2, X } from "lucide-react";
 
 const StoriesPage = () => {
   const [isAddingStory, setIsAddingStory] = useState(false);
   const [storyContent, setStoryContent] = useState("");
   const [storyTitle, setStoryTitle] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortOrder, setSortOrder] = useState("recent"); // 'recent', 'likes', 'comments'
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedStory, setSelectedStory] = useState<number | null>(null);
 
   const stories = [
     {
@@ -76,39 +67,12 @@ const StoriesPage = () => {
     },
   ];
 
-  const storyCategories = [
-    "all",
-    "personal",
-    "success",
-    "education",
-    "resources",
-    "culture",
-    "work",
-  ];
-
-  const filteredStories = stories.filter((story) => {
-    return (
-      (selectedCategory === "all" || story.category === selectedCategory) &&
-      (searchQuery === "" ||
-        story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        story.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        story.author.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-  });
-
-  switch (sortOrder) {
-    case "likes":
-      filteredStories.sort((a, b) => b.likes - a.likes);
-      break;
-    case "comments":
-      filteredStories.sort((a, b) => b.comments - a.comments);
-      break;
-    default:
-      break;
-  }
-
   const toggleLike = (storyId: number) => {
     console.log(`Toggle like for story ${storyId}`);
+  };
+
+  const handleCircleClick = (storyId: number) => {
+    setSelectedStory(storyId);
   };
 
   return (
@@ -119,11 +83,13 @@ const StoriesPage = () => {
         <h1 className="text-4xl text-center"> Listen to the others </h1>
       </div>
       <SectionNav />
-      <div className="container mx-auto px-4 py-12">
-        {!isAddingStory && (
-          <div className="mb-8 text-center">
+
+      <div className="container mx-auto px-4 py-6">
+        {/* Share Story Button placed above the floating circles */}
+        {!isAddingStory && selectedStory === null && (
+          <div className="mb-4 text-center">
             <button
-              className="bg-[#553a5c] text-white px-8 py-3 rounded-lg hover:bg-[#937195] transition-colors"
+              className="inline-block bg-[#553a5c] hover:bg-[#937195] text-white px-6 py-3 rounded-lg shadow-lg transition-colors"
               onClick={() => setIsAddingStory(true)}
             >
               Share Your Story
@@ -131,8 +97,27 @@ const StoriesPage = () => {
           </div>
         )}
 
+        {/* Floating Circles Container with defined dimensions */}
+        {!isAddingStory && selectedStory === null && (
+          <div className="relative w-full h-[60vh] mb-8">
+            <FloatingCircles
+              stories={stories}
+              onCircleClick={handleCircleClick}
+              onAddStoryClick={() => setIsAddingStory(true)}
+            />
+          </div>
+        )}
+
+        {/* Add story form */}
         {isAddingStory && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="bg-white rounded-lg shadow-md p-6 mb-8 relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+              onClick={() => setIsAddingStory(false)}
+            >
+              <X size={24} />
+            </button>
+
             <h2 className="text-2xl font-medium text-[#553a5c] mb-4">
               Share Your Story
             </h2>
@@ -156,19 +141,6 @@ const StoriesPage = () => {
                 placeholder="Share your experience, journey, or advice..."
                 className="w-full p-3 border border-gray-300 rounded-lg h-40 focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
               />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 mb-2">Category</label>
-              <select className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]">
-                {storyCategories
-                  .filter((cat) => cat !== "all")
-                  .map((category) => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </option>
-                  ))}
-              </select>
             </div>
 
             <div className="flex justify-end gap-3">
@@ -197,67 +169,20 @@ const StoriesPage = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="flex flex-col md:flex-row justify-between gap-4">
-            <div className="relative flex-grow">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                size={20}
-              />
-              <input
-                type="text"
-                placeholder="Search stories..."
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+        {/* Selected story detail view */}
+        {selectedStory !== null && (
+          <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8 relative">
+            <button
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"
+              onClick={() => setSelectedStory(null)}
+            >
+              <X size={24} />
+            </button>
 
-            <div className="flex items-center">
-              <Filter size={20} className="text-gray-500 mr-2" />
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
-              >
-                <option value="all">All Categories</option>
-                {storyCategories
-                  .filter((cat) => cat !== "all")
-                  .map((category) => (
-                    <option key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            <div className="flex items-center">
-              {sortOrder === "recent" ? (
-                <ArrowDown size={20} className="text-gray-500 mr-2" />
-              ) : (
-                <ArrowUp size={20} className="text-gray-500 mr-2" />
-              )}
-              <select
-                value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
-              >
-                <option value="recent">Most Recent</option>
-                <option value="likes">Most Liked</option>
-                <option value="comments">Most Discussed</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {filteredStories.length > 0 ? (
-          <div className="space-y-8">
-            {filteredStories.map((story) => (
-              <div
-                key={story.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <div className="p-6">
+            {stories
+              .filter((story) => story.id === selectedStory)
+              .map((story) => (
+                <div key={story.id} className="p-6">
                   <div className="flex items-center mb-4">
                     <div className="w-12 h-12 rounded-full bg-gray-200 relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
@@ -272,10 +197,12 @@ const StoriesPage = () => {
                     </div>
                   </div>
 
-                  <h3 className="font-semibold text-xl mb-2 text-[#553a5c]">
+                  <h3 className="font-semibold text-2xl mb-3 text-[#553a5c]">
                     {story.title}
                   </h3>
-                  <p className="text-gray-700 mb-4">{story.content}</p>
+                  <p className="text-gray-700 mb-6 leading-relaxed">
+                    {story.content}
+                  </p>
 
                   <div className="flex justify-between items-center">
                     <div className="flex space-x-4">
@@ -305,23 +232,7 @@ const StoriesPage = () => {
                     </span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <p className="text-gray-500 text-lg">
-              No stories match your current filters
-            </p>
-            <button
-              onClick={() => {
-                setSelectedCategory("all");
-                setSearchQuery("");
-              }}
-              className="mt-4 text-[#553a5c] hover:underline"
-            >
-              Clear filters
-            </button>
+              ))}
           </div>
         )}
       </div>

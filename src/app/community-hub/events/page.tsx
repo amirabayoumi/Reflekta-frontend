@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HubHeader from "@/app/components/HubHeader";
 import HubFooter from "@/app/components/HubFooter";
 import SectionNav from "@/app/components/SectionNav";
@@ -10,103 +10,145 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
+  AlertCircle,
+  Loader,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 
-
-const MapWithNoSSR = dynamic(
-  () => import("@/app/components/MapComponent"),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="h-[400px] w-full flex items-center justify-center bg-gray-100">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#553a5c]"></div>
-          <p className="mt-2 text-gray-500">Loading map...</p>
-        </div>
+const MapWithNoSSR = dynamic(() => import("@/app/components/MapComponent"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[400px] w-full flex items-center justify-center bg-gray-100">
+      <div className="text-center">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#553a5c]"></div>
+        <p className="mt-2 text-gray-500">Loading map...</p>
       </div>
-    ),
-  }
-);
+    </div>
+  ),
+});
+
+interface EventData {
+  id: number;
+  title: string;
+  description: string | null;
+  location: string | null;
+  latitude: number;
+  longitude: number;
+  start_date: string;
+  end_date: string | null;
+  organizer: string | null;
+  categories: string[];
+  image?: string;
+  attendees?: number;
+}
 
 const EventsPage = () => {
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("all");
   const [query, setQuery] = useState("");
   const [mapExpanded, setMapExpanded] = useState(true);
-  const [mapKey, setMapKey] = useState(0); // Key to force map re-render
+  const [mapKey, setMapKey] = useState(0);
 
-  const eventsData = [
-    {
-      id: 1,
-      title: "Multicultural Festival",
-      description:
-        "A celebration of diversity with music, food, and art from around the world.",
-      location: "Brussels",
-      latitude: 50.8503,
-      longitude: 4.3517,
-      start_date: "2023-12-15T10:00:00",
-      end_date: "2023-12-15T22:00:00",
-      organizer: "Brussels Cultural Center",
-      categories: ["festival", "cultural", "networking"],
-      image: "/events/festival.jpg",
-      attendees: 24,
-    },
-    {
-      id: 2,
-      title: "Story Circle: My Journey",
-      description:
-        "Share your migration stories and connect with others through narrative.",
-      location: "Antwerp",
-      latitude: 51.2194,
-      longitude: 4.4024,
-      start_date: "2023-12-20T18:30:00",
-      end_date: "2023-12-20T21:00:00",
-      organizer: "Antwerp Community Hub",
-      categories: ["workshop", "cultural"],
-      image: "/events/workshop.jpg",
-      attendees: 18,
-    },
-    {
-      id: 3,
-      title: "Language Exchange Meetup",
-      description:
-        "Practice languages and make new friends in this casual gathering.",
-      location: "Ghent",
-      latitude: 51.0543,
-      longitude: 3.7174,
-      start_date: "2024-01-05T14:00:00",
-      end_date: "2024-01-05T17:00:00",
-      organizer: "Multilingual Society",
-      categories: ["networking", "cultural"],
-      image: "/events/networking.jpg",
-      attendees: 30,
-    },
-    {
-      id: 4,
-      title: "Professional Development Workshop",
-      description:
-        "Develop skills for the Belgian job market with expert guidance.",
-      location: "Liège",
-      latitude: 50.6056,
-      longitude: 5.4439,
-      start_date: "2024-01-12T09:00:00",
-      end_date: "2024-01-12T16:00:00",
-      organizer: "Career Connect Belgium",
-      categories: ["workshop", "networking"],
-      image: "/events/workshop2.jpg",
-      attendees: 15,
-    },
-  ];
+  // New state for API data
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const filteredEvents = eventsData.filter((event) => {
+  // Fetch events from API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const response = await fetch("http://3.75.235.214/api/events");
+
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        // Debug the response structure
+        console.log("API Response structure:", typeof result, result);
+
+        // Handle different response formats
+        let eventData;
+        if (Array.isArray(result)) {
+          eventData = result;
+        } else if (result && typeof result === "object") {
+          // Try to find events array in common response structures
+          eventData = result.data ||
+            result.events ||
+            result.content || [result];
+        } else {
+          eventData = [];
+        }
+
+        if (!Array.isArray(eventData)) {
+          console.error("Could not find events array in response", result);
+          throw new Error("Unexpected API response format");
+        }
+
+        // Transform data to match our expected format
+        const formattedEvents = eventData.map((event) => ({
+          id: event.id || Math.random().toString(36).substr(2, 9),
+          title: event.title || "Untitled Event",
+          description: event.description || null,
+          location: event.location || "Location TBD",
+          latitude: parseFloat(event.latitude) || 50.8503,
+          longitude: parseFloat(event.longitude) || 4.3517,
+          start_date: event.start_date || new Date().toISOString(),
+          end_date: event.end_date || null,
+          organizer: event.organizer || "Community Organizer",
+          categories: Array.isArray(event.categories)
+            ? event.categories
+            : typeof event.categories === "string"
+            ? [event.categories]
+            : ["general"],
+          attendees: event.attendees || Math.floor(Math.random() * 30) + 5,
+          image: event.image || `/events/default.jpg`,
+        }));
+
+        setEvents(formattedEvents);
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+        setError("Failed to load events. Please try again later.");
+
+        // Fallback to default events for development
+        setEvents([
+          {
+            id: 1,
+            title: "Sample Event (API Failed)",
+            description: "This is a sample event since the API request failed.",
+            location: "Brussels",
+            latitude: 50.8503,
+            longitude: 4.3517,
+            start_date: new Date().toISOString(),
+            end_date: new Date(Date.now() + 86400000).toISOString(),
+            organizer: "System",
+            categories: ["sample"],
+            attendees: 10,
+            image: "/events/default.jpg",
+          },
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const filteredEvents = events.filter((event) => {
     return (
       (category === "all" || event.categories.includes(category)) &&
       (location === "all" || event.location === location) &&
       (query === "" ||
         event.title.toLowerCase().includes(query.toLowerCase()) ||
-        event.description.toLowerCase().includes(query.toLowerCase()))
+        (event.description &&
+          event.description.toLowerCase().includes(query.toLowerCase())))
     );
   });
 
@@ -237,12 +279,13 @@ const EventsPage = () => {
               mapExpanded ? "h-[400px]" : "h-0"
             }`}
           >
-            {mapExpanded && (
+            {mapExpanded && !isLoading && !error && (
               <div className="h-full w-full">
                 <MapWithNoSSR
                   key={mapKey}
-                  events={filteredEvents.map(({ start_date, ...rest }) => ({
+                  events={filteredEvents.map(({ start_date, location, ...rest }) => ({
                     ...rest,
+                    location: location ?? "Location TBD",
                     startDate: start_date,
                   }))}
                   center={getMapCenter()}
@@ -250,16 +293,46 @@ const EventsPage = () => {
                 />
               </div>
             )}
+            {mapExpanded && isLoading && (
+              <div className="h-full w-full flex items-center justify-center bg-gray-100">
+                <div className="text-center">
+                  <Loader
+                    size={32}
+                    className="mx-auto animate-spin text-[#553a5c]"
+                  />
+                  <p className="mt-2 text-gray-500">Loading events...</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Events Grid - Now full width */}
+        {/* Events Grid */}
         <div className="mb-12">
           <h2 className="text-2xl font-semibold text-[#553a5c] mb-4">
             Upcoming Events
           </h2>
 
-          {filteredEvents.length > 0 ? (
+          {isLoading ? (
+            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+              <Loader
+                size={32}
+                className="mx-auto animate-spin text-[#553a5c]"
+              />
+              <p className="mt-4 text-gray-500 text-lg">Loading events...</p>
+            </div>
+          ) : error ? (
+            <div className="bg-white rounded-lg shadow-md p-12 text-center">
+              <AlertCircle size={32} className="mx-auto text-red-500" />
+              <p className="mt-4 text-gray-500 text-lg">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-4 bg-[#553a5c] text-white px-4 py-2 rounded hover:bg-[#937195] transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : filteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event) => (
                 <div
