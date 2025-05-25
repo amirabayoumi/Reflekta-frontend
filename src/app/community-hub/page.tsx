@@ -87,7 +87,7 @@ const CommunityHub = () => {
                 Help & Be Helped
               </h2>
               <Link
-                href="/community-hub/jobs"
+                href="/community-hub/help"
                 className="text-sm text-[#886f80] hover:underline"
               >
                 View all
@@ -111,7 +111,7 @@ const CommunityHub = () => {
             </div>
             <div className="mt-6 pt-4 border-t border-gray-200 text-center">
               <Link
-                href="/community-hub/jobs"
+                href="/community-hub/help"
                 className="bg-[#886f80]/10 text-[#553a5c] px-4 py-2 rounded-md hover:bg-[#886f80]/20 transition-colors inline-block"
               >
                 + Offer Help

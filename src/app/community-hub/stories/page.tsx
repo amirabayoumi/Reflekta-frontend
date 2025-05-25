@@ -110,14 +110,76 @@ const StoriesPage = () => {
           </div>
         )}
 
-        {/* Floating Circles Container with defined dimensions */}
+        {/* Floating Circles Container - visible only on medium screens and up */}
         {!isAddingStory && selectedStory === null && (
-          <div className="relative w-full h-[60vh] mb-8">
+          <div className="relative w-full h-[60vh] mb-8 hidden md:block">
             <FloatingCircles
               stories={stories}
               onCircleClick={handleCircleClick}
               onAddStoryClick={() => setIsAddingStory(true)}
             />
+          </div>
+        )}
+
+        {/* Grid View for Mobile Screens - visible only on small screens */}
+        {!isAddingStory && selectedStory === null && (
+          <div className="md:hidden">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+              {stories.map((story) => (
+                <div
+                  key={story.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                  onClick={() => setSelectedStory(story.id)}
+                >
+                  <div className="p-4">
+                    <div className="flex items-center mb-3">
+                      <div className="w-10 h-10 rounded-full bg-gray-200 relative overflow-hidden">
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
+                          <span className="text-white font-medium">
+                            {story.author.charAt(0)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="ml-3">
+                        <p className="font-medium text-sm">{story.author}</p>
+                        <p className="text-xs text-gray-500">{story.date}</p>
+                      </div>
+                    </div>
+
+                    <h3 className="font-semibold text-lg mb-2 text-[#553a5c]">
+                      {story.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                      {story.content}
+                    </p>
+
+                    <div className="flex justify-between items-center">
+                      <div className="flex space-x-3 text-sm">
+                        <span
+                          className={`flex items-center ${
+                            story.isLiked ? "text-pink-500" : "text-gray-500"
+                          }`}
+                        >
+                          <Heart
+                            size={16}
+                            className={story.isLiked ? "fill-current" : ""}
+                          />
+                          <span className="ml-1">{story.likes}</span>
+                        </span>
+                        <span className="flex items-center text-gray-500">
+                          <MessageCircle size={16} />
+                          <span className="ml-1">{story.comments}</span>
+                        </span>
+                      </div>
+                      <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
+                        {story.category.charAt(0).toUpperCase() +
+                          story.category.slice(1)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
