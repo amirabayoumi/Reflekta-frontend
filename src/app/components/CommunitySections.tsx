@@ -35,12 +35,13 @@ const CommunitySections = () => {
           </div>
         </Link>
 
-        <Link href="/community-hub/jobs" className="group">
+        {/* Updated Help section with corrected link and better content */}
+        <Link href="/community-hub/help" className="group">
           <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-lg h-full">
             <div className="h-40 bg-[#f7d2d2] relative flex items-center justify-center">
               <Image
                 src="/icons/jobs-icon.png"
-                alt="Jobs"
+                alt="Help & Support"
                 width={80}
                 height={80}
                 className="opacity-90"
@@ -48,15 +49,15 @@ const CommunitySections = () => {
             </div>
             <div className="p-6">
               <h3 className="text-xl font-semibold text-[#553a5c] mb-2">
-                Jobs & Opportunities
+                Help & Support Services
               </h3>
               <p className="text-gray-600">
-                Discover job opportunities and internships tailored for Belgians
-                and immigrants.
+                Access language assistance, educational guidance, and
+                professional mentorship from community volunteers.
               </p>
               <div className="mt-4 flex justify-between items-center">
                 <span className="text-sm text-[#886f80]">
-                  25 open positions
+                  40+ support services
                 </span>
                 <span className="text-[#553a5c] group-hover:underline">
                   Explore →
@@ -95,12 +96,13 @@ const CommunitySections = () => {
           </div>
         </Link>
 
-        <Link href="/community-hub/legal-faq" className="group">
+        {/* Updated Legal section with corrected link and better content */}
+        <Link href="/community-hub/legal" className="group">
           <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-lg h-full">
             <div className="h-40 bg-[#937195]/25 relative flex items-center justify-center">
               <Image
                 src="/icons/legal-icon.png"
-                alt="Legal FAQ"
+                alt="Legal Resources"
                 width={80}
                 height={80}
                 className="opacity-90"
@@ -108,14 +110,14 @@ const CommunitySections = () => {
             </div>
             <div className="p-6">
               <h3 className="text-xl font-semibold text-[#553a5c] mb-2">
-                Legal Help & Rights
+                Legal Resources
               </h3>
               <p className="text-gray-600">
-                Access resources and information about your rights and legal
-                matters in Belgium.
+                Find information on residence permits, family reunification,
+                employment rights, and connect with pro bono legal advisors.
               </p>
               <div className="mt-4 flex justify-between items-center">
-                <span className="text-sm text-[#886f80]">30+ articles</span>
+                <span className="text-sm text-[#886f80]">45+ resources</span>
                 <span className="text-[#553a5c] group-hover:underline">
                   Explore →
                 </span>

@@ -78,7 +78,6 @@ const getMapCenter = (events: EventData[]): [number, number] => {
 export default function EventsClientWrapper({
   initialEvents,
   categories = [],
-  
 }: EventsClientWrapperProps) {
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("all");
@@ -312,15 +311,6 @@ export default function EventsClientWrapper({
             </button>
           </div>
         )}
-
-        <div className="mt-8 text-center">
-          <Link
-            href="/community-hub/events/create"
-            className="bg-[#553a5c] text-white px-6 py-3 rounded-lg hover:bg-[#937195] transition-colors inline-block"
-          >
-            Create New Event
-          </Link>
-        </div>
       </div>
     </div>
   );
