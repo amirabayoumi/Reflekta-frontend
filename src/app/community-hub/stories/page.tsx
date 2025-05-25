@@ -65,6 +65,19 @@ const StoriesPage = () => {
       comments: 9,
       isLiked: false,
     },
+    {
+      id: 5,
+      title: "Exploring the Belgian Landscape",
+      author: "Elena R.",
+      authorImage: "/profiles/person5.jpg",
+      date: "1 week ago",
+      category: "nature",
+      content:
+        "When I first arrived in Brussels, everything was overwhelming. The language, the culture, the transportation system. But slowly, I found my community and began to feel at home...",
+      likes: 78,
+      comments: 5,
+      isLiked: true,
+    },
   ];
 
   const toggleLike = (storyId: number) => {

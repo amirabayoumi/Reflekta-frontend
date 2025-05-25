@@ -67,14 +67,25 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
   }, []);
 
   const storyCircles = useMemo(() => {
-    return stories.map((story, idx) => {
+    // Sort stories by date with newest first
+    const sortedStories = [...stories].sort((a, b) => {
+      return new Date(b.date).getTime() - new Date(a.date).getTime();
+    });
+
+    return sortedStories.map((story, idx) => {
       // Deterministic positions for stories
       const top = `${20 + ((idx * 15) % 50)}%`;
       const left = `${20 + ((idx * 20) % 60)}%`;
+
+      // Calculate size based on recency - newer stories are bigger
+      // First story (newest) will be 180px, and each subsequent story will be smaller
+      const size = Math.max(120, 180 - idx * 15);
+
       return {
         ...story,
         top,
         left,
+        size,
       };
     });
   }, [stories]);
@@ -261,8 +272,17 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
             height: `${circle.size}px`,
             top: circle.top,
             left: circle.left,
-            backgroundColor: `rgba(85,58,92,${circle.opacity})`,
+            background: `radial-gradient(circle at 30% 30%, rgba(138,109,145,${
+              circle.opacity + 0.1
+            }), rgba(85,58,92,${circle.opacity}))`,
+            boxShadow: `
+              0 6px 10px rgba(0,0,0,0.15),
+              0 0 6px rgba(0,0,0,0.05) inset,
+              0 -3px 5px rgba(255,255,255,0.1) inset
+            `,
             zIndex: 1,
+            transform: "translateZ(0)",
+            border: "1px solid rgba(255,255,255,0.1)",
           }}
         />
       ))}
@@ -281,8 +301,8 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
             }
           `}
           style={{
-            width: "140px",
-            height: "140px",
+            width: `${story.size}px`,
+            height: `${story.size}px`,
             top: story.top,
             left: story.left,
             transition: "transform 0.2s, box-shadow 0.2s",
@@ -291,13 +311,31 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
           onMouseEnter={() => handleMouseEnter(story.id.toString())}
           onMouseLeave={() => handleMouseLeave(story.id.toString())}
         >
-          <div className="flex flex-col items-center justify-center p-2 text-center w-full h-full">
-            <h4 className="font-semibold text-[#553a5c] text-sm mb-1 truncate w-full">
-              {story.title}
+          <div className="flex flex-col items-center justify-center p-3 text-center w-full h-full">
+            {/* Display author name prominently */}
+            <h4
+              className={`font-semibold text-[#553a5c] mb-1 ${
+                story.size >= 150 ? "text-lg" : "text-base"
+              }`}
+            >
+              {story.author}
             </h4>
-            <p className="text-xs text-gray-500 line-clamp-2">
-              {story.content}
+
+            {/* Show date information */}
+            <p
+              className={`text-gray-400 ${
+                story.size >= 150 ? "text-sm" : "text-xs"
+              }`}
+            >
+              {story.date}
             </p>
+
+            {/* Only show title on larger circles */}
+            {story.size > 140 && (
+              <p className="text-xs text-gray-600 mt-2 line-clamp-1">
+                &quot;{story.title}&quot;
+              </p>
+            )}
           </div>
         </div>
       ))}
