@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { AlignJustify, Globe } from "lucide-react";
+import { AlignJustify, Globe, X } from "lucide-react";
 import { useLanguage } from "@/app/contexts/LanguageContext";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,7 +40,7 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button - Updated to toggle between hamburger and X */}
         <div className="md:hidden flex items-center">
           {/* Language Selector for Mobile */}
           <div className="relative mr-4">
@@ -91,8 +91,12 @@ const Header = () => {
             )}
           </div>
 
-          <button className="p-2" onClick={toggleMenu} aria-label="Toggle menu">
-            <AlignJustify />
+          <button
+            className="p-2"
+            onClick={toggleMenu}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMenuOpen ? <X size={24} /> : <AlignJustify size={24} />}
           </button>
         </div>
 
