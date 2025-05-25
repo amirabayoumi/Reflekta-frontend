@@ -33,12 +33,15 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
     onClose();
   };
 
+  console.log("isShowLogin:", isShowLogin);
+
+  // Don't render anything if isShowLogin is false
+  if (!isShowLogin) {
+    return null;
+  }
+
   return (
-    <div
-      className={`fixed inset-0 bg-black/80 z-50 flex items-center justify-center transition-opacity duration-300 ${
-        isShowLogin ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
-    >
+    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center transition-opacity duration-300">
       {/* Container with perspective */}
       <div
         className="w-full max-w-md perspective-1000"
@@ -48,7 +51,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
         <motion.div
           animate={{
             rotateY: isFlipped ? 180 : 0,
-            scale: isShowLogin ? 1 : 0.8,
+            scale: 1,
           }}
           initial={{ rotateY: 0, scale: 0.8 }}
           className="bg-white rounded-xl shadow-2xl w-full relative preserve-3d"

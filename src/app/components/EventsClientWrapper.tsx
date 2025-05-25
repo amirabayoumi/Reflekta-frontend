@@ -33,7 +33,19 @@ const filterEvents = (
       event.categories.some((cat: CategoryData | string) =>
         typeof cat === "string" ? cat === category : cat.name === category
       );
-    const matchesLocation = location === "all" || event.location === location;
+
+    // More precise city matching - check for city name at the beginning or after a comma
+    const matchesLocation =
+      location === "all" ||
+      (event.location &&
+        (event.location.toLowerCase() === location.toLowerCase() || // Exact match
+          event.location
+            .toLowerCase()
+            .startsWith(location.toLowerCase() + ",") || // City at start
+          event.location
+            .toLowerCase()
+            .includes(", " + location.toLowerCase()))); // City after comma
+
     const matchesQuery =
       !query ||
       event.title.toLowerCase().includes(query.toLowerCase()) ||
@@ -66,7 +78,7 @@ const getMapCenter = (events: EventData[]): [number, number] => {
 export default function EventsClientWrapper({
   initialEvents,
   categories = [],
-  locations = [],
+  
 }: EventsClientWrapperProps) {
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("all");
@@ -109,6 +121,22 @@ export default function EventsClientWrapper({
     }
   };
 
+  // Extract just the cities for the location filter
+  const belgianCities = [
+    // Flatten the nested structure to get just the city names
+    "Antwerpen",
+    "Gent",
+    "Leuven",
+    "Brugge",
+    "Mechelen", // Vlaanderen
+    "Liège",
+    "Namur",
+    "Charleroi",
+    "Mons",
+    "Spa", // Wallonia
+    "Brussels", // Brussels
+  ];
+
   return (
     <div className="container mx-auto px-4 py-12">
       {/* Filters */}
@@ -146,7 +174,7 @@ export default function EventsClientWrapper({
             </select>
           </div>
 
-          {/* Location */}
+          {/* Location - Updated to only show cities */}
           <div className="flex items-center">
             <MapPin size={20} className="text-gray-500 mr-2" />
             <select
@@ -155,13 +183,11 @@ export default function EventsClientWrapper({
               className="py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
             >
               <option value="all">All Locations</option>
-              {locations
-                .filter((loc) => loc !== "all" && loc)
-                .map((loc) => (
-                  <option key={loc} value={loc}>
-                    {loc}
-                  </option>
-                ))}
+              {belgianCities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
             </select>
           </div>
         </div>
