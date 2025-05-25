@@ -10,16 +10,66 @@ import Link from "next/link";
 import JoinEventButton from "@/app/components/JoinEventButton";
 import ReusableMap from "@/app/components/ReusableMap";
 import type { EventData } from "@/types";
-
+import type { Metadata } from "next";
 export const dynamicParams = true;
 
-export default async function EventDetailsPage({
+interface PageParams {
+  id: string;
+  slug: string;
+}
+export const generateMetadata = async ({
   params,
 }: {
-  params: { id: string; slug: string };
-}) {
+  params: Promise<PageParams>;
+}): Promise<Metadata> => {
+  const { id, slug } = await params;
+  if (!id || !slug) {
+    return {
+      title: "Event Details",
+      description: "Detailed information about the event",
+    };
+  }
+  return {
+    title: "Event Details",
+    description: "Detailed information about the event",
+    openGraph: {
+      title: "Event Details",
+      description: "Detailed information about the event",
+      siteName: "Community Hub",
+      images: [
+        {
+          url: "/images/event-details-og.jpg",
+          width: 1200,
+          height: 630,
+          alt: "Event Details",
+        },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Event Details",
+      description: "Detailed information about the event",
+      images: ["/images/event-details-og.jpg"],
+    },
+  };
+};
+
+/**
+ * Renders the Event Details Page.
+ *
+ * This page fetches and displays detailed information about a specific event
+ * identified by the provided `id` and `slug` parameters. It includes the event's
+ * title, date, time, location, organizer, categories, and description. The page
+ * also provides a map view of the event location and a button to join the event.
+ *
+ * @param params Object containing the event `id` and `slug`.
+ */
+
+const page = async ({ params }: { params: Promise<PageParams> }) => {
+  const { id } = await params;
   // Fetch data from API
-  const rawEvent = (await fetchEventById(params.id)) as
+  const rawEvent = (await fetchEventById(id)) as
     | { data: EventData | EventData[] }
     | undefined;
 
@@ -32,7 +82,7 @@ export default async function EventDetailsPage({
 
   if (Array.isArray(eventData)) {
     eventData =
-      eventData.find((e) => String(e.id) === String(params.id)) ?? eventData[0];
+      eventData.find((e) => String(e.id) === String(id)) ?? eventData[0];
   }
 
   if (!eventData) {
@@ -223,4 +273,6 @@ export default async function EventDetailsPage({
       <HubFooter />
     </div>
   );
-}
+};
+
+export default page;
