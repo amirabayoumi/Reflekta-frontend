@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import HubHeader from "@/app/components/HubHeader";
-import HubFooter from "@/app/components/HubFooter";
-import SectionNav from "@/app/components/SectionNav";
+import HubHeader from "@/components/HubHeader";
+import HubFooter from "@/components/HubFooter";
+import SectionNav from "@/components/SectionNav";
 import {
   HandHelping,
   MapPin,

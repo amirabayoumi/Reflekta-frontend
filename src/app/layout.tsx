@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Alef } from "next/font/google";
 import "./globals.css";
-import { LanguageProvider } from "./contexts/LanguageContext";
-
+import { LanguageProvider } from "../contexts/LanguageContext";
 
 const alef = Alef({
   subsets: ["latin"],
@@ -27,11 +26,7 @@ export default function RootLayout({
         <meta name="next-size-adjust" />
       </head>
       <body className={`${alef.variable}  antialiased`}>
-        <LanguageProvider>
-       
-          {children}
-      
-        </LanguageProvider>
+        <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>
   );

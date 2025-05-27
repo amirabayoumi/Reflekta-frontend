@@ -1,25 +1,24 @@
 "use client";
 
 import Image from "next/image";
-import ArrowButton from "@/app/components/ArrowButton";
-import { useLanguage } from "@/app/contexts/LanguageContext";
+import ArrowButton from "@/components/ArrowButton";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
-import Header from "@/app/components/Header";
-import Footer from "./components/Footer";
-import Carousel3D from "./components/Carousel3D";
+import Header from "@/components/Header";
+import Footer from "../components/Footer";
+import Carousel3D from "../components/Carousel3D";
 
 export default function Home() {
   const { t } = useLanguage();
 
   return (
     <>
-    <Header/>
+      <Header />
       <div className="min-h-screen h-screen w-full relative overflow-hidden font-alef">
         <main className="">
           <div className="w-full h-full absolute -z-10">
             <Image
               src="https://res.cloudinary.com/djuqnuesr/image/upload/q_auto,f_auto,w_1200/mario-purisic-jG1z5o7NCq4-unsplash_cqpwkj.jpg"
-     
               priority
               sizes="100vw"
               alt="Background"
@@ -36,11 +35,12 @@ export default function Home() {
             <p className="text-white text-2xl mt-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)] mb-5">
               {t("reflektaDescription")}
             </p>
-           
-            <Link 
+
+            <Link
               className="bg-pink text-black px-4 py-2 rounded-full mt-4"
-              href="/community-hub">
-           Join the Community
+              href="/community-hub"
+            >
+              Join the Community
             </Link>
           </div>
 
@@ -67,7 +67,6 @@ export default function Home() {
         </div>
       </section>{" "}
       <Footer />
-      
     </>
   );
 }

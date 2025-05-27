@@ -48,6 +48,10 @@ const UserDashboard = () => {
 
   const [activeTab, setActiveTab] = useState("activity");
 
+  //fetch avatar image for the user
+  //https://avatar.iran.liara.run/username?username=[firstname+lastname]
+  // Example: https://avatar.iran.liara.run/username?username=Alex+Johnson
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#121212] via-[#281e2a] to-[#121212] text-white font-alef ">
       <div className="container mx-auto py-12 px-4 md:px-6">
@@ -60,7 +64,7 @@ const UserDashboard = () => {
             <div className="flex flex-col items-center">
               <div className="relative w-32 h-32 mb-4">
                 <Image
-                  src={user.profileImage}
+                  src="https://avatar.iran.liara.run/username?username=Alex+Johnson"
                   alt="Profile"
                   fill
                   className="rounded-full object-cover"
@@ -210,31 +214,6 @@ const UserDashboard = () => {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-
-        <div className="mt-10 bg-[#1d1a20]/80 p-6 rounded-lg shadow-lg backdrop-blur-sm border border-gray-700/30">
-          <h3 className="text-xl mb-6">Recommended Communities</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              "Photography",
-              "Creative Writing",
-              "Digital Art",
-              "Travel Stories",
-            ].map((community) => (
-              <div
-                key={community}
-                className="bg-[#2a242c] p-4 rounded-md text-center hover:bg-[#33293a] transition-colors cursor-pointer"
-              >
-                <h4 className="font-medium mb-2">{community}</h4>
-                <p className="text-sm text-gray-400">
-                  Join {Math.floor(Math.random() * 1000) + 100} members
-                </p>
-                <button className="mt-3 text-[#cbbfd1] text-sm hover:underline">
-                  Explore
-                </button>
-              </div>
-            ))}
           </div>
         </div>
       </div>

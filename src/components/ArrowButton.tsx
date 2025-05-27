@@ -5,7 +5,6 @@ import { FaChevronDown } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
 export default function ArrowButton() {
-
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -17,7 +16,7 @@ export default function ArrowButton() {
         setVisible(true);
       }
     };
-
+    handleScroll(); // Initial check on mount
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import type { EventData, CategoryData } from "@/types";
 // Dynamically load the map component (no SSR)
-const MapWithNoSSR = dynamic(() => import("@/app/components/MapComponent"), {
+const MapWithNoSSR = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full flex items-center justify-center bg-gray-100">
@@ -35,9 +35,7 @@ export default function ReusableMap({
     // Ensure categories is always an array of strings (e.g., category names)
     categories: Array.isArray(event.categories)
       ? event.categories.map((cat: CategoryData | string) =>
-          typeof cat === "string"
-            ? cat
-            : cat.name 
+          typeof cat === "string" ? cat : cat.name
         )
       : [],
     // Ensure other required properties have defaults

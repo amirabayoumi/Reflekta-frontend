@@ -1,10 +1,15 @@
 import { fetchAllCategories, fetchAllEvents } from "@/queries";
-import HubHeader from "@/app/components/HubHeader";
-import HubFooter from "@/app/components/HubFooter";
-import SectionNav from "@/app/components/SectionNav";
-import EventsClientWrapper from "@/app/components/EventsClientWrapper";
-import type { CategoryData, EventData, Events, Categories , FormatedEvent} from "@/types";
-
+import HubHeader from "@/components/HubHeader";
+import HubFooter from "@/components/HubFooter";
+import SectionNav from "@/components/SectionNav";
+import EventsClientWrapper from "@/components/EventsClientWrapper";
+import type {
+  CategoryData,
+  EventData,
+  Events,
+  Categories,
+  FormatedEvent,
+} from "@/types";
 
 export default async function EventsPage() {
   let eventsData: EventData[] = [];

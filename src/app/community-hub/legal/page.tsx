@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import HubHeader from "@/app/components/HubHeader";
-import HubFooter from "@/app/components/HubFooter";
-import SectionNav from "@/app/components/SectionNav";
+import HubHeader from "@/components/HubHeader";
+import HubFooter from "@/components/HubFooter";
+import SectionNav from "@/components/SectionNav";
 import { ChevronDown, ChevronUp, Search, Phone, Mail } from "lucide-react";
 
 const LegalFAQPage = () => {
@@ -152,13 +152,12 @@ const LegalFAQPage = () => {
       <HubHeader />
 
       {/* Page Header */}
-        <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
+      <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
         <h1 className="text-4xl text-center"> Legal Hub</h1>
       </div>
-        <SectionNav />
+      <SectionNav />
       <div className="container mx-auto px-4 py-12">
         {/* Add Section Navigation */}
-
 
         {/* Search Bar */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
