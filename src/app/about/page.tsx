@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import { FaHandHoldingHeart, FaLightbulb, FaUsers } from "react-icons/fa";
-import Header from "@/app/components/Header";
-import Footer from "@/app/components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 export default function About() {
   return (
     <>

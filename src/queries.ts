@@ -2,7 +2,9 @@ import { EventData, CategoryData } from "./types";
 export const fetchAllEvents = async (): Promise<EventData[]> => {
   try {
     const response = await fetch("http://3.75.235.214/api/events", {
-      cache: 'no-store',
+      //ensure that the request is refresh evey 1 hour
+      next: { revalidate: 3600 },
+   
     });
 
     if (!response.ok) {

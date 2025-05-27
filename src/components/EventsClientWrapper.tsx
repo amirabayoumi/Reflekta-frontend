@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import type { CategoryData, EventData, FormatedEvent } from "@/types";
-import ReusableMap from "@/app/components/ReusableMap";
+import ReusableMap from "@/components/ReusableMap";
 
 interface EventsClientWrapperProps {
   initialEvents: FormatedEvent[];

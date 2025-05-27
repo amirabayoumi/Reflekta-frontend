@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { AlignJustify, Globe, X } from "lucide-react";
-import { useLanguage } from "@/app/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);

@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import HubFooter from "@/app/components/HubFooter";
-import HubHeader from "../components/HubHeader";
-import CommunitySections from "../components/CommunitySections";
-import UserProfileSummary from "../components/UserProfileSummary";
-import SectionNav from "../components/SectionNav";
+import HubFooter from "@/components/HubFooter";
+import HubHeader from "../../components/HubHeader";
+import CommunitySections from "../../components/CommunitySections";
+import UserProfileSummary from "../../components/UserProfileSummary";
+import SectionNav from "../../components/SectionNav";
 
 const CommunityHub = () => {
   const featuredEvents = [

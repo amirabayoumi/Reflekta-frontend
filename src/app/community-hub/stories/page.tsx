@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import HubHeader from "@/app/components/HubHeader";
-import HubFooter from "@/app/components/HubFooter";
-import SectionNav from "@/app/components/SectionNav";
-import FloatingCircles from "@/app/components/FloatingCircles";
+import HubHeader from "@/components/HubHeader";
+import HubFooter from "@/components/HubFooter";
+import SectionNav from "@/components/SectionNav";
+import FloatingCircles from "@/components/FloatingCircles";
 import { Heart, MessageCircle, Share2, X } from "lucide-react";
 
 const StoriesPage = () => {
