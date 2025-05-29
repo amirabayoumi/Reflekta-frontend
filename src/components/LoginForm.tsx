@@ -1,9 +1,23 @@
 "use client";
 
-// import styles from "../styles/Login.module.css";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
+import { registerUser, loginUser } from "../queries";
+
+interface LoginResponse {
+  success: boolean;
+  data?: {
+    token: string;
+    name: string;
+  };
+  message?: string;
+}
+
+interface RegisterResponse {
+  success: boolean;
+  message?: string;
+}
 
 interface LoginFormProps {
   isShowLogin: boolean;
@@ -11,43 +25,97 @@ interface LoginFormProps {
 }
 
 const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
-  // Form state
   const [isFlipped, setIsFlipped] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
-  // Reset all form fields and state when closing
   const handleClose = () => {
-    // Reset flip state
     setIsFlipped(false);
-
-    // Reset all form fields
     setEmail("");
     setPassword("");
     setUsername("");
     setConfirmPassword("");
-
-    // Call the provided onClose function
+    setErrorMessage("");
+    setLoginSuccess(false);
     onClose();
   };
 
-  console.log("isShowLogin:", isShowLogin);
+  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const result = (await loginUser({ email, password })) as LoginResponse;
+      if (result.success && result.data?.token) {
+        localStorage.setItem("token", result.data.token);
+        localStorage.setItem("userName", result.data.name);
+        setLoginSuccess(true);
+      } else {
+        setErrorMessage(result.message || "Login failed");
+      }
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        error !== null &&
+        "message" in error &&
+        typeof (error as { message?: unknown }).message === "string"
+      ) {
+        setErrorMessage((error as { message: string }).message);
+      } else {
+        setErrorMessage("Login failed");
+      }
+    }
+  };
 
-  // Don't render anything if isShowLogin is false
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match");
+      return;
+    }
+    const userData = {
+      name: username,
+      email,
+      password,
+      confirm_password: confirmPassword,
+    };
+    try {
+      const result = (await registerUser(userData)) as RegisterResponse;
+      if (result.success) {
+        setIsFlipped(false);
+        setErrorMessage("Registration successful. Please sign in.");
+        setEmail(email);
+        setPassword(password);
+      } else {
+        setErrorMessage(result.message || "Registration failed");
+      }
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "message" in error &&
+        typeof (error as { message?: unknown }).message === "string"
+      ) {
+        setErrorMessage((error as { message: string }).message);
+      } else {
+        setErrorMessage("Registration failed");
+      }
+    }
+  };
+
   if (!isShowLogin) {
     return null;
   }
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center transition-opacity duration-300">
-      {/* Container with perspective */}
       <div
         className="w-full max-w-md perspective-1000"
         style={{ perspective: "1000px" }}
       >
-        {/* Card that flips */}
         <motion.div
           animate={{
             rotateY: isFlipped ? 180 : 0,
@@ -58,11 +126,10 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
           transition={{ duration: 0.6 }}
           style={{
             transformStyle: "preserve-3d",
-            height: isFlipped ? "520px" : "380px", // Adjust based on your content
+            height: isFlipped ? "520px" : "380px",
             transition: "transform 0.6s, scale 0.6s, height 0.6s",
           }}
         >
-          {/* Sign In Side - Front */}
           <div
             className={`absolute inset-0 p-8 backface-hidden ${
               isFlipped ? "pointer-events-none" : "pointer-events-auto"
@@ -84,7 +151,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               </button>
             </div>
 
-            <form className="space-y-5">
+            <form className="space-y-5" onSubmit={handleSignIn}>
               <div>
                 <input
                   type="email"
@@ -107,6 +174,17 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
                 />
               </div>
 
+              {errorMessage && (
+                <div className="text-red-500 text-sm text-center">
+                  {errorMessage}
+                </div>
+              )}
+              {loginSuccess && (
+                <div className="text-green-500 text-sm text-center">
+                  Successfully logged in!
+                </div>
+              )}
+
               <button
                 type="submit"
                 className="w-full py-3 bg-[#553a5c] hover:bg-[#937195] text-white font-medium rounded-lg transition-colors"
@@ -126,7 +204,6 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
             </p>
           </div>
 
-          {/* Sign Up Side - Back */}
           <div
             className={`absolute inset-0 p-8 backface-hidden ${
               isFlipped ? "pointer-events-auto" : "pointer-events-none"
@@ -148,7 +225,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               </button>
             </div>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSignUp}>
               <div>
                 <input
                   type="text"
@@ -218,3 +295,4 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
 };
 
 export default LoginForm;
+
