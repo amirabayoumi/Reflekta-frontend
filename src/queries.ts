@@ -1,6 +1,6 @@
 import { EventData, CategoryData } from "./types";
 import https from 'https';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 interface registerData {
   name: string;
@@ -12,6 +12,20 @@ interface registerData {
 interface userData {
   email: string;
   password: string;
+}
+
+interface LoginResponse {
+  success: boolean;
+  data?: {
+    token: string;
+    name: string;
+  };
+  message?: string;
+}
+
+interface RegisterResponse {
+  success: boolean;
+  message?: string;
 }
 
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
@@ -48,7 +62,7 @@ export const fetchAllEvents = async (): Promise<EventData[]> => {
     }
 
     return eventsData;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching events:", error);
     return [];
   }
@@ -90,12 +104,16 @@ export const fetchAllCategories = async (): Promise<CategoryData[]> => {
   }
 };
 
-export const registerUser = async (registerData: registerData): Promise<unknown> => {
+export const registerUser = async (registerData: registerData): Promise<RegisterResponse> => {
   try {
-    const response = await axios.post("https://3.75.235.214/api/register", registerData, {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
-    });
+    const response: AxiosResponse<RegisterResponse> = await axios.post(
+      "https://3.75.235.214/api/register",
+      registerData,
+      {
+        headers: getHeaders(),
+        httpsAgent: httpsAgent,
+      }
+    );
 
     if (response.status !== 200) {
       const message = response.data ? JSON.stringify(response.data) : `Registration failed with status ${response.status}`;
@@ -105,24 +123,37 @@ export const registerUser = async (registerData: registerData): Promise<unknown>
 
     console.log("Registration response:", response.data);
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error registering user:", error);
     let message = "Registration failed";
-    if (error.response && error.response.data) {
-      message = JSON.stringify(error.response.data);
+
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      error.response &&
+      typeof (error as { response: unknown }).response === "object" &&
+      "data" in ((error as { response: unknown }).response as object)
+    ) {
+      message = JSON.stringify((error as { response: { data: unknown } }).response.data);
     } else if (error && typeof error === "object" && "message" in error) {
       message = (error as { message?: string }).message || message;
     }
+
     return { success: false, message };
   }
 };
 
-export const loginUser = async (userData: userData): Promise<unknown> => {
+export const loginUser = async (userData: userData): Promise<LoginResponse> => {
   try {
-    const response = await axios.post("https://3.75.235.214/api/login", userData, {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
-    });
+    const response: AxiosResponse<LoginResponse> = await axios.post(
+      "https://3.75.235.214/api/login",
+      userData,
+      {
+        headers: getHeaders(),
+        httpsAgent: httpsAgent,
+      }
+    );
 
     if (response.status !== 200) {
       const message = response.data ? JSON.stringify(response.data) : `Login failed with status ${response.status}`;
@@ -132,14 +163,23 @@ export const loginUser = async (userData: userData): Promise<unknown> => {
 
     console.log("Login response:", response.data);
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error logging in user:", error);
     let message = "Login failed";
-    if (error.response && error.response.data) {
-      message = JSON.stringify(error.response.data);
+
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      (error as { response?: unknown }).response &&
+      typeof (error as { response: unknown }).response === "object" &&
+      "data" in (error as { response: { data?: unknown } }).response
+    ) {
+      message = JSON.stringify((error as { response: { data?: unknown } }).response.data);
     } else if (error && typeof error === "object" && "message" in error) {
       message = (error as { message?: string }).message || message;
     }
+
     return { success: false, message };
   }
 };
