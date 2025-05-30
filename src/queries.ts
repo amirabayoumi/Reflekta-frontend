@@ -24,7 +24,7 @@ export const fetchAllEvents = async (): Promise<EventData[]> => {
     const response = await fetch("http://3.75.235.214/api/events", {
       method: "GET",
       headers: getHeaders(),
-      next: { revalidate: 3600 },
+      
     });
 
     if (!response.ok) {
@@ -87,7 +87,7 @@ export const fetchAllCategories = async (): Promise<CategoryData[]> => {
 
 export const registerUser = async (registerData: registerData): Promise<unknown> => {
   try {
-    const response = await fetch("https://laravel-endproject.ddev.site/api/register", {
+    const response = await fetch("http://3.75.235.214/api/register", {
       method: "POST",
       headers: getHeaders(),
       body: JSON.stringify(registerData),
@@ -114,7 +114,7 @@ export const registerUser = async (registerData: registerData): Promise<unknown>
 
 export const loginUser = async (userData: userData): Promise<unknown> => {
   try {
-    const response = await fetch("https://laravel-endproject.ddev.site/api/login", {
+    const response = await fetch("http://3.75.235.214/api/login", {
       method: "POST",
       headers: getHeaders(),
       body: JSON.stringify(userData),
