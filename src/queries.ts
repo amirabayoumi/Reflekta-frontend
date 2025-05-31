@@ -1,32 +1,15 @@
-import { EventData, CategoryData } from "./types";
+import {
+  EventData,
+  CategoryData,
+  registerData,
+  userData,
+  LoginResponse,
+  RegisterResponse,
+  UserData
+} from "./types";
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
-
-interface registerData {
-  name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
-
-interface userData {
-  email: string;
-  password: string;
-}
-
-interface LoginResponse {
-  success: boolean;
-  data?: {
-    token: string;
-    name: string;
-  };
-  message?: string;
-}
-
-interface RegisterResponse {
-  success: boolean;
-  message?: string;
-}
+import { Buffer } from 'buffer';
 
 const AUTH_TOKEN = process.env.AUTH_TOKEN;
 
@@ -161,6 +144,25 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
       return { success: false, message };
     }
 
+    // Store token in cookies via API endpoint if login was successful
+    if (response.data.success && response.data.data?.token) {
+      try {
+        console.log(response.data.data.token);
+        // Encode token to base64 before sending it to the endpoint
+        const encodedToken = Buffer.from(response.data.data.token).toString('base64');
+        
+        // Call the set-token API endpoint
+        await axios.post('/api/auth/set-token', { 
+          token: encodedToken 
+        });
+        
+        console.log("Token stored in cookies successfully");
+      } catch (tokenError) {
+        console.error("Failed to set token cookie:", tokenError);
+        // Continue despite cookie setting error
+      }
+    }
+
     console.log("Login response:", response.data);
     return response.data;
   } catch (error: unknown) {
@@ -182,5 +184,60 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
 
     return { success: false, message };
   }
+};
+
+// Helper function to get token from cookie (non-HttpOnly)
+const getTokenFromCookie = (): string | null => {
+  if (typeof document === 'undefined') return null;
+  const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+};
+
+export const fetchUserData = async (): Promise<UserData | null> => {
+  try {
+    const token = getTokenFromCookie();
+    if (!token) {
+      // Do not throw error, just log and return null
+      console.warn("No token found in cookies");
+      return null;
+    }
+    const response = await axios.get("https://3.75.235.214/api/user", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      httpsAgent: httpsAgent,
+    });
+    if (response.status !== 200) return null;
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("Axios error details:", {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data,
+      });
+    }
+    return null;
+  }
+};
+
+// Update the test function since we can't directly check for token existence
+export const testAuthAndUserData = async (): Promise<{userData: UserData | null}> => {
+  console.log("=== Testing User Data ===");
+  
+  // We can't check for token directly since it's HttpOnly
+  console.log("Note: Token is in HttpOnly cookie and cannot be accessed via JavaScript");
+  
+  // Test user data fetching
+  const userData = await fetchUserData();
+  console.log("User data fetch result:", userData ? "Success" : "Failed");
+  if (userData) {
+    console.log("User name:", userData.name);
+    console.log("User email:", userData.email);
+  }
+  
+  return { userData };
 };
 
