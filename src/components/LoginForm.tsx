@@ -52,6 +52,9 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
         localStorage.setItem("token", result.data.token);
         localStorage.setItem("userName", result.data.name);
         setLoginSuccess(true);
+        setTimeout(() => {
+          handleClose();
+        }, 1000);
       } else {
         setErrorMessage(result.message || "Login failed");
       }
@@ -295,4 +298,3 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
 };
 
 export default LoginForm;
-
