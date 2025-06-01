@@ -1,25 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
-import { ChevronDown, ChevronUp, Search, Phone, Mail } from "lucide-react";
+import { Search, Phone, Mail } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+interface FAQCategory {
+  id: string;
+  title: string;
+  faqs: FAQItem[];
+}
 
 const LegalFAQPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
-
-  // Toggle category expansion
-  const toggleCategory = (categoryId: string) => {
-    setExpandedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
-    );
-  };
+  const [filteredCategories, setFilteredCategories] = useState<FAQCategory[]>(
+    []
+  );
+  const [expandedValues, setExpandedValues] = useState<string[]>([]);
 
   // Sample FAQ data
-  const faqCategories = [
+  const faqCategories: FAQCategory[] = [
     {
       id: "immigration",
       title: "Immigration & Residency",
@@ -119,33 +132,30 @@ const LegalFAQPage = () => {
     },
   ];
 
-  // Filter FAQs based on search
-  let filteredCategories = faqCategories;
+  // Simplify the filtering process
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredCategories(faqCategories);
+      return;
+    }
 
-  if (searchQuery) {
-    filteredCategories = faqCategories
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    const filtered = faqCategories
       .map((category) => ({
         ...category,
         faqs: category.faqs.filter(
           (faq) =>
-            faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
+            faq.question.toLowerCase().includes(lowerCaseQuery) ||
+            faq.answer.toLowerCase().includes(lowerCaseQuery)
         ),
       }))
       .filter((category) => category.faqs.length > 0);
 
+    setFilteredCategories(filtered);
+
     // Auto-expand categories with matching FAQs
-    const matchingCategories = filteredCategories.map((cat) => cat.id);
-    setExpandedCategories((prev) => {
-      const newExpanded = [...prev];
-      matchingCategories.forEach((catId) => {
-        if (!newExpanded.includes(catId)) {
-          newExpanded.push(catId);
-        }
-      });
-      return newExpanded;
-    });
-  }
+    setExpandedValues(filtered.map((cat) => cat.id));
+  }, [searchQuery]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
@@ -157,8 +167,6 @@ const LegalFAQPage = () => {
       </div>
       <SectionNav />
       <div className="container mx-auto px-4 py-12">
-        {/* Add Section Navigation */}
-
         {/* Search Bar */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="relative max-w-xl mx-auto">
@@ -176,7 +184,7 @@ const LegalFAQPage = () => {
           </div>
         </div>
 
-        {/* FAQ Accordion */}
+        {/* FAQ Accordion using Shadcn UI */}
         <div className="space-y-6 mb-12">
           {filteredCategories.length > 0 ? (
             filteredCategories.map((category) => (
@@ -184,32 +192,48 @@ const LegalFAQPage = () => {
                 key={category.id}
                 className="bg-white rounded-lg shadow-md overflow-hidden"
               >
-                <button
-                  className="w-full flex justify-between items-center p-6 text-left bg-[#553a5c]/5 hover:bg-[#553a5c]/10 transition-colors"
-                  onClick={() => toggleCategory(category.id)}
+                <Accordion
+                  type="single"
+                  collapsible
+                  value={
+                    expandedValues.includes(category.id)
+                      ? category.id
+                      : undefined
+                  }
+                  onValueChange={(value) => {
+                    if (value) {
+                      // Add to expanded values if not already there
+                      setExpandedValues((prev) =>
+                        prev.includes(category.id)
+                          ? prev
+                          : [...prev, category.id]
+                      );
+                    } else {
+                      // Remove from expanded values
+                      setExpandedValues((prev) =>
+                        prev.filter((id) => id !== category.id)
+                      );
+                    }
+                  }}
                 >
-                  <h2 className="text-xl font-medium text-[#553a5c]">
-                    {category.title}
-                  </h2>
-                  {expandedCategories.includes(category.id) ? (
-                    <ChevronUp size={20} className="text-[#553a5c]" />
-                  ) : (
-                    <ChevronDown size={20} className="text-[#553a5c]" />
-                  )}
-                </button>
-
-                {expandedCategories.includes(category.id) && (
-                  <div className="p-6 border-t border-gray-200">
-                    {category.faqs.map((faq) => (
-                      <div key={faq.id} className="mb-8 last:mb-0">
-                        <h3 className="font-medium text-lg mb-2 text-gray-900">
-                          {faq.question}
-                        </h3>
-                        <p className="text-gray-600">{faq.answer}</p>
+                  <AccordionItem value={category.id} className="border-0">
+                    <AccordionTrigger className="p-6 text-xl font-medium text-[#553a5c] bg-[#553a5c]/5 hover:bg-[#553a5c]/10 hover:no-underline">
+                      {category.title}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="p-6 border-t border-gray-200">
+                        {category.faqs.map((faq) => (
+                          <div key={faq.id} className="mb-8 last:mb-0">
+                            <h3 className="font-medium text-lg mb-2 text-gray-900">
+                              {faq.question}
+                            </h3>
+                            <p className="text-gray-600">{faq.answer}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
               </div>
             ))
           ) : (
