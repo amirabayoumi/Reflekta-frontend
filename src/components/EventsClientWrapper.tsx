@@ -13,6 +13,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import type { CategoryData, EventData, FormatedEvent } from "@/types";
 import ReusableMap from "@/components/ReusableMap";
+import { slugit } from "@/helper";
 
 interface EventsClientWrapperProps {
   initialEvents: FormatedEvent[];
@@ -282,9 +283,9 @@ export default function EventsClientWrapper({
                       ))}
                     </div>
                     <Link
-                      href={`/community-hub/events/${event.id}/${event.title
-                        .toLowerCase()
-                        .replace(/\s+/g, "-")}`}
+                      href={`/community-hub/events/${event.id}/${slugit(
+                        event.title
+                      )}`}
                       className="text-sm bg-[#886f80] text-white px-4 py-1 rounded hover:bg-[#553a5c] transition-colors"
                     >
                       View Details

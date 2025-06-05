@@ -2,6 +2,25 @@ import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Reflekta - Privacy Policy",
+  description: "Privacy Policy",
+  openGraph: {
+    title: "Reflekta - Privacy Policy",
+    description: "Privacy Policy",
+    siteName: "Reflekta",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
+        width: 1000,
+        height: 1000,
+        alt: "Reflekta Privacy Policy",
+      },
+    ],
+  },
+};
+
 export default function PrivacyPolicy() {
   return (
     <>

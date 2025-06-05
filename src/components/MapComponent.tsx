@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
+import Link from "next/link";
+import { slugit } from "@/helper";
 
 // Custom plum-colored pin marker
 const plumPinIcon = L.divIcon({
@@ -84,7 +86,14 @@ const MapComponent = ({ events, center, zoom }: MapProps) => {
         >
           <Popup className="event-popup">
             <div className="p-1">
-              <h3 className="font-bold text-[#553a5c]">{event.title}</h3>
+              <Link
+                href={`/community-hub/events/${event.id}/${slugit(
+                  event.title
+                )}`}
+                className="hover:underline"
+              >
+                {event.title}
+              </Link>
               <p className="text-sm">{event.location}</p>
               <p className="text-sm">{formatDate(event.startDate)}</p>
               <div className="flex flex-wrap gap-1 mt-1">
@@ -106,4 +115,3 @@ const MapComponent = ({ events, center, zoom }: MapProps) => {
 };
 
 export default MapComponent;
-

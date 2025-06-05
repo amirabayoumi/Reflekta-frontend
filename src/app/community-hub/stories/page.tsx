@@ -1,84 +1,73 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
 import FloatingCircles from "@/components/FloatingCircles";
 import { Heart, MessageCircle, Share2, X } from "lucide-react";
+import { fetchAllStories } from "@/queries";
+import { Story } from "@/types";
+
+// Transform the API story data to UI format
+const transformStoryData = (story: Story) => {
+  return {
+    id: story.id,
+    title: story.title || "Untitled Story",
+    content: story.content || "",
+    date: formatDate(story.created_at),
+    category: "personal", // Default category if not provided
+    likes: 0, // Default value since API doesn't provide likes yet
+    comments: story.comments?.length || 0,
+    isLiked: false, // Default value
+    user_id: story.user_id,
+    created_at: story.created_at,
+    updated_at: story.updated_at,
+    is_published: story.is_published,
+  };
+};
+
+// Helper to format dates
+const formatDate = (dateString: string) => {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+  // Check if date is valid
+  if (isNaN(date.getTime())) return "";
+
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(date);
+};
 
 const StoriesPage = () => {
   const [isAddingStory, setIsAddingStory] = useState(false);
   const [storyContent, setStoryContent] = useState("");
   const [storyTitle, setStoryTitle] = useState("");
   const [selectedStory, setSelectedStory] = useState<number | null>(null);
+  const [stories, setStories] = useState<Story[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const stories = [
-    {
-      id: 1,
-      title: "Finding My Way in Belgium",
-      author: "Maria K.",
-      authorImage: "/profiles/person1.jpg",
-      date: "2 weeks ago",
-      category: "personal",
-      content:
-        "When I first arrived in Brussels, everything was overwhelming. The language, the culture, the transportation system. But slowly, I found my community and began to feel at home...",
-      likes: 45,
-      comments: 8,
-      isLiked: false,
-    },
-    {
-      id: 2,
-      title: "From Refugee to Entrepreneur",
-      author: "Ahmed L.",
-      authorImage: "/profiles/person2.jpg",
-      date: "1 month ago",
-      category: "success",
-      content:
-        "Five years ago, I arrived with nothing but hope. Today, I run a small business that employs 7 people. This is how community support made it possible...",
-      likes: 87,
-      comments: 12,
-      isLiked: true,
-    },
-    {
-      id: 3,
-      title: "Language Learning Journey",
-      author: "Sophia J.",
-      authorImage: "/profiles/person3.jpg",
-      date: "3 days ago",
-      category: "education",
-      content:
-        "Learning Dutch seemed impossible at first, but with these methods and resources, I was able to become conversational in just 6 months...",
-      likes: 32,
-      comments: 15,
-      isLiked: false,
-    },
-    {
-      id: 4,
-      title: "Navigating Healthcare as a Newcomer",
-      author: "Carlos M.",
-      authorImage: "/profiles/person4.jpg",
-      date: "2 months ago",
-      category: "resources",
-      content:
-        "Understanding the Belgian healthcare system was one of my biggest challenges. Here's what I wish someone had told me when I arrived...",
-      likes: 56,
-      comments: 9,
-      isLiked: false,
-    },
-    {
-      id: 5,
-      title: "Exploring the Belgian Landscape",
-      author: "Elena R.",
-      authorImage: "/profiles/person5.jpg",
-      date: "1 week ago",
-      category: "nature",
-      content:
-        "When I first arrived in Brussels, everything was overwhelming. The language, the culture, the transportation system. But slowly, I found my community and began to feel at home...",
-      likes: 78,
-      comments: 5,
-      isLiked: true,
-    },
-  ];
+  useEffect(() => {
+    setLoading(true);
+    fetchAllStories()
+      .then((data) => {
+        // Transform API data to the expected UI format
+        const transformedStories = data.map(transformStoryData);
+        setStories(transformedStories);
+        console.log("Fetched stories:", data);
+        console.log("Transformed stories:", transformedStories);
+      })
+      .catch((err) => {
+        console.error("Error fetching stories:", err);
+        setError("Failed to load stories. Please try again later.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const toggleLike = (storyId: number) => {
     console.log(`Toggle like for story ${storyId}`);
@@ -110,78 +99,97 @@ const StoriesPage = () => {
           </div>
         )}
 
-        {/* Floating Circles Container - visible only on medium screens and up */}
-        {!isAddingStory && selectedStory === null && (
-          <div className="relative w-full h-[60vh] mb-8 hidden md:block">
-            <FloatingCircles
-              stories={stories}
-              onCircleClick={handleCircleClick}
-              onAddStoryClick={() => setIsAddingStory(true)}
-            />
+        {/* Loading state */}
+        {loading && (
+          <div className="flex justify-center items-center py-16">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#553a5c]"></div>
           </div>
         )}
 
+        {/* Error state */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
+            <p>{error}</p>
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && !error && stories.length === 0 && (
+          <div className="text-center py-16">
+            <p className="text-xl text-gray-500 mb-4">No stories found</p>
+            <p className="text-gray-500">Be the first to share your story!</p>
+          </div>
+        )}
+
+        {/* Floating Circles Container - visible only on medium screens and up */}
+        {!loading &&
+          !error &&
+          !isAddingStory &&
+          selectedStory === null &&
+          stories.length > 0 && (
+            <div className="relative w-full h-[60vh] mb-8 hidden md:block">
+              <FloatingCircles
+                stories={stories}
+                onCircleClick={handleCircleClick}
+                onAddStoryClick={() => setIsAddingStory(true)}
+              />
+            </div>
+          )}
+
         {/* Grid View for Mobile Screens - visible only on small screens */}
-        {!isAddingStory && selectedStory === null && (
-          <div className="md:hidden">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              {stories.map((story) => (
-                <div
-                  key={story.id}
-                  className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                  onClick={() => setSelectedStory(story.id)}
-                >
-                  <div className="p-4">
-                    <div className="flex items-center mb-3">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 relative overflow-hidden">
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
-                          <span className="text-white font-medium">
-                            {story.author.charAt(0)}
+        {!loading &&
+          !error &&
+          !isAddingStory &&
+          selectedStory === null &&
+          stories.length > 0 && (
+            <div className="md:hidden">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                {stories.map((story) => (
+                  <div
+                    key={story.id}
+                    className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+                    onClick={() => setSelectedStory(story.id)}
+                  >
+                    <div className="p-4">
+                      <div className="flex items-center mb-3">
+                        <div className="w-10 h-10 rounded-full bg-gray-200 relative overflow-hidden">
+                          <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
+                            <span className="text-white font-medium">
+                              {(story.author || "A").charAt(0)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="ml-3">
+                          <p className="font-medium text-sm">{story.author}</p>
+                          <p className="text-xs text-gray-500">{story.date}</p>
+                        </div>
+                      </div>
+
+                      <h3 className="font-semibold text-lg mb-2 text-[#553a5c]">
+                        {story.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {story.content}
+                      </p>
+
+                      <div className="flex justify-between items-center">
+                        <div className="flex space-x-3 text-sm">
+                          <span className="flex items-center text-gray-500">
+                            <Heart size={16} />
+                            <span className="ml-1">{story.likes || 0}</span>
+                          </span>
+                          <span className="flex items-center text-gray-500">
+                            <MessageCircle size={16} />
+                            <span className="ml-1">{story.comments}</span>
                           </span>
                         </div>
                       </div>
-                      <div className="ml-3">
-                        <p className="font-medium text-sm">{story.author}</p>
-                        <p className="text-xs text-gray-500">{story.date}</p>
-                      </div>
-                    </div>
-
-                    <h3 className="font-semibold text-lg mb-2 text-[#553a5c]">
-                      {story.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {story.content}
-                    </p>
-
-                    <div className="flex justify-between items-center">
-                      <div className="flex space-x-3 text-sm">
-                        <span
-                          className={`flex items-center ${
-                            story.isLiked ? "text-pink-500" : "text-gray-500"
-                          }`}
-                        >
-                          <Heart
-                            size={16}
-                            className={story.isLiked ? "fill-current" : ""}
-                          />
-                          <span className="ml-1">{story.likes}</span>
-                        </span>
-                        <span className="flex items-center text-gray-500">
-                          <MessageCircle size={16} />
-                          <span className="ml-1">{story.comments}</span>
-                        </span>
-                      </div>
-                      <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded">
-                        {story.category.charAt(0).toUpperCase() +
-                          story.category.slice(1)}
-                      </span>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Add story form */}
         {isAddingStory && (
@@ -262,7 +270,7 @@ const StoriesPage = () => {
                     <div className="w-12 h-12 rounded-full bg-gray-200 relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
                         <span className="text-white font-medium">
-                          {story.author.charAt(0)}
+                          {(story.author || "A").charAt(0)}
                         </span>
                       </div>
                     </div>
@@ -282,16 +290,11 @@ const StoriesPage = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex space-x-4">
                       <button
-                        className={`flex items-center ${
-                          story.isLiked ? "text-pink-500" : "text-gray-500"
-                        } hover:text-pink-500`}
+                        className="flex items-center text-gray-500 hover:text-pink-500"
                         onClick={() => toggleLike(story.id)}
                       >
-                        <Heart
-                          size={18}
-                          className={story.isLiked ? "fill-current" : ""}
-                        />
-                        <span className="ml-1">{story.likes}</span>
+                        <Heart size={18} />
+                        <span className="ml-1">{story.likes || 0}</span>
                       </button>
                       <button className="flex items-center text-gray-500 hover:text-gray-700">
                         <MessageCircle size={18} />
@@ -301,10 +304,7 @@ const StoriesPage = () => {
                         <Share2 size={18} />
                       </button>
                     </div>
-                    <span className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded">
-                      {story.category.charAt(0).toUpperCase() +
-                        story.category.slice(1)}
-                    </span>
+                    {/* Remove category tag since it's not in the API data */}
                   </div>
                 </div>
               ))}

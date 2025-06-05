@@ -1,16 +1,15 @@
 import { notFound } from "next/navigation";
-import { fetchEventById } from "@/queries";
+import { fetchAllEvents, fetchEventById } from "@/queries";
 import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
 import { Calendar, Clock, MapPin, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
-// import EventLocationMap from "@/app/components/EventLocationMap";
-// import EventMapSection from "@/app/components/EventMapSection";
-import JoinEventButton from "@/components/JoinEventButton";
+import TicketGenerator from "@/components/TicketGenerator";
 import ReusableMap from "@/components/ReusableMap";
 import type { EventData } from "@/types";
 import type { Metadata } from "next";
+import { slugit } from "@/helper";
 export const dynamicParams = true;
 
 interface PageParams {
@@ -23,48 +22,69 @@ export const generateMetadata = async ({
   params: Promise<PageParams>;
 }): Promise<Metadata> => {
   const { id, slug } = await params;
+  const resp = (await fetchEventById(id)) as { data: EventData } | undefined;
   if (!id || !slug) {
     return {
       title: "Event Details",
+      description: "reflekta - Community Hub - Event Details",
+      openGraph: {
+        title: "Event Details",
+        description: "reflekta - Community Hub - Event Details",
+        siteName: "reflekta",
+        images: [
+          {
+            url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
+            width: 1200,
+            height: 630,
+            alt: "Event Details",
+          },
+        ],
+      },
+    };
+    return {
+      title: "Event Details",
       description: "Detailed information about the event",
+      openGraph: {
+        title: "Event Details",
+        description: "Detailed information about the event",
+        siteName: "Community Hub",
+        images: [
+          {
+            url: "/images/event-details-og.jpg",
+            width: 1200,
+            height: 630,
+            alt: "Event Details",
+          },
+        ],
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: "Event Details",
+        description: "Detailed information about the event",
+        images: ["/images/event-details-og.jpg"],
+      },
     };
   }
   return {
-    title: "Event Details",
-    description: "Detailed information about the event",
+    title: ` ${resp?.data?.title}-Event Details`,
+
     openGraph: {
-      title: "Event Details",
-      description: "Detailed information about the event",
-      siteName: "Community Hub",
+      title: `Reflekta - Community Hub - Event Details - ${resp?.data?.title}`,
+
+      siteName: "Reflekta",
       images: [
         {
-          url: "/images/event-details-og.jpg",
+          url: `https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png`,
           width: 1200,
           height: 630,
-          alt: "Event Details",
+          alt: `Event Details`,
         },
       ],
       type: "website",
     },
-    twitter: {
-      card: "summary_large_image",
-      title: "Event Details",
-      description: "Detailed information about the event",
-      images: ["/images/event-details-og.jpg"],
-    },
   };
 };
-
-/**
- * Renders the Event Details Page.
- *
- * This page fetches and displays detailed information about a specific event
- * identified by the provided `id` and `slug` parameters. It includes the event's
- * title, date, time, location, organizer, categories, and description. The page
- * also provides a map view of the event location and a button to join the event.
- *
- * @param params Object containing the event `id` and `slug`.
- */
 
 const page = async ({ params }: { params: Promise<PageParams> }) => {
   const { id } = await params;
@@ -99,7 +119,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
   const event: EventData = {
     ...eventData,
     categories: categories.map((name) => ({
-      id: 0, // fallback, ideally you should pass actual ID
+      id: 0, // Placeholder ID, adjust as needed
       name,
       created_at: "",
       updated_at: "",
@@ -201,7 +221,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
                 </div>
 
                 <div className="flex items-center">
-                  <MapPin size={20} className="mr-3 text-[#937195]" />
+                  <MapPin size={16} className="mr-3 text-[#937195]" />
                   <div>
                     <p className="font-medium">Location</p>
                     <p className="text-gray-600">{event.location}</p>
@@ -236,7 +256,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
                 <ReusableMap
                   events={mapEvent}
                   center={[event.latitude, event.longitude]}
-                  zoom={20} // Closer zoom for a single event
+                  zoom={14} // Closer zoom for a single event
                   className="h-full w-full"
                 />
               </div>
@@ -260,10 +280,9 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
             <div className="border-t border-gray-200 pt-6 mt-8">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className="text-gray-600">
-                  Share this event with friends and family who might be
-                  interested.
+                 Reflekta give you free access to all events, so you can join and participate in the community without any cost.
                 </p>
-                <JoinEventButton eventId={event.id} />
+              <TicketGenerator event={event} />
               </div>
             </div>
           </div>
@@ -276,3 +295,16 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
 };
 
 export default page;
+
+export async function generateStaticParams() {
+  // Fetch all events to generate static params
+  const events = (await fetchAllEvents()) as EventData[] | undefined;
+  if (!events || !Array.isArray(events)) {
+    return [];
+  }
+
+  return events.map((event) => ({
+    id: String(event.id),
+    slug: slugit(event.title),
+  }));
+}
