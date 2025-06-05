@@ -4,25 +4,39 @@ import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
 import FloatingCircles from "@/components/FloatingCircles";
-import { Heart, MessageCircle, Share2, X } from "lucide-react";
+import {  MessageCircle, Share2, X } from "lucide-react";
 import { fetchAllStories } from "@/queries";
 import { Story } from "@/types";
 
+// Define a type for the transformed story data that matches what we use in UI
+type TransformedStory = {
+  id: number;
+  title: string;
+  content: string;
+  date: string;
+  comments: number;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  is_published: number;
+  // Fields not in API but needed for UI
+  authorInitial: string;
+};
+
 // Transform the API story data to UI format
-const transformStoryData = (story: Story) => {
+const transformStoryData = (story: Story): TransformedStory => {
   return {
     id: story.id,
     title: story.title || "Untitled Story",
     content: story.content || "",
     date: formatDate(story.created_at),
-    category: "personal", // Default category if not provided
-    likes: 0, // Default value since API doesn't provide likes yet
     comments: story.comments?.length || 0,
-    isLiked: false, // Default value
     user_id: story.user_id,
     created_at: story.created_at,
     updated_at: story.updated_at,
     is_published: story.is_published,
+    // Derived fields
+    authorInitial: "U", // User initial (could be derived from user_id in the future)
   };
 };
 
@@ -46,7 +60,7 @@ const StoriesPage = () => {
   const [storyContent, setStoryContent] = useState("");
   const [storyTitle, setStoryTitle] = useState("");
   const [selectedStory, setSelectedStory] = useState<number | null>(null);
-  const [stories, setStories] = useState<Story[]>([]);
+  const [stories, setStories] = useState<TransformedStory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -68,10 +82,6 @@ const StoriesPage = () => {
         setLoading(false);
       });
   }, []);
-
-  const toggleLike = (storyId: number) => {
-    console.log(`Toggle like for story ${storyId}`);
-  };
 
   const handleCircleClick = (storyId: number) => {
     setSelectedStory(storyId);
@@ -155,12 +165,14 @@ const StoriesPage = () => {
                         <div className="w-10 h-10 rounded-full bg-gray-200 relative overflow-hidden">
                           <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
                             <span className="text-white font-medium">
-                              {(story.author || "A").charAt(0)}
+                              {story.authorInitial}
                             </span>
                           </div>
                         </div>
                         <div className="ml-3">
-                          <p className="font-medium text-sm">{story.author}</p>
+                          <p className="font-medium text-sm">
+                            User #{story.user_id}
+                          </p>
                           <p className="text-xs text-gray-500">{story.date}</p>
                         </div>
                       </div>
@@ -175,12 +187,11 @@ const StoriesPage = () => {
                       <div className="flex justify-between items-center">
                         <div className="flex space-x-3 text-sm">
                           <span className="flex items-center text-gray-500">
-                            <Heart size={16} />
-                            <span className="ml-1">{story.likes || 0}</span>
-                          </span>
-                          <span className="flex items-center text-gray-500">
                             <MessageCircle size={16} />
                             <span className="ml-1">{story.comments}</span>
+                          </span>
+                          <span className="flex items-center text-gray-500">
+                            {story.is_published === 1 ? "Published" : "Draft"}
                           </span>
                         </div>
                       </div>
@@ -270,12 +281,12 @@ const StoriesPage = () => {
                     <div className="w-12 h-12 rounded-full bg-gray-200 relative overflow-hidden">
                       <div className="absolute inset-0 flex items-center justify-center bg-[#553a5c]">
                         <span className="text-white font-medium">
-                          {(story.author || "A").charAt(0)}
+                          {story.authorInitial}
                         </span>
                       </div>
                     </div>
                     <div className="ml-4">
-                      <p className="font-medium">{story.author}</p>
+                      <p className="font-medium">User #{story.user_id}</p>
                       <p className="text-sm text-gray-500">{story.date}</p>
                     </div>
                   </div>
@@ -289,22 +300,17 @@ const StoriesPage = () => {
 
                   <div className="flex justify-between items-center">
                     <div className="flex space-x-4">
-                      <button
-                        className="flex items-center text-gray-500 hover:text-pink-500"
-                        onClick={() => toggleLike(story.id)}
-                      >
-                        <Heart size={18} />
-                        <span className="ml-1">{story.likes || 0}</span>
-                      </button>
-                      <button className="flex items-center text-gray-500 hover:text-gray-700">
+                      <span className="flex items-center text-gray-500">
                         <MessageCircle size={18} />
                         <span className="ml-1">{story.comments}</span>
-                      </button>
-                      <button className="flex items-center text-gray-500 hover:text-gray-700">
+                      </span>
+                      <span className="flex items-center text-gray-500">
                         <Share2 size={18} />
-                      </button>
+                      </span>
                     </div>
-                    {/* Remove category tag since it's not in the API data */}
+                    <span className="text-sm text-gray-500">
+                      {story.is_published === 1 ? "Published" : "Draft"}
+                    </span>
                   </div>
                 </div>
               ))}
