@@ -1,16 +1,18 @@
 "use client";
 import { useState, useMemo, useRef, useEffect } from "react";
 
+// Update Story interface to match what's actually available from API
 interface Story {
   id: number;
   title: string;
-  author: string;
   content: string;
-  category?: string;
-  likes: number;
+  user_id: number;
+  is_published: number;
   comments: number;
-  isLiked: boolean;
-  date: string;
+  created_at: string;
+  updated_at: string;
+  date: string; // From transformed data
+  authorInitial: string; // From transformed data
 }
 
 interface FloatingCirclesProps {
@@ -312,13 +314,20 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
           onMouseLeave={() => handleMouseLeave(story.id.toString())}
         >
           <div className="flex flex-col items-center justify-center p-3 text-center w-full h-full">
-            {/* Display author name prominently */}
+            {/* Display initial in user avatar */}
+            <div className="h-8 w-8 rounded-full bg-[#553a5c] flex items-center justify-center mb-1">
+              <span className="text-white text-sm font-medium">
+                {story.authorInitial}
+              </span>
+            </div>
+
+            {/* Show user ID instead of author name */}
             <h4
               className={`font-semibold text-[#553a5c] mb-1 ${
-                story.size >= 150 ? "text-lg" : "text-base"
+                story.size >= 150 ? "text-sm" : "text-xs"
               }`}
             >
-              {story.author}
+              User #{story.user_id}
             </h4>
 
             {/* Show date information */}
@@ -334,6 +343,13 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
             {story.size > 140 && (
               <p className="text-xs text-gray-600 mt-2 line-clamp-1">
                 &quot;{story.title}&quot;
+              </p>
+            )}
+
+            {/* Show comments count */}
+            {story.size > 140 && (
+              <p className="text-xs text-gray-500 mt-1">
+                {story.comments} comment{story.comments !== 1 ? "s" : ""}
               </p>
             )}
           </div>
