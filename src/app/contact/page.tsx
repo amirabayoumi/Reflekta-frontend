@@ -5,6 +5,24 @@ import { FaPhoneAlt } from "react-icons/fa";
 import { IoIosPin } from "react-icons/io";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Reflekta - Contact",
+  description: "Contact Reflekta",
+  openGraph: {
+    title: "Reflekta - Contact",
+    description: "Get in touch with Reflekta",
+    siteName: "Reflekta",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
+        width: 1000,
+        height: 1000,
+        alt: "Contact Reflekta",
+      },
+    ],
+  },
+};
 export default function Contact() {
   return (
     <>

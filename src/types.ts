@@ -89,3 +89,30 @@ export interface UserData {
 
 
 
+//  {
+//     "id": 1,
+//     "created_at": "2025-06-04T07:47:38.000000Z",
+//     "updated_at": "2025-06-04T07:47:54.000000Z",
+//     "title": "story",
+//     "content": "test",
+//     "user_id": 12,
+//     "is_published": 1,
+//     "comments": []
+//   }
+
+export interface Story {
+  id: number;
+  title: string;
+  content: string;
+  user_id: number;
+  is_published: number;
+  comments: Comment[];
+  created_at: string;
+  updated_at: string;
+} 
+
+
+export type Message = {
+  type: string;
+  message: string;
+};

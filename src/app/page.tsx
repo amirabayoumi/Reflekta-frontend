@@ -45,8 +45,6 @@ export default function Home() {
           </div>
 
           <ArrowButton />
-
-          {/* Add LoginForm modal */}
         </main>
       </div>
       <section id="web-sections" className="min-h-screen bg-black p-8">

@@ -3,6 +3,7 @@ import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
 import EventsClientWrapper from "@/components/EventsClientWrapper";
+import { Metadata } from "next";
 import type {
   CategoryData,
   EventData,
@@ -10,6 +11,24 @@ import type {
   Categories,
   FormatedEvent,
 } from "@/types";
+
+export const metadata: Metadata = {
+  title: "Events - Community Hub ",
+  description: "Community Hub - Events",
+  openGraph: {
+    title: "Reflekta - Community Hub - Events",
+    description: "Explore events in the community hub",
+    siteName: "Reflekta",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
+        width: 1000,
+        height: 1000,
+        alt: "Community Hub Events",
+      },
+    ],
+  },
+};
 
 export default async function EventsPage() {
   let eventsData: EventData[] = [];

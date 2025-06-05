@@ -5,18 +5,24 @@ import {
   userData,
   LoginResponse,
   RegisterResponse,
-  UserData
+  UserData,
+  Story
 } from "./types";
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
 import { Buffer } from 'buffer';
+import 'dotenv/config';
 
-const AUTH_TOKEN = process.env.AUTH_TOKEN;
+
+// Change the environment variable reference
+const AUTH_TOKEN = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
 const getHeaders = () => ({
   "Content-Type": "application/json",
   "Authorization": `Bearer ${AUTH_TOKEN}`,
 });
+
+console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
@@ -27,6 +33,7 @@ export const fetchAllEvents = async (): Promise<EventData[]> => {
     const response = await axios.get("https://3.75.235.214/api/events", {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
+
     });
 
     if (response.status !== 200) {
@@ -241,3 +248,105 @@ export const testAuthAndUserData = async (): Promise<{userData: UserData | null}
   return { userData };
 };
 
+export const fetchAllStories = async(): Promise<Story[]> => {
+  try {
+    // Log the headers being used - helpful for debugging
+    console.log("Headers being sent:", getHeaders());
+    
+    // In Thunder Client, you might be using a different token
+    // or have manually added an Authorization header
+    const response = await axios.get("https://3.75.235.214/api/stories", {
+      headers: getHeaders(),
+      httpsAgent: httpsAgent,
+    });
+    
+    
+    // Log the full response for debugging
+    console.log("Raw API response:", response);
+    
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    
+    // Check if the response is a direct array (not wrapped in a data property)
+    if (Array.isArray(response.data)) {
+      console.log("Response is array:", response.data);
+      return response.data;
+    }
+    
+    // Fallback to checking for data property if not a direct array
+    const storiesData = response.data.data || [];
+    
+    // Log the stories data for debugging
+    console.log(`Found ${storiesData.length} stories`);
+    
+    return storiesData;
+    
+  } catch (error) {
+    console.error("Error fetching stories:", error);
+    // Add more detailed error information
+    if (axios.isAxiosError(error)) {
+      console.error("Request details:", {
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers
+        },
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
+    }
+    return [];
+  }
+};
+
+type Ticketdata = {
+  eventName: string;
+  numberOfAdults: number;
+}
+
+export async function getTicketPdf(ticketData: Ticketdata): Promise<Blob> {
+  try {
+    const response = await fetch(
+      "https://pnfpkvxzqvzbybtwuzhf.supabase.co/functions/v1/direct-download-pdf-ticket",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + process.env.SUPABASE_KEY, 
+        },
+        body: JSON.stringify(ticketData),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.error || "Failed to generate ticket");
+    }
+
+    const blob = await response.blob();
+    return blob;
+  } catch (error) {
+    console.error("❌ Error generating ticket PDF:", error);
+    throw error;
+  }
+}
+
+// Client-side only function to trigger download
+export function downloadPdfBlob(blob: Blob, filename = "ticket.pdf"): void {
+  // Check if we're in a browser environment
+  if (typeof window !== 'undefined' && window.URL && document) {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    console.log("✅ PDF downloaded successfully.");
+  } else {
+    console.warn("Cannot download in non-browser environment");
+  }
+}
