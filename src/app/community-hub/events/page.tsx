@@ -1,4 +1,4 @@
-import { fetchAllCategories, fetchAllEvents } from "@/queries";
+import { fetchAllCategories} from "@/queries";
 import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
@@ -7,7 +7,7 @@ import { Metadata } from "next";
 import type {
   CategoryData,
   EventData,
-  Events,
+ 
   Categories,
   FormatedEvent,
 } from "@/types";
@@ -33,10 +33,15 @@ export const metadata: Metadata = {
 export default async function EventsPage() {
   let eventsData: EventData[] = [];
   let categoryData: CategoryData[] = [];
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+
 
   try {
-    const eventsResponse: EventData[] | Events | undefined =
-      await fetchAllEvents();
+    const response: Response = await fetch(`${baseUrl}/api/events`, {
+      next: { revalidate: 60 }, //
+      //  Revalidate every 60 seconds
+    });
+    const eventsResponse: EventData[] = await response.json();
     if (eventsResponse) {
       if (Array.isArray(eventsResponse)) {
         eventsData = eventsResponse;
