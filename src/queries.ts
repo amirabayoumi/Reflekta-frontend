@@ -11,7 +11,7 @@ import {
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
 import { Buffer } from 'buffer';
-import 'dotenv/config';
+// import 'dotenv/config';
 
 
 // Change the environment variable reference
@@ -136,6 +136,9 @@ export const registerUser = async (registerData: registerData): Promise<Register
 
 export const loginUser = async (userData: userData): Promise<LoginResponse> => {
   try {
+    console.log("Logging in user with data:", userData);
+    console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
+    console.log("Headers being sent:", getHeaders());
     const response: AxiosResponse<LoginResponse> = await axios.post(
       "https://3.75.235.214/api/login",
       userData,
