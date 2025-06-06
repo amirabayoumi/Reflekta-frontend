@@ -30,7 +30,7 @@ export default async function EventsPage() {
 
   try {
     const response: Response = await fetch(`${baseUrl}/api/events`, {
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
     const eventsResponse: EventData[] = await response.json();
     if (eventsResponse) {
@@ -56,7 +56,7 @@ export default async function EventsPage() {
 
   try {
     const response: Response = await fetch(`${baseUrl}/api/categories`, {
-      next: { revalidate: 60 }
+      next: { revalidate: 60 },
     });
     const categoryResponse: CategoryData[] = await response.json();
 

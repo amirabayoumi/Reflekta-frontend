@@ -9,9 +9,9 @@ import TicketGenerator from "@/components/TicketGenerator";
 import ReusableMap from "@/components/ReusableMap";
 import type { EventData } from "@/types";
 import type { Metadata } from "next";
-import { slugit } from "@/helper";
+// import { slugit } from "@/helper";
 export const dynamicParams = true;
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 interface PageParams {
   id: string;
@@ -296,16 +296,28 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
 
 export default page;
 
-export async function generateStaticParams() {
-  // Fetch all events to generate static params
-  const response = await fetch(`${baseUrl}/api/events`);
-  const events = (await response.json()) as EventData[];
-  if (!events || !Array.isArray(events)) {
-    return [];
-  }
+// export async function generateStaticParams() {
+//   try {
+//     const response = await fetch(`${baseUrl}/api/events`);
 
-  return events.map((event) => ({
-    id: String(event.id),
-    slug: slugit(event.title),
-  }));
-}
+//     if (!response.ok) {
+//       console.error(
+//         `Failed to fetch events: ${response.status} ${response.statusText}`
+//       );
+//       return [];
+//     }
+
+//     const events = await response.json();
+//     if (!events || !Array.isArray(events)) {
+//       return [];
+//     }
+
+//     return events.map((event) => ({
+//       id: String(event.id),
+//       slug: slugit(event.title),
+//     }));
+//   } catch (err) {
+//     console.error("Error in generateStaticParams:", err);
+//     return [];
+//   }
+// }
