@@ -1,16 +1,9 @@
-import { fetchAllCategories} from "@/queries";
 import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
 import EventsClientWrapper from "@/components/EventsClientWrapper";
 import { Metadata } from "next";
-import type {
-  CategoryData,
-  EventData,
- 
-  Categories,
-  FormatedEvent,
-} from "@/types";
+import type { CategoryData, EventData, FormatedEvent } from "@/types";
 
 export const metadata: Metadata = {
   title: "Events - Community Hub ",
@@ -35,11 +28,9 @@ export default async function EventsPage() {
   let categoryData: CategoryData[] = [];
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-
   try {
     const response: Response = await fetch(`${baseUrl}/api/events`, {
-      next: { revalidate: 60 }, //
-      //  Revalidate every 60 seconds
+      next: { revalidate: 60 }
     });
     const eventsResponse: EventData[] = await response.json();
     if (eventsResponse) {
@@ -64,8 +55,10 @@ export default async function EventsPage() {
   }
 
   try {
-    const categoryResponse: CategoryData[] | Categories | undefined =
-      await fetchAllCategories();
+    const response: Response = await fetch(`${baseUrl}/api/categories`, {
+      next: { revalidate: 60 }
+    });
+    const categoryResponse: CategoryData[] = await response.json();
 
     if (categoryResponse) {
       if (Array.isArray(categoryResponse)) {
@@ -81,7 +74,7 @@ export default async function EventsPage() {
           categoryData =
             (categoryResponse as { data: CategoryData[] }).data || [];
         } else {
-          categoryData = categoryResponse as CategoryData[];
+          categoryData = categoryResponse;
         }
       }
       console.log("Fetched categories:", categoryData);
