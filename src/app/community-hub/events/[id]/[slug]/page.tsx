@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { fetchAllEvents, fetchEventById } from "@/queries";
+import { fetchEventById } from "@/queries";
 import HubHeader from "@/components/HubHeader";
 import HubFooter from "@/components/HubFooter";
 import SectionNav from "@/components/SectionNav";
@@ -9,8 +9,9 @@ import TicketGenerator from "@/components/TicketGenerator";
 import ReusableMap from "@/components/ReusableMap";
 import type { EventData } from "@/types";
 import type { Metadata } from "next";
-import { slugit } from "@/helper";
+// import { slugit } from "@/helper";
 export const dynamicParams = true;
+// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 interface PageParams {
   id: string;
@@ -88,7 +89,7 @@ export const generateMetadata = async ({
 
 const page = async ({ params }: { params: Promise<PageParams> }) => {
   const { id } = await params;
-  // Fetch data from API
+
   const rawEvent = (await fetchEventById(id)) as
     | { data: EventData | EventData[] }
     | undefined;
@@ -109,7 +110,6 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
     notFound();
   }
 
-  // Clean categories to ensure strings or fallback
   const categories = Array.isArray(eventData.categories)
     ? eventData.categories.map((cat) =>
         typeof cat === "string" ? cat : cat.name ?? "general"
@@ -119,7 +119,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
   const event: EventData = {
     ...eventData,
     categories: categories.map((name) => ({
-      id: 0, // Placeholder ID, adjust as needed
+      id: 0,
       name,
       created_at: "",
       updated_at: "",
@@ -154,7 +154,6 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
     return days <= 1 ? "1 day" : `${days} days`;
   };
 
-  // Create a single event array for the map
   const mapEvent = [event];
 
   return (
@@ -280,9 +279,10 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
             <div className="border-t border-gray-200 pt-6 mt-8">
               <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                 <p className="text-gray-600">
-                 Reflekta give you free access to all events, so you can join and participate in the community without any cost.
+                  Reflekta give you free access to all events, so you can join
+                  and participate in the community without any cost.
                 </p>
-              <TicketGenerator event={event} />
+                <TicketGenerator event={event} />
               </div>
             </div>
           </div>
@@ -296,15 +296,28 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
 
 export default page;
 
-export async function generateStaticParams() {
-  // Fetch all events to generate static params
-  const events = (await fetchAllEvents()) as EventData[] | undefined;
-  if (!events || !Array.isArray(events)) {
-    return [];
-  }
+// export async function generateStaticParams() {
+//   try {
+//     const response = await fetch(`${baseUrl}/api/events`);
 
-  return events.map((event) => ({
-    id: String(event.id),
-    slug: slugit(event.title),
-  }));
-}
+//     if (!response.ok) {
+//       console.error(
+//         `Failed to fetch events: ${response.status} ${response.statusText}`
+//       );
+//       return [];
+//     }
+
+//     const events = await response.json();
+//     if (!events || !Array.isArray(events)) {
+//       return [];
+//     }
+
+//     return events.map((event) => ({
+//       id: String(event.id),
+//       slug: slugit(event.title),
+//     }));
+//   } catch (err) {
+//     console.error("Error in generateStaticParams:", err);
+//     return [];
+//   }
+// }

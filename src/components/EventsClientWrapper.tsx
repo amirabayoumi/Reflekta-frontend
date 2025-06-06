@@ -243,9 +243,7 @@ export default function EventsClientWrapper({
                         .join(", ")}
                     </span>
                   </div>
-                  <div className="absolute bottom-0 right-0 bg-[#553a5c] text-white px-3 py-1 text-sm">
-                    attending
-                  </div>
+                 
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-lg mb-1 text-[#553a5c]">

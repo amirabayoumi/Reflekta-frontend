@@ -22,41 +22,43 @@ const getHeaders = () => ({
   "Authorization": `Bearer ${AUTH_TOKEN}`,
 });
 
-console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
+console.log("Using AUTH_TOKEN:", AUTH_TOKEN); 
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-export const fetchAllEvents = async (): Promise<EventData[]> => {
-  try {
-    const response = await axios.get("https://3.75.235.214/api/events", {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
+// export const fetchAllEvents = async (): Promise<EventData[]> => {
+//   try {
+//     const response = await axios.get("https://3.75.235.214/api/events", {
+//       headers: getHeaders(),
+//       httpsAgent: httpsAgent,
+      
+      
 
-    });
+//     });
+// console.log("David");
+//     if (response.status !== 200) {
+//       throw new Error(`API Error: ${response.status}`);
+//     }
 
-    if (response.status !== 200) {
-      throw new Error(`API Error: ${response.status}`);
-    }
+//     let eventsData: EventData[] = [];
 
-    let eventsData: EventData[] = [];
+//     if (response.data && response.data.data && Array.isArray(response.data.data)) {
+//       eventsData = response.data.data;
+//     }
 
-    if (response.data && response.data.data && Array.isArray(response.data.data)) {
-      eventsData = response.data.data;
-    }
+//     if (eventsData.length === 0) {
+//       console.warn("Could not extract events from API response:", response.data);
+//       return [];
+//     }
 
-    if (eventsData.length === 0) {
-      console.warn("Could not extract events from API response:", response.data);
-      return [];
-    }
-
-    return eventsData;
-  } catch (error: unknown) {
-    console.error("Error fetching events:", error);
-    return [];
-  }
-};
+//     return eventsData;
+//   } catch (error: unknown) {
+//     console.error("Error fetching events:", error);
+//     return [];
+//   }
+// };
 
 export const fetchEventById = async (id: string): Promise<EventData | undefined> => {
   try {
@@ -219,7 +221,9 @@ export const fetchUserData = async (): Promise<UserData | null> => {
       httpsAgent: httpsAgent,
     });
     if (response.status !== 200) return null;
+    console.log("User data fetched successfully:", response.data);
     return response.data;
+
   } catch (error) {
     console.error("Error fetching user data:", error);
     if (axios.isAxiosError(error)) {
