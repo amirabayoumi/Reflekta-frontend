@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState, useMemo, useRef, useEffect } from "react";
 
 // Update Story interface to match what's actually available from API
@@ -8,23 +9,17 @@ interface Story {
   content: string;
   user_id: number;
   is_published: number;
-  comments: number;
+  comments: Comment[];
   created_at: string;
   updated_at: string;
-  date: string; // From transformed data
-  authorInitial: string; // From transformed data
+  date: string;
 }
 
 interface FloatingCirclesProps {
   stories: Story[];
-  onCircleClick: (storyId: number) => void;
-  onAddStoryClick: () => void;
 }
 
-const FloatingCircles: React.FC<FloatingCirclesProps> = ({
-  stories,
-  onCircleClick,
-}) => {
+const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
   // Track if we're mounted on the client
   const [isMounted, setIsMounted] = useState(false);
 
@@ -309,50 +304,37 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({
             left: story.left,
             transition: "transform 0.2s, box-shadow 0.2s",
           }}
-          onClick={() => onCircleClick(story.id)}
           onMouseEnter={() => handleMouseEnter(story.id.toString())}
           onMouseLeave={() => handleMouseLeave(story.id.toString())}
         >
-          <div className="flex flex-col items-center justify-center p-3 text-center w-full h-full">
-            {/* Display initial in user avatar */}
-            <div className="h-8 w-8 rounded-full bg-[#553a5c] flex items-center justify-center mb-1">
-              <span className="text-white text-sm font-medium">
-                {story.authorInitial}
-              </span>
+          <Link href={`/community-hub/stories/${story.id}`} key={story.id}>
+            <div className="flex flex-col items-center justify-center p-3 text-center w-full h-full">
+              {/* Show user ID instead of author name */}
+              <h4
+                className={`font-semibold text-[#553a5c] mb-1 ${
+                  story.size >= 150 ? "text-sm" : "text-xs"
+                }`}
+              >
+                User #{story.user_id}
+              </h4>
+
+              {/* Show date information */}
+              <p
+                className={`text-gray-400 ${
+                  story.size >= 150 ? "text-sm" : "text-xs"
+                }`}
+              >
+                {story.date}
+              </p>
+
+              {/* Only show title on larger circles */}
+              {story.size > 140 && (
+                <p className="text-xs text-gray-600 mt-2 line-clamp-1">
+                  &quot;{story.title}&quot;
+                </p>
+              )}
             </div>
-
-            {/* Show user ID instead of author name */}
-            <h4
-              className={`font-semibold text-[#553a5c] mb-1 ${
-                story.size >= 150 ? "text-sm" : "text-xs"
-              }`}
-            >
-              User #{story.user_id}
-            </h4>
-
-            {/* Show date information */}
-            <p
-              className={`text-gray-400 ${
-                story.size >= 150 ? "text-sm" : "text-xs"
-              }`}
-            >
-              {story.date}
-            </p>
-
-            {/* Only show title on larger circles */}
-            {story.size > 140 && (
-              <p className="text-xs text-gray-600 mt-2 line-clamp-1">
-                &quot;{story.title}&quot;
-              </p>
-            )}
-
-            {/* Show comments count */}
-            {story.size > 140 && (
-              <p className="text-xs text-gray-500 mt-1">
-                {story.comments} comment{story.comments !== 1 ? "s" : ""}
-              </p>
-            )}
-          </div>
+          </Link>
         </div>
       ))}
     </div>

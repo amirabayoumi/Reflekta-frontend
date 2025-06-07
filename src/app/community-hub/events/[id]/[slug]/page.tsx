@@ -1,12 +1,10 @@
 import { notFound } from "next/navigation";
 import { fetchEventById } from "@/queries";
-import HubHeader from "@/components/HubHeader";
-import HubFooter from "@/components/HubFooter";
-import SectionNav from "@/components/SectionNav";
+
 import { Calendar, Clock, MapPin, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
-import TicketGenerator from "@/components/TicketGenerator";
-import ReusableMap from "@/components/ReusableMap";
+import TicketGenerator from "@/components/eventsComponents/TicketGenerator";
+import ReusableMap from "@/components/eventsComponents/ReusableMap";
 import type { EventData } from "@/types";
 import type { Metadata } from "next";
 // import { slugit } from "@/helper";
@@ -158,12 +156,6 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
-      <HubHeader />
-      <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
-        <h1 className="text-4xl text-center">Community Events</h1>
-      </div>
-      <SectionNav />
-
       <div className="container mx-auto px-4 py-8">
         <Link
           href="/community-hub/events"
@@ -276,20 +268,10 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
               </div>
             </div>
 
-            <div className="border-t border-gray-200 pt-6 mt-8">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-                <p className="text-gray-600">
-                  Reflekta give you free access to all events, so you can join
-                  and participate in the community without any cost.
-                </p>
-                <TicketGenerator event={event} />
-              </div>
-            </div>
+            <TicketGenerator event={event} />
           </div>
         </div>
       </div>
-
-      <HubFooter />
     </div>
   );
 };

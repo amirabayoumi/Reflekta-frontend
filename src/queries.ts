@@ -1,6 +1,6 @@
 import {
   EventData,
-  CategoryData,
+
   registerData,
   userData,
   LoginResponse,
@@ -78,23 +78,23 @@ export const fetchEventById = async (id: string): Promise<EventData | undefined>
   }
 };
 
-export const fetchAllCategories = async (): Promise<CategoryData[]> => {
-  try {
-    const response = await axios.get("https://3.75.235.214/api/categories", {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
-    });
+// export const fetchAllCategories = async (): Promise<CategoryData[]> => {
+//   try {
+//     const response = await axios.get("https://3.75.235.214/api/categories", {
+//       headers: getHeaders(),
+//       httpsAgent: httpsAgent,
+//     });
 
-    if (response.status !== 200) {
-      throw new Error(`API Error: ${response.status}`);
-    }
+//     if (response.status !== 200) {
+//       throw new Error(`API Error: ${response.status}`);
+//     }
 
-    return response.data.data || [];
-  } catch (error) {
-    console.error("Error fetching categories:", error);
-    return [];
-  }
-};
+//     return response.data.data || [];
+//   } catch (error) {
+//     console.error("Error fetching categories:", error);
+//     return [];
+//   }
+// };
 
 export const registerUser = async (registerData: registerData): Promise<RegisterResponse> => {
   try {
@@ -255,58 +255,58 @@ export const testAuthAndUserData = async (): Promise<{userData: UserData | null}
   return { userData };
 };
 
-export const fetchAllStories = async(): Promise<Story[]> => {
-  try {
-    // Log the headers being used - helpful for debugging
-    console.log("Headers being sent:", getHeaders());
+// export const fetchAllStories = async(): Promise<Story[]> => {
+//   try {
+//     // Log the headers being used - helpful for debugging
+//     console.log("Headers being sent:", getHeaders());
     
-    // In Thunder Client, you might be using a different token
-    // or have manually added an Authorization header
-    const response = await axios.get("https://3.75.235.214/api/stories", {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
-    });
+//     // In Thunder Client, you might be using a different token
+//     // or have manually added an Authorization header
+//     const response = await axios.get("https://3.75.235.214/api/stories", {
+//       headers: getHeaders(),
+//       httpsAgent: httpsAgent,
+//     });
     
     
-    // Log the full response for debugging
-    console.log("Raw API response:", response);
+//     // Log the full response for debugging
+//     console.log("Raw API response:", response);
     
-    if (response.status !== 200) {
-      throw new Error(`API Error: ${response.status}`);
-    }
+//     if (response.status !== 200) {
+//       throw new Error(`API Error: ${response.status}`);
+//     }
     
-    // Check if the response is a direct array (not wrapped in a data property)
-    if (Array.isArray(response.data)) {
-      console.log("Response is array:", response.data);
-      return response.data;
-    }
+//     // Check if the response is a direct array (not wrapped in a data property)
+//     if (Array.isArray(response.data)) {
+//       console.log("Response is array:", response.data);
+//       return response.data;
+//     }
     
-    // Fallback to checking for data property if not a direct array
-    const storiesData = response.data.data || [];
+//     // Fallback to checking for data property if not a direct array
+//     const storiesData = response.data.data || [];
     
-    // Log the stories data for debugging
-    console.log(`Found ${storiesData.length} stories`);
+//     // Log the stories data for debugging
+//     console.log(`Found ${storiesData.length} stories`);
     
-    return storiesData;
+//     return storiesData;
     
-  } catch (error) {
-    console.error("Error fetching stories:", error);
-    // Add more detailed error information
-    if (axios.isAxiosError(error)) {
-      console.error("Request details:", {
-        config: {
-          url: error.config?.url,
-          method: error.config?.method,
-          headers: error.config?.headers
-        },
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data
-      });
-    }
-    return [];
-  }
-};
+//   } catch (error) {
+//     console.error("Error fetching stories:", error);
+//     // Add more detailed error information
+//     if (axios.isAxiosError(error)) {
+//       console.error("Request details:", {
+//         config: {
+//           url: error.config?.url,
+//           method: error.config?.method,
+//           headers: error.config?.headers
+//         },
+//         status: error.response?.status,
+//         statusText: error.response?.statusText,
+//         data: error.response?.data
+//       });
+//     }
+//     return [];
+//   }
+// };
 
 type Ticketdata = {
   eventName: string;
@@ -357,3 +357,22 @@ export function downloadPdfBlob(blob: Blob, filename = "ticket.pdf"): void {
     console.warn("Cannot download in non-browser environment");
   }
 }
+
+
+
+
+export const fetchStoryById = async (id: string): Promise<Story | undefined> => {
+  try {
+    const response = await axios.get(`https://3.75.235.214/api/stories/${id}`, {
+      headers: getHeaders(),
+      httpsAgent: httpsAgent,
+    });
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching story by ID:", error);
+    return undefined;
+  }
+};

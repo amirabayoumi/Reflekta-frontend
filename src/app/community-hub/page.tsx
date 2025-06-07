@@ -1,11 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import HubFooter from "@/components/HubFooter";
-import HubHeader from "../../components/HubHeader";
-import CommunitySections from "../../components/CommunitySections";
-import UserProfileSummary from "../../components/UserProfileSummary";
-import SectionNav from "../../components/SectionNav";
+import CommunitySections from "../../components/communityComponents/CommunitySections";
+import UserProfileSummary from "../../components/communityComponents/UserProfileSummary";
 
 const CommunityHub = () => {
   const featuredEvents = [
@@ -42,12 +39,6 @@ const CommunityHub = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
-      <HubHeader />
-
-      <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
-        <h1 className="text-4xl text-center"> Community Hub</h1>
-      </div>
-      <SectionNav />
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
           <UserProfileSummary />
@@ -148,8 +139,6 @@ const CommunityHub = () => {
           </div>
         </div>
       </div>
-
-      <HubFooter />
     </div>
   );
 };

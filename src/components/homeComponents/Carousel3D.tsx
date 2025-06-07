@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import styles from "../styles/Carousel3D.module.css";
+import styles from "@/styles/Carousel3D.module.css";
 import Link from "next/link";
 
 interface CarouselItem {

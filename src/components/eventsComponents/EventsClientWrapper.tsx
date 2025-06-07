@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
 import type { CategoryData, EventData, FormatedEvent } from "@/types";
-import ReusableMap from "@/components/ReusableMap";
+import ReusableMap from "@/components/eventsComponents/ReusableMap";
 import { slugit } from "@/helper";
 
 interface EventsClientWrapperProps {
@@ -243,7 +243,6 @@ export default function EventsClientWrapper({
                         .join(", ")}
                     </span>
                   </div>
-                 
                 </div>
                 <div className="p-4">
                   <h3 className="font-medium text-lg mb-1 text-[#553a5c]">

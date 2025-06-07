@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useState, useEffect } from "react";
-import HubHeader from "@/components/HubHeader";
-import HubFooter from "@/components/HubFooter";
-import SectionNav from "@/components/SectionNav";
 import { Search, Phone, Mail } from "lucide-react";
 import {
   Accordion,
@@ -159,13 +156,6 @@ const LegalFAQPage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
-      <HubHeader />
-
-      {/* Page Header */}
-      <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
-        <h1 className="text-4xl text-center"> Legal Hub</h1>
-      </div>
-      <SectionNav />
       <div className="container mx-auto px-4 py-12">
         {/* Search Bar */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
@@ -281,8 +271,6 @@ const LegalFAQPage = () => {
           </div>
         </div>
       </div>
-
-      <HubFooter />
     </div>
   );
 };
