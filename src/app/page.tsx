@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import ArrowButton from "@/components/ArrowButton";
+import ArrowButton from "@/components/homeComponents/ArrowButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
-import Header from "@/components/Header";
-import Footer from "../components/Footer";
-import Carousel3D from "../components/Carousel3D";
+import Header from "@/components/homeComponents/Header";
+import Footer from "../components/homeComponents/Footer";
+import Carousel3D from "../components/homeComponents/Carousel3D";
 
 export default function Home() {
   const { t } = useLanguage();

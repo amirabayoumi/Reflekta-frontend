@@ -14,15 +14,15 @@ const getHeaders = () => ({
 
 export const GET = async () => {
   try {
-    const response = await axios.get("https://3.75.235.214/api/categories", {
+    const response = await axios.get("https://3.75.235.214/api/stories", {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
     if (response.status !== 200) {
       throw new Error(`API Error: ${response.status}`);
     }
-    const categoriesData = response.data;
-    return new Response(JSON.stringify(categoriesData))
+    const storiesDataData = response.data;
+    return new Response(JSON.stringify(storiesDataData))
   } catch (error) {
     console.error("Error fetching events:", error);
     return new Response(JSON.stringify({ error: "Failed to fetch events" }), {

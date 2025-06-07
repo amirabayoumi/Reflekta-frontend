@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
-import HubHeader from "@/components/HubHeader";
-import HubFooter from "@/components/HubFooter";
-import SectionNav from "@/components/SectionNav";
+
 import {
   HandHelping,
   MapPin,
@@ -135,12 +133,6 @@ const HelpExchangePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
-      <HubHeader />
-
-      <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
-        <h1 className="text-4xl text-center"> Get and Give Help</h1>
-      </div>
-      <SectionNav />
       <div className="container mx-auto px-4 py-12">
         <div className="mb-8 flex">
           <button
@@ -307,8 +299,6 @@ const HelpExchangePage = () => {
           </div>
         )}
       </div>
-
-      <HubFooter />
 
       {showPostForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">

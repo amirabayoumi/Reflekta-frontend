@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import HubHeader from "@/components/HubHeader";
-import HubFooter from "@/components/HubFooter";
+
 import Image from "next/image";
 import { FaFlag, FaCheck, FaTimes, FaMedal } from "react-icons/fa";
 
@@ -96,7 +95,7 @@ export default function GuessTheFlag() {
     };
 
     fetchCountries();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getFlagUrl = (countryCode: string) => {
@@ -216,13 +215,11 @@ export default function GuessTheFlag() {
   if (loading) {
     return (
       <>
-        <HubHeader />
         <main className="bg-gradient-to-br from-purple to-black font-alef text-white min-h-screen py-16 px-6">
           <div className="max-w-4xl mx-auto flex justify-center py-24">
             <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-beige"></div>
           </div>
         </main>
-        <HubFooter />
       </>
     );
   }
@@ -230,21 +227,18 @@ export default function GuessTheFlag() {
   if (error) {
     return (
       <>
-        <HubHeader />
         <main className="bg-gradient-to-br from-purple to-black font-alef text-white min-h-screen py-16 px-6">
           <div className="max-w-4xl mx-auto p-8 bg-white/10 rounded-xl text-center">
             <h1 className="text-3xl mb-4">Error</h1>
             <p className="text-beige mb-6">{error}</p>
           </div>
         </main>
-        <HubFooter />
       </>
     );
   }
 
   return (
     <>
-      <HubHeader />
       <main className="bg-gradient-to-br from-purple to-black font-alef text-white min-h-screen py-16 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Page Title */}
@@ -394,7 +388,6 @@ export default function GuessTheFlag() {
           </div>
         </div>
       </main>
-      <HubFooter />
     </>
   );
 }

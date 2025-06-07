@@ -1,7 +1,4 @@
-import HubHeader from "@/components/HubHeader";
-import HubFooter from "@/components/HubFooter";
-import SectionNav from "@/components/SectionNav";
-import EventsClientWrapper from "@/components/EventsClientWrapper";
+import EventsClientWrapper from "@/components/eventsComponents/EventsClientWrapper";
 import { Metadata } from "next";
 import type { CategoryData, EventData, FormatedEvent } from "@/types";
 
@@ -112,19 +109,11 @@ export default async function EventsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
-      <HubHeader />
-      <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
-        <h1 className="text-4xl text-center">
-          Let&apos;s bring people together
-        </h1>
-      </div>
-      <SectionNav />
       <EventsClientWrapper
         initialEvents={formattedEvents}
         categories={categoryData}
         locations={uniqueLocations}
       />
-      <HubFooter />
     </div>
   );
 }

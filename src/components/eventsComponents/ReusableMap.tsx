@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import type { EventData, CategoryData } from "@/types";
 // Dynamically load the map component (no SSR)
-const MapWithNoSSR = dynamic(() => import("@/components/MapComponent"), {
+const MapWithNoSSR = dynamic(() => import("@/components/eventsComponents/MapComponent"), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full flex items-center justify-center bg-gray-100">

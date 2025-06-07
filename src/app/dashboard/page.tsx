@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 
 import { fetchUserData } from "@/queries";
-import HubHeader from "@/components/HubHeader";
-import HubFooter from "@/components/HubFooter";
+import HubHeader from "@/components/communityComponents/HubHeader";
+import HubFooter from "@/components/communityComponents/HubFooter";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react"; // Add this import
 
