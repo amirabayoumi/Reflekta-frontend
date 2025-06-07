@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { fetchEventById } from "@/queries";
+// import { slugit } from "@/helper";
 
 import { Calendar, Clock, MapPin, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
@@ -275,10 +276,8 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
     </div>
   );
 };
-
-export default page;
-
-// export async function generateStaticParams() {
+// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+// export async function generateStaticParams(): Promise<PageParams[]> {
 //   try {
 //     const response = await fetch(`${baseUrl}/api/events`);
 
@@ -303,3 +302,5 @@ export default page;
 //     return [];
 //   }
 // }
+
+export default page;

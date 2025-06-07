@@ -1,0 +1,102 @@
+"use client";
+import { addNewStoryAction } from "@/actions";
+import { Button } from "@/components/ui/button";
+import { useActionState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogHeader,
+} from "@/components/ui/dialog";
+import { LoaderPinwheel } from "lucide-react";
+
+export default function ShareStoryButton() {
+  const initialState = { type: "", message: "" };
+
+  const [state, action, isPending] = useActionState(
+    addNewStoryAction,
+    initialState
+  );
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="bg-[#553a5c] hover:bg-[#937195] text-white">
+          Share Story
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Share Your Story</DialogTitle>
+          <p className="text-sm text-gray-500">
+            All fields marked with <span className="text-red-500">*</span> are
+            required.
+          </p>
+        </DialogHeader>
+
+        <form action={action} className="mt-4">
+          <input type="hidden" name="userId" value="1" />
+          <div className="space-y-4">
+            <div>
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Title <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="title"
+                type="text"
+                name="title"
+                placeholder="Story Title"
+                className="border border-gray-300 rounded-md p-2 w-full focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="content"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Content <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                id="content"
+                name="content"
+                placeholder="Write your story here..."
+                className="border border-gray-300 rounded-md p-2 w-full min-h-[200px] focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
+              />
+            </div>
+          </div>
+          <div className="mt-6 flex justify-end">
+            <Button
+              type="submit"
+              disabled={isPending}
+              className="bg-[#553a5c] hover:bg-[#937195] text-white"
+            >
+              {isPending ? (
+                <>
+                  <LoaderPinwheel className="animate-spin mr-2" /> Submitting...
+                </>
+              ) : (
+                "Share Your Story"
+              )}
+            </Button>
+          </div>
+        </form>
+        {state.type && (
+          <div
+            className={`mt-4 p-3 rounded-md ${
+              state.type === "success"
+                ? "bg-green-50 text-green-700"
+                : "bg-red-50 text-red-700"
+            }`}
+          >
+            {state.message}
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}

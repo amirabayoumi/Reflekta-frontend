@@ -376,3 +376,27 @@ export const fetchStoryById = async (id: string): Promise<Story | undefined> => 
     return undefined;
   }
 };
+type NewStoryData = {
+  title: string;
+  content: string;
+  user_id: number;
+};
+
+
+export const addNewStory = async (storyData: NewStoryData): Promise<Story | null> => {
+  try {
+    const response = await axios.post("https://3.75.235.214/api/stories", storyData, {
+      headers: getHeaders(),
+      httpsAgent: httpsAgent,
+    });
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error adding new story:", error);
+    return null;
+  }
+};
+
+
