@@ -10,14 +10,30 @@ import {
   DialogHeader,
 } from "@/components/ui/dialog";
 import { LoaderPinwheel } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ShareStoryButton() {
   const initialState = { type: "", message: "" };
+  const { user } = useAuth();
 
   const [state, action, isPending] = useActionState(
     addNewStoryAction,
     initialState
   );
+
+  // If user is not logged in, show message instead of dialog
+  if (!user) {
+    return (
+      <div className="bg-white/70 backdrop-blur-sm shadow-sm rounded-lg p-4 border border-gray-200">
+        <p className="text-gray-700 text-center">
+          <span className="font-medium text-[#553a5c] block mb-1">
+            Sign in to share your story
+          </span>
+          Join our community to share your experiences and connect with others
+        </p>
+      </div>
+    );
+  }
 
   return (
     <Dialog>
@@ -36,7 +52,8 @@ export default function ShareStoryButton() {
         </DialogHeader>
 
         <form action={action} className="mt-4">
-          <input type="hidden" name="userId" value="1" />
+          {/* Use user_id from auth context instead of hardcoded value */}
+          <input type="hidden" name="userId" value={user.id} />
           <div className="space-y-4">
             <div>
               <label

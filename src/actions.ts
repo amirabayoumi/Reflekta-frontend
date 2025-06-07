@@ -1,7 +1,8 @@
 "use server";
 
 
-import { getTicketPdf, addNewStory } from "./queries";
+import { revalidatePath } from "next/cache";
+import { getTicketPdf, addNewStory, addCommentToStory } from "./queries";
 
 type initialStateType = {
   type: string;
@@ -77,5 +78,41 @@ export async function addNewStoryAction(initialState: initialStoryStateType, for
   } catch (error) {
     console.error("Error adding new story:", error);
     return { type: "error", message: "Failed to add story." };
+  }
+}
+
+
+export async function addCommentToStoryAction(
+  initialState: initialStoryStateType,
+  formData: FormData
+) {
+  try {
+    const storyId = formData.get("storyId") as string;
+    const content = formData.get("content") as string;
+    const token = formData.get("token") as string;
+
+    // Validate inputs
+    if (!storyId || !content ) {
+      return { type: "error", message: "All fields are required." };
+    }
+    if( !token ) {
+      return { type: "error", message: "Authentication issue." };
+    }
+
+    // Call the query to add the comment
+    await addCommentToStory(
+      parseInt(storyId),
+      { content: content },
+      token 
+
+    );
+
+
+  revalidatePath(`/community-hub/stories/${storyId}`);
+
+    return { type: "success", message: "Comment added successfully!" };
+  } catch (error) {
+    console.error("Error adding comment:", error);
+    return { type: "error", message: "Failed to add comment." };
   }
 }

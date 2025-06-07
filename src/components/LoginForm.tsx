@@ -4,15 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { registerUser, loginUser } from "../queries";
-
-interface LoginResponse {
-  success: boolean;
-  data?: {
-    token: string;
-    name: string;
-  };
-  message?: string;
-}
+import { useAuth } from "@/hooks/useAuth";
 
 interface RegisterResponse {
   success: boolean;
@@ -32,6 +24,10 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get the auth context
+  const {  setToken } = useAuth();
 
   const handleClose = () => {
     setIsFlipped(false);
@@ -46,17 +42,22 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setErrorMessage("");
+    setIsSubmitting(true);
+
     try {
-      const result = (await loginUser({ email, password })) as LoginResponse;
-      if (result.success && result.data?.token) {
-        localStorage.setItem("token", result.data.token);
-        localStorage.setItem("userName", result.data.name);
+      const response = await loginUser({ email, password });
+
+      if (response.success && response.data?.token) {
+        // Store the token in auth context
+        setToken(response.data.token);
+
         setLoginSuccess(true);
         setTimeout(() => {
           handleClose();
         }, 1000);
       } else {
-        setErrorMessage(result.message || "Login failed");
+        setErrorMessage(response.message || "Login failed");
       }
     } catch (error: unknown) {
       if (
@@ -70,6 +71,8 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
       } else {
         setErrorMessage("Login failed");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -191,8 +194,9 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               <button
                 type="submit"
                 className="w-full py-3 bg-[#553a5c] hover:bg-[#937195] text-white font-medium rounded-lg transition-colors"
+                disabled={isSubmitting}
               >
-                Sign In
+                {isSubmitting ? "Signing In..." : "Sign In"}
               </button>
             </form>
 

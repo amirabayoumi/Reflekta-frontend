@@ -3,6 +3,7 @@ import { Alef } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "../contexts/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/context/AuthContext";
 const alef = Alef({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -58,7 +59,9 @@ export default function RootLayout({
       </head>
       <body className={`${alef.variable}  antialiased`}>
         <LanguageProvider>
-          {children} <Toaster />
+          <AuthProvider>
+            {children} <Toaster />
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

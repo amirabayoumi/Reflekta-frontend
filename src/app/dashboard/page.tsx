@@ -1,20 +1,34 @@
 "use client";
 import { useState, useEffect } from "react";
-
-import { fetchUserData } from "@/queries";
+import { useAuth } from "@/hooks/useAuth";
 import HubHeader from "@/components/communityComponents/HubHeader";
 import HubFooter from "@/components/communityComponents/HubFooter";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react"; // Add this import
-
-import type { UserData } from "@/types";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const UserDashboard = () => {
-  const [user, setUser] = useState<UserData | null>(null);
+  // Use auth context instead of direct API call
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState("activity");
 
+  // Client-side auth protection
   useEffect(() => {
-    fetchUserData().then(setUser);
-  }, []);
+    // When auth is checked and no user found, redirect
+    if (!isLoading && !user) {
+      router.push("/community-hub");
+    }
+  }, [isLoading, user, router]);
+
+  // Show loading state
+  if (isLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121212] via-[#281e2a] to-[#121212] text-white font-alef">
+        <p className="text-lg">Loading your dashboard...</p>
+      </div>
+    );
+  }
 
   const activities = [
     {
@@ -47,15 +61,6 @@ const UserDashboard = () => {
       comments: 12,
     },
   ];
-  const [activeTab, setActiveTab] = useState("activity");
-
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#121212] via-[#281e2a] to-[#121212] text-white font-alef">
-        <p className="text-lg">Loading user data...</p>
-      </div>
-    );
-  }
 
   // Helper to get initials from user name
   const getInitials = (name: string) =>

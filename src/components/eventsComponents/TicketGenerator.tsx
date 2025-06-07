@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { downloadTicket } from "@/actions";
 import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,8 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LoaderPinwheel } from "lucide-react";
-import { Download, Ticket } from "lucide-react";
+import { LoaderPinwheel, Download, Ticket } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 interface TicketGeneratorProps {
   event: {
@@ -24,29 +24,15 @@ interface TicketGeneratorProps {
 }
 
 const TicketGenerator = ({ event }: TicketGeneratorProps) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Use auth context instead of manual cookie checks
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+
   const initialState = { type: "", message: "", pdfData: "" };
   const [message, action, isPending] = useActionState(
     downloadTicket,
     initialState
   );
-
-  useEffect(() => {
-    // Simple check for token cookie
-    const hasToken = document.cookie.includes("token=");
-    setIsLoggedIn(hasToken);
-
-    // Monitor for cookie changes
-    const checkTokenChange = () => {
-      const currentHasToken = document.cookie.includes("token=");
-      if (currentHasToken !== isLoggedIn) {
-        setIsLoggedIn(currentHasToken);
-      }
-    };
-
-    const intervalId = setInterval(checkTokenChange, 1000);
-    return () => clearInterval(intervalId);
-  }, [isLoggedIn]);
 
   // Handle PDF download when data is received
   useEffect(() => {
