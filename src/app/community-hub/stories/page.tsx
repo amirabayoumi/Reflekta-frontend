@@ -2,6 +2,7 @@
 import FloatingCircles from "@/components/storiesComponents/FloatingCircles";
 import Link from "next/link";
 import { Story } from "@/types";
+import AddStory from "@/components/storiesComponents/AddStory";
 
 // Helper to format dates
 const formatDate = (dateString: string) => {
@@ -55,12 +56,7 @@ export default async function StoriesPage() {
           <>
             {/* Add Story Button */}
             <div className="mb-4 text-center">
-              <Link
-                href="/community-hub/stories/new"
-                className="inline-block bg-[#553a5c] hover:bg-[#937195] text-white px-6 py-3 rounded-lg shadow-lg transition-colors"
-              >
-                Share Your Story
-              </Link>
+            <AddStory />
             </div>
 
             {/* Floating Circles for Medium+ screens */}

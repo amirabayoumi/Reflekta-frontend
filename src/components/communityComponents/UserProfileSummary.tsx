@@ -8,6 +8,8 @@ interface UserProfile {
   // Add other fields as needed
 }
 
+
+
 const UserProfileSummary: React.FC = () => {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);

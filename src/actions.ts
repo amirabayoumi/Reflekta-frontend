@@ -1,7 +1,7 @@
 "use server";
 
 
-import { getTicketPdf } from "./queries";
+import { getTicketPdf, addNewStory } from "./queries";
 
 type initialStateType = {
   type: string;
@@ -36,5 +36,46 @@ export async function downloadTicket(initialState: initialStateType , formData: 
       message: `Error generating ticket: ${typeof error === "object" && error !== null && "message" in error ? (error as { message: string }).message : String(error)}`,
       pdfData: ""
     };
+  }
+}
+
+// type NewStoryData = {
+//   title: string;
+//   content: string;
+//   user_id: number;
+// };
+
+type initialStoryStateType = {
+  type: string;
+  message: string;
+
+};
+
+export async function addNewStoryAction(initialState: initialStoryStateType, formData: FormData) {
+  try {
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const userId = formData.get("userId") as string;
+
+    // Validate inputs
+    if (!title || !content || !userId) {
+      return { type: "error", message: "All fields are required." };
+    }
+
+  
+ 
+ 
+
+    await addNewStory({
+      title: title,
+      content: content,
+      user_id: parseInt(userId),
+    });
+    
+
+    return { type: "success", message: "Story added successfully!" };
+  } catch (error) {
+    console.error("Error adding new story:", error);
+    return { type: "error", message: "Failed to add story." };
   }
 }
