@@ -1,46 +1,24 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import LoginForm from "@/components/LoginForm";
-import { fetchUserData } from "@/queries";
-import type { UserData } from "@/types";
+import { useAuth } from "@/hooks/useAuth"; // Replace fetchUserData with useAuth
 
 const HubHeader = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isShowLogin, setIsShowLogin] = useState(false);
-  const [user, setUser] = useState<UserData | null>(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  // Logout handler: remove token and update user state
+  // Use auth context instead of local state and API calls
+  const { user, logout } = useAuth();
+
+  // Updated logout handler that uses auth context
   const handleLogout = () => {
-    // Remove the token cookie by setting it to expired
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    setUser(null);
+    logout();
     setShowLogoutConfirm(false);
   };
-
-  useEffect(() => {
-    let lastToken = "";
-    let intervalId: NodeJS.Timeout;
-
-    const checkTokenChange = () => {
-      const currentToken =
-        document.cookie.match(/(?:^|;\s*)token=([^;]*)/)?.[1] || "";
-      if (currentToken !== lastToken) {
-        lastToken = currentToken;
-        fetchUserData().then(setUser);
-      }
-    };
-
-    fetchUserData().then(setUser);
-
-    // eslint-disable-next-line prefer-const
-    intervalId = setInterval(checkTokenChange, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
 
   return (
     <header className="bg-white shadow-md py-3">

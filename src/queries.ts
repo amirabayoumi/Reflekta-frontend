@@ -159,23 +159,26 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
     // Store token in cookies via API endpoint if login was successful
     if (response.data.success && response.data.data?.token) {
       try {
-        console.log(response.data.data.token);
-        // Encode token to base64 before sending it to the endpoint
-        const encodedToken = Buffer.from(response.data.data.token).toString('base64');
+        // Store the original token for return
+        const originalToken = response.data.data.token;
+        
+        // Encode token to base64 before sending it to the endpoint (for HttpOnly cookie)
+        const encodedToken = Buffer.from(originalToken).toString('base64');
         
         // Call the set-token API endpoint
         await axios.post('/api/auth/set-token', { 
           token: encodedToken 
         });
         
+        // Add token to response for auth context
+        response.data.data.token = originalToken; // Restore original token for context use
+        
         console.log("Token stored in cookies successfully");
       } catch (tokenError) {
         console.error("Failed to set token cookie:", tokenError);
-        // Continue despite cookie setting error
       }
     }
 
-    console.log("Login response:", response.data);
     return response.data;
   } catch (error: unknown) {
     console.error("Error logging in user:", error);
@@ -199,18 +202,17 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
 };
 
 // Helper function to get token from cookie (non-HttpOnly)
-const getTokenFromCookie = (): string | null => {
-  if (typeof document === 'undefined') return null;
-  const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
-  return match ? decodeURIComponent(match[1]) : null;
-};
+// const getTokenFromCookie = (): string | null => {
+//   if (typeof document === 'undefined') return null;
+//   const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
+//   return match ? decodeURIComponent(match[1]) : null;
+// };
 
-export const fetchUserData = async (): Promise<UserData | null> => {
+export const fetchUserData = async (token?: string): Promise<UserData | null> => {
   try {
-    const token = getTokenFromCookie();
     if (!token) {
       // Do not throw error, just log and return null
-      console.warn("No token found in cookies");
+      console.warn("No token provided to fetchUserData");
       return null;
     }
     const response = await axios.get("https://3.75.235.214/api/user", {
@@ -237,15 +239,12 @@ export const fetchUserData = async (): Promise<UserData | null> => {
   }
 };
 
-// Update the test function since we can't directly check for token existence
-export const testAuthAndUserData = async (): Promise<{userData: UserData | null}> => {
+// Update the test function to pass a token
+export const testAuthAndUserData = async (token?: string): Promise<{userData: UserData | null}> => {
   console.log("=== Testing User Data ===");
   
-  // We can't check for token directly since it's HttpOnly
-  console.log("Note: Token is in HttpOnly cookie and cannot be accessed via JavaScript");
-  
-  // Test user data fetching
-  const userData = await fetchUserData();
+  // Test user data fetching with provided token
+  const userData = await fetchUserData(token);
   console.log("User data fetch result:", userData ? "Success" : "Failed");
   if (userData) {
     console.log("User name:", userData.name);
@@ -255,58 +254,6 @@ export const testAuthAndUserData = async (): Promise<{userData: UserData | null}
   return { userData };
 };
 
-// export const fetchAllStories = async(): Promise<Story[]> => {
-//   try {
-//     // Log the headers being used - helpful for debugging
-//     console.log("Headers being sent:", getHeaders());
-    
-//     // In Thunder Client, you might be using a different token
-//     // or have manually added an Authorization header
-//     const response = await axios.get("https://3.75.235.214/api/stories", {
-//       headers: getHeaders(),
-//       httpsAgent: httpsAgent,
-//     });
-    
-    
-//     // Log the full response for debugging
-//     console.log("Raw API response:", response);
-    
-//     if (response.status !== 200) {
-//       throw new Error(`API Error: ${response.status}`);
-//     }
-    
-//     // Check if the response is a direct array (not wrapped in a data property)
-//     if (Array.isArray(response.data)) {
-//       console.log("Response is array:", response.data);
-//       return response.data;
-//     }
-    
-//     // Fallback to checking for data property if not a direct array
-//     const storiesData = response.data.data || [];
-    
-//     // Log the stories data for debugging
-//     console.log(`Found ${storiesData.length} stories`);
-    
-//     return storiesData;
-    
-//   } catch (error) {
-//     console.error("Error fetching stories:", error);
-//     // Add more detailed error information
-//     if (axios.isAxiosError(error)) {
-//       console.error("Request details:", {
-//         config: {
-//           url: error.config?.url,
-//           method: error.config?.method,
-//           headers: error.config?.headers
-//         },
-//         status: error.response?.status,
-//         statusText: error.response?.statusText,
-//         data: error.response?.data
-//       });
-//     }
-//     return [];
-//   }
-// };
 
 type Ticketdata = {
   eventName: string;
@@ -399,4 +346,52 @@ export const addNewStory = async (storyData: NewStoryData): Promise<Story | null
   }
 };
 
+type StoryComment = {
+  content: string;
+};
 
+export type StoryCommentResponse = {
+  id: number;
+  user_id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  story_id: number;
+};
+
+// story_id: parseInt(storyId),
+// content: content,
+export const addCommentToStory = async (
+  storyId: number, 
+  commentData: StoryComment,
+  token: string 
+): Promise<StoryCommentResponse | null> => {
+  try {
+    // No fallback to cookies, only use the provided token
+    if (!token) {
+      console.warn("No token provided, cannot add comment");
+      return null;
+    }
+    
+    const response = await axios.post(
+      `https://3.75.235.214/api/stories/${storyId}/comments`, 
+      commentData, 
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        httpsAgent: httpsAgent,
+      }
+    );
+    
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    
+    return response.data;
+  } catch (error) {
+    console.error("Error adding comment to story:", error);
+    return null;
+  }
+};

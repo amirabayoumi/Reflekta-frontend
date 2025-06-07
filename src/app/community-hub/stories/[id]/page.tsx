@@ -158,7 +158,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
 
       {/* Add comment section with theme styling */}
       <div className="bg-gradient-to-t from-[#553a5c]/5 to-transparent">
-        <AddComment />
+        <AddComment storyId={story.id} />
       </div>
     </div>
   );

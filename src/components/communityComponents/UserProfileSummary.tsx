@@ -1,46 +1,9 @@
-import { fetchUserData } from "@/queries";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-
-interface UserProfile {
-  name: string;
-  email: string;
-  // Add other fields as needed
-}
-
-
+import { useAuth } from "@/hooks/useAuth";
 
 const UserProfileSummary: React.FC = () => {
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let lastToken = "";
-    let intervalId: NodeJS.Timeout;
-
-    const checkTokenChange = () => {
-      const currentToken =
-        document.cookie.match(/(?:^|;\s*)token=([^;]*)/)?.[1] || "";
-      if (currentToken !== lastToken) {
-        lastToken = currentToken;
-        setIsLoading(true);
-        fetchUserData().then((data) => {
-          setUser(data);
-          setIsLoading(false);
-        });
-      }
-    };
-
-    fetchUserData().then((data) => {
-      setUser(data);
-      setIsLoading(false);
-    });
-
-    // eslint-disable-next-line prefer-const
-    intervalId = setInterval(checkTokenChange, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
+  // Use the auth context instead of direct API calls
+  const { user, isLoading } = useAuth();
 
   const getInitials = (name: string) =>
     name
@@ -71,7 +34,6 @@ const UserProfileSummary: React.FC = () => {
               <span className="text-2xl">{getInitials(user.name)}</span>
             </div>
             <h3 className="font-medium text-lg">Welcome, {user.name}!</h3>
-            {/* Removed email */}
           </div>
           <Link
             href="/dashboard"
