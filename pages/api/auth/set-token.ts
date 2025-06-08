@@ -1,34 +1,16 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { serialize } from 'cookie';
-import { Buffer } from 'buffer';
+
+// This endpoint is no longer needed since we're using pure localStorage token storage
+// Keeping it with a deprecation notice in case there are existing references to it
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    let { token } = req.body;
-
-    if (!token) {
-      return res.status(400).json({ message: 'Token is required' });
-    }
-
-    try {
-      // Decode the token
-      token = Buffer.from(token, 'base64').toString('utf8');
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      return res.status(400).json({ message: 'Invalid token encoding' });
-    }
-
-    // DO NOT include httpOnly at all
-    const cookie = serialize('token', token, {
-      // httpOnly: true, // Do not include this line
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24, // 1 day
+    console.warn('The set-token API endpoint is deprecated. Authentication now uses localStorage directly.');
+    
+    // Return success but do nothing
+    return res.status(200).json({ 
+      message: 'Authentication now uses localStorage directly. This endpoint is deprecated.' 
     });
-
-    res.setHeader('Set-Cookie', cookie);
-    return res.status(200).json({ message: 'Token set' });
   } else {
     res.setHeader('Allow', ['POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
