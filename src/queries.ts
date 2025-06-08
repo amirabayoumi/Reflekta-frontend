@@ -101,10 +101,7 @@ export const registerUser = async (registerData: registerData): Promise<Register
     const response: AxiosResponse<RegisterResponse> = await axios.post(
       "https://3.75.235.214/api/register",
       registerData,
-      {
-        headers: getHeaders(),
-        httpsAgent: httpsAgent,
-      }
+   
     );
 
     if (response.status !== 200) {
@@ -144,10 +141,7 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
     const response: AxiosResponse<LoginResponse> = await axios.post(
       "https://3.75.235.214/api/login",
       userData,
-      {
-        headers: getHeaders(),
-        httpsAgent: httpsAgent,
-      }
+    
     );
 
     if (response.status !== 200) {
