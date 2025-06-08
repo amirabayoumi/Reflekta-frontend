@@ -28,9 +28,6 @@ const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-// Change API base URL to use http for login and register (server-side only)
-const API_BASE_HTTP = "http://3.75.235.214/api";
-
 // export const fetchAllEvents = async (): Promise<EventData[]> => {
 //   try {
 //     const response = await axios.get("https://3.75.235.214/api/events", {
@@ -102,12 +99,9 @@ export const fetchEventById = async (id: string): Promise<EventData | undefined>
 export const registerUser = async (registerData: registerData): Promise<RegisterResponse> => {
   try {
     const response: AxiosResponse<RegisterResponse> = await axios.post(
-      `${API_BASE_HTTP}/register`, // use http
+      "https://3.75.235.214/api/register",
       registerData,
-      {
-        headers: getHeaders(),
-        httpsAgent: httpsAgent,
-      }
+   
     );
 
     if (response.status !== 200) {
@@ -145,12 +139,9 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
     console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
     console.log("Headers being sent:", getHeaders());
     const response: AxiosResponse<LoginResponse> = await axios.post(
-      `${API_BASE_HTTP}/login`, // use http
+      "https://3.75.235.214/api/login",
       userData,
-      {
-        headers: getHeaders(),
-        httpsAgent: httpsAgent,
-      }
+    
     );
 
     if (response.status !== 200) {
