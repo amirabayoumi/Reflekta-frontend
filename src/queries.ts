@@ -10,7 +10,7 @@ import {
 } from "./types";
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
-import { Buffer } from 'buffer';
+// import { Buffer } from 'buffer';
 // import 'dotenv/config';
 
 
@@ -156,27 +156,11 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
       return { success: false, message };
     }
 
-    // Store token in cookies via API endpoint if login was successful
+    // Remove the cookie handling part since we're using pure token auth
     if (response.data.success && response.data.data?.token) {
-      try {
-        // Store the original token for return
-        const originalToken = response.data.data.token;
-        
-        // Encode token to base64 before sending it to the endpoint (for HttpOnly cookie)
-        const encodedToken = Buffer.from(originalToken).toString('base64');
-        
-        // Call the set-token API endpoint
-        await axios.post('/api/auth/set-token', { 
-          token: encodedToken 
-        });
-        
-        // Add token to response for auth context
-        response.data.data.token = originalToken; // Restore original token for context use
-        
-        console.log("Token stored in cookies successfully");
-      } catch (tokenError) {
-        console.error("Failed to set token cookie:", tokenError);
-      }
+      // Return the original token for auth context to use
+      // No encoding needed as we're not using cookies anymore
+      console.log("Login successful, returning token");
     }
 
     return response.data;

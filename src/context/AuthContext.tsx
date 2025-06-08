@@ -101,15 +101,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (e) {
       console.error("Error removing from localStorage:", e);
     }
-    // Also clear the cookie if you're using one
-    document.cookie =
-      "token=; Max-Age=0; path=/; domain=" + window.location.hostname;
   };
 
   // Load user data on initial mount
   useEffect(() => {
     refreshUserData();
-  }, []);
+  }, [refreshUserData]); // Include refreshUserData in dependencies
 
   const value = {
     user,

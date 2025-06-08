@@ -27,7 +27,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get the auth context
-  const {  setToken } = useAuth();
+  const { setToken } = useAuth();
 
   const handleClose = () => {
     setIsFlipped(false);
@@ -49,7 +49,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
       const response = await loginUser({ email, password });
 
       if (response.success && response.data?.token) {
-        // Store the token in auth context
+        // Store the token in auth context - this will also save to localStorage
         setToken(response.data.token);
 
         setLoginSuccess(true);
