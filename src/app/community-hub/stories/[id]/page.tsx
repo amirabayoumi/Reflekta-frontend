@@ -8,13 +8,8 @@ import ShareButton from "@/components/storiesComponents/ShareButton";
 
 import type { Story } from "@/types";
 
-// Define StoryComment type locally if not available from "@/types"
-type StoryComment = {
-  id: string;
-  user_id: string;
-  content: string;
-  created_at: string;
-};
+// Use StoryComment type from "@/types" for consistency
+import type { StoryComment } from "@/types";
 
 type PageParams = {
   id: string;
@@ -22,16 +17,12 @@ type PageParams = {
 
 const page = async ({ params }: { params: Promise<PageParams> }) => {
   const { id } = await params;
-  // Add type assertion to the fetchStoryById result
   const story: Story | undefined = await fetchStoryById(id);
 
   // If story not found, show 404
   if (!story) {
     notFound();
   }
-
-  // Add console log to debug the story data structure
-  console.log("Story data received:", story);
 
   const formattedDate = new Date(story.created_at).toLocaleDateString("en-US", {
     year: "numeric",
@@ -53,9 +44,11 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
         "content" in comment &&
         "created_at" in comment
     ) as StoryComment[];
-
-    console.log("Valid comments found:", comments.length);
   }
+
+  // Get story author name
+  const storyAuthor =
+    story.user_name || (story.user && story.user.name) || "Unknown";
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -79,7 +72,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
           <div className="bg-white/20 p-2 rounded-full">
             <User size={18} />
           </div>
-          <span className="font-medium">User ID: {story.user_id}</span>
+          <span className="font-medium">{storyAuthor}</span>
         </div>
       </div>
 
@@ -122,27 +115,33 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
             Comments ({comments.length})
           </h3>
           <div className="space-y-5">
-            {comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:border-[#886f80]/30 transition-colors"
-              >
-                <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100">
-                  <div className="flex items-center">
-                    <div className="h-8 w-8 bg-[#553a5c]/20 rounded-full flex items-center justify-center mr-3">
-                      <User size={14} className="text-[#553a5c]" />
+            {comments.map((comment) => {
+              const commentAuthor =
+                comment.user_name ||
+                (comment.user && comment.user.name) ||
+                "Unknown";
+              return (
+                <div
+                  key={comment.id}
+                  className="bg-white p-5 rounded-lg shadow-sm border border-gray-100 hover:border-[#886f80]/30 transition-colors"
+                >
+                  <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100">
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 bg-[#553a5c]/20 rounded-full flex items-center justify-center mr-3">
+                        <User size={14} className="text-[#553a5c]" />
+                      </div>
+                      <div className="font-medium text-[#553a5c]">
+                        {commentAuthor}
+                      </div>
                     </div>
-                    <div className="font-medium text-[#553a5c]">
-                      User ID: {comment.user_id}
+                    <div className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                      {new Date(comment.created_at).toLocaleDateString()}
                     </div>
                   </div>
-                  <div className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                    {new Date(comment.created_at).toLocaleDateString()}
-                  </div>
+                  <p className="text-gray-700">{comment.content}</p>
                 </div>
-                <p className="text-gray-700">{comment.content}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (

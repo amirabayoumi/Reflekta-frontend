@@ -1,19 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useMemo, useRef, useEffect } from "react";
-
-// Update Story interface to match what's actually available from API
-interface Story {
-  id: number;
-  title: string;
-  content: string;
-  user_id: number;
-  is_published: number;
-  comments: Comment[];
-  created_at: string;
-  updated_at: string;
-  date: string;
-}
+import type { Story } from "@/types";
 
 interface FloatingCirclesProps {
   stories: Story[];
@@ -64,10 +52,22 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
   }, []);
 
   const storyCircles = useMemo(() => {
-    // Sort stories by date with newest first
+    // Sort stories by created_at with newest first
     const sortedStories = [...stories].sort((a, b) => {
-      return new Date(b.date).getTime() - new Date(a.date).getTime();
+      return (
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
     });
+
+    // Format date as "Month Day, Year" (e.g., June 6, 2025)
+    const formatDate = (dateString: string) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    };
 
     return sortedStories.map((story, idx) => {
       // Deterministic positions for stories
@@ -83,6 +83,7 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
         top,
         left,
         size,
+        formattedDate: formatDate(story.created_at),
       };
     });
   }, [stories]);
@@ -309,13 +310,15 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
         >
           <Link href={`/community-hub/stories/${story.id}`} key={story.id}>
             <div className="flex flex-col items-center justify-center p-3 text-center w-full h-full">
-              {/* Show user ID instead of author name */}
+              {/* Show author name instead of user ID */}
               <h4
                 className={`font-semibold text-[#553a5c] mb-1 ${
                   story.size >= 150 ? "text-sm" : "text-xs"
                 }`}
               >
-                User #{story.user_id}
+                {story.user_name ||
+                  (story.user && story.user.name) ||
+                  "Unknown"}
               </h4>
 
               {/* Show date information */}
@@ -324,7 +327,7 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
                   story.size >= 150 ? "text-sm" : "text-xs"
                 }`}
               >
-                {story.date}
+                {story.formattedDate}
               </p>
 
               {/* Only show title on larger circles */}

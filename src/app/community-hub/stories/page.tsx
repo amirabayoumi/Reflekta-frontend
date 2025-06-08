@@ -1,4 +1,3 @@
-
 import FloatingCircles from "@/components/storiesComponents/FloatingCircles";
 import Link from "next/link";
 import { Story } from "@/types";
@@ -24,7 +23,6 @@ const transformStoryData = (story: Story) => {
   return {
     ...story,
     date: formatDate(story.created_at),
-    // User initial (could be derived from user_id in the future)
   };
 };
 
@@ -50,13 +48,12 @@ export default async function StoriesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">
-      
       <div className="container mx-auto px-4 py-6">
         {transformedStories.length > 0 ? (
           <>
             {/* Add Story Button */}
             <div className="mb-4 text-center">
-            <AddStory />
+              <AddStory />
             </div>
 
             {/* Floating Circles for Medium+ screens */}
@@ -80,19 +77,20 @@ export default async function StoriesPage() {
                         </div>
                         <div className="ml-3">
                           <p className="font-medium text-sm">
-                            User #{story.user_id}
+                            {/* Show author name instead of user ID */}
+                            {story.user_name ||
+                              (story.user && story.user.name) ||
+                              "Unknown"}
                           </p>
                           <p className="text-xs text-gray-500">{story.date}</p>
                         </div>
                       </div>
-
                       <h3 className="font-semibold text-lg mb-2 text-[#553a5c]">
                         {story.title || "Untitled Story"}
                       </h3>
                       <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                         {story.content || "No content available"}
                       </p>
-
                       <div className="flex justify-between items-center">
                         <div className="flex space-x-3 text-sm">
                           <span className="flex items-center text-gray-500">
@@ -118,7 +116,6 @@ export default async function StoriesPage() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
