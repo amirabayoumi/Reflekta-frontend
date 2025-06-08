@@ -106,11 +106,49 @@ export interface Story {
   content: string;
   user_id: number;
   is_published: number;
-  comments: Comment[];
+  comments: StoryComment[];
   created_at: string;
   updated_at: string;
-} 
+  user_name?: string;
+  user?: {
+    id: number;
+    name: string;
+    email?: string;
+    is_admin?: number;
+    email_verified_at?: string | null;
+    two_factor_secret?: string | null;
+    two_factor_recovery_codes?: string | null;
+    two_factor_confirmed_at?: string | null;
+    current_team_id?: number | null;
+    profile_photo_path?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  };
+}
 
+export interface StoryComment {
+  id: number;
+  user_id: number;
+  story_id: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  user_name?: string;
+  user?: {
+    id: number;
+    name: string;
+    email?: string;
+    is_admin?: number;
+    email_verified_at?: string | null;
+    two_factor_secret?: string | null;
+    two_factor_recovery_codes?: string | null;
+    two_factor_confirmed_at?: string | null;
+    current_team_id?: number | null;
+    profile_photo_path?: string | null;
+    created_at?: string;
+    updated_at?: string;
+  };
+}
 
 export type Message = {
   type: string;
