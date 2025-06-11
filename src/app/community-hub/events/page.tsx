@@ -23,10 +23,10 @@ export const metadata: Metadata = {
 export default async function EventsPage() {
   let eventsData: EventData[] = [];
   let categoryData: CategoryData[] = [];
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   try {
-    const response: Response = await fetch(`${baseUrl}/api/events`, {
+    const response: Response = await fetch("/api/events", {
       next: { revalidate: 60 },
     });
     const eventsResponse: EventData[] = await response.json();
@@ -52,7 +52,7 @@ export default async function EventsPage() {
   }
 
   try {
-    const response: Response = await fetch(`${baseUrl}/api/categories`, {
+    const response: Response = await fetch("/api/categories", {
       next: { revalidate: 60 },
     });
     const categoryResponse: CategoryData[] = await response.json();

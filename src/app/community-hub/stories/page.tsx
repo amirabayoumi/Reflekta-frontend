@@ -25,12 +25,12 @@ const transformStoryData = (story: Story) => {
     date: formatDate(story.created_at),
   };
 };
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default async function StoriesPage() {
   let storiesResponse: Story[] = [];
   try {
-    const response: Response = await fetch(`${baseUrl}/api/stories`, {
+    const response: Response = await fetch("/api/stories", {
       next: { revalidate: 60 },
     });
     const data = await response.json();
