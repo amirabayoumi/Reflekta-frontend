@@ -26,9 +26,16 @@ export default async function EventsPage() {
   // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
   try {
-    const response: Response = await fetch("/api/events", {
-      next: { revalidate: 60 },
-    });
+    const response: Response = await fetch(
+      "https://inputoutput.be/api/events",
+      {
+        next: { revalidate: 60 },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+        },
+      }
+    );
     const eventsResponse: EventData[] = await response.json();
     if (eventsResponse) {
       if (Array.isArray(eventsResponse)) {
@@ -52,9 +59,16 @@ export default async function EventsPage() {
   }
 
   try {
-    const response: Response = await fetch("/api/categories", {
-      next: { revalidate: 60 },
-    });
+    const response: Response = await fetch(
+      "https://inputoutput.be/api/categories",
+      {
+        next: { revalidate: 60 },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+        },
+      }
+    );
     const categoryResponse: CategoryData[] = await response.json();
 
     if (categoryResponse) {
