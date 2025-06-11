@@ -14,7 +14,7 @@ const getHeaders = () => ({
 
 export const GET = async () => {
   try {
-    const response = await axios.get("https://3.75.235.214/api/categories", {
+    const response = await axios.get("https://inputoutput.be/api/categories", {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
