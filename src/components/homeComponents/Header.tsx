@@ -2,25 +2,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { AlignJustify, Globe, X } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { AlignJustify, X } from "lucide-react";
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
-    if (!isMenuOpen) setIsLangMenuOpen(false); // Close language menu when opening main menu
-  };
-
-  const toggleLangMenu = () => {
-    setIsLangMenuOpen(!isLangMenuOpen);
-  };
-
-  const changeLanguage = (lang: "en" | "fr" | "nl" | "ar") => {
-    setLanguage(lang);
-    setIsLangMenuOpen(false);
   };
 
   return (
@@ -42,55 +30,6 @@ const Header = () => {
 
         {/* Mobile Menu Button - Updated to toggle between hamburger and X */}
         <div className="md:hidden flex items-center">
-          {/* Language Selector for Mobile */}
-          <div className="relative mr-4">
-            <button
-              className="p-2 flex items-center"
-              onClick={toggleLangMenu}
-              aria-label="Select language"
-            >
-              <Globe className="w-5 h-5" />
-              <span className="ml-1 uppercase">{language}</span>
-            </button>
-
-            {isLangMenuOpen && (
-              <div className="absolute right-0 mt-2 py-2 w-28 bg-black/80 rounded shadow-lg z-50">
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left ${
-                    language === "en" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("en")}
-                >
-                  English
-                </button>
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left ${
-                    language === "fr" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("fr")}
-                >
-                  Français
-                </button>
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left ${
-                    language === "nl" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("nl")}
-                >
-                  Nederlands
-                </button>
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left ${
-                    language === "ar" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("ar")}
-                >
-                  العربية
-                </button>
-              </div>
-            )}
-          </div>
-
           <button
             className="p-2"
             onClick={toggleMenu}
@@ -106,19 +45,19 @@ const Header = () => {
             href="/"
             className="mr-4 text-lg hover:text-pink transition-colors text-shadow-sm"
           >
-            {t("home")}
+            Home
           </Link>
           <Link
             href="/about"
             className="mr-4 text-lg hover:text-pink transition-colors text-shadow-sm"
           >
-            {t("aboutUs")}
+            About Us
           </Link>
           <Link
             href="/contact"
             className="text-lg hover:text-pink  transition-colors text-shadow-sm"
           >
-            {t("contact")}
+            Contact
           </Link>
         </div>
 
@@ -127,57 +66,8 @@ const Header = () => {
             href="/community-hub"
             className="mr-6 text-lg hover:text-pink  transition-colors text-shadow-sm"
           >
-            {t("startHere")}
+            Start Here
           </Link>
-
-          {/* Language Selector for Desktop */}
-          <div className="relative">
-            <button
-              className="p-2 flex items-center hover:text-pink  transition-colors"
-              onClick={toggleLangMenu}
-              aria-label="Select language"
-            >
-              <Globe className="w-5 h-5" />
-              <span className="ml-1 uppercase">{language}</span>
-            </button>
-
-            {isLangMenuOpen && (
-              <div className="absolute py-2 w-36 bg-black/80 rounded shadow-lg z-50">
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left hover:bg-white/10 ${
-                    language === "en" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("en")}
-                >
-                  English
-                </button>
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left hover:bg-white/10 ${
-                    language === "fr" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("fr")}
-                >
-                  Français
-                </button>
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left hover:bg-white/10 ${
-                    language === "nl" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("nl")}
-                >
-                  Nederlands
-                </button>
-                <button
-                  className={`block px-4 py-2 text-sm w-full text-left hover:bg-white/10 ${
-                    language === "ar" ? "bg-white/20" : ""
-                  }`}
-                  onClick={() => changeLanguage("ar")}
-                >
-                  العربية
-                </button>
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
@@ -186,22 +76,22 @@ const Header = () => {
         <div className="md:hidden">
           <div className="flex flex-col space-y-4 p-4 text-white rounded">
             <Link href="/" className="hover:text-pink  transition-colors">
-              {t("home")}
+              Home
             </Link>
             <Link href="/about" className="hover:text-pink  transition-colors">
-              {t("aboutUs")}
+              About Us
             </Link>
             <Link
               href="/contact"
               className="hover:text-pink  transition-colors"
             >
-              {t("contact")}
+              Contact
             </Link>
             <Link
               href="/community-hub"
               className="hover:text-pink  transition-colors"
             >
-              {t("startHere")}
+              Start Here
             </Link>
           </div>
         </div>

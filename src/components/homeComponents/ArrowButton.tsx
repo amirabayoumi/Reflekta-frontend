@@ -34,12 +34,12 @@ export default function ArrowButton() {
     >
       <div
         className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 rounded-full 
-                 bg-pink hover:bg-opacity-80 flex items-center justify-center shadow-lg
-                 transition-all duration-300 z-50 animate-bounce
-                 ${visible ? "opacity-90" : "opacity-0 pointer-events-none"}`}
+                 bg-black  flex items-center justify-center shadow-lg
+                 transition-all duration-300 z-50 animate-bounce cursor-pointer
+                 ${visible ? "opacity-40" : "opacity-0 pointer-events-none"}`}
         aria-label="Scroll down"
       >
-        <FaChevronDown className="mt-3 animate-bounce text-xl drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)]" />
+        <FaChevronDown className="text-white mt-3 animate-bounce text-xl drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)]" />
       </div>
     </div>
   );
