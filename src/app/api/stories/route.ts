@@ -14,7 +14,7 @@ const getHeaders = () => ({
 
 export const GET = async () => {
   try {
-    const response = await axios.get("inputoutput.be/api/stories", {
+    const response = await axios.get("https://inputoutput.be/api/stories", {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
