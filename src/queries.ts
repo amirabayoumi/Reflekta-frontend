@@ -78,9 +78,12 @@ export const fetchEventById = async (id: string): Promise<EventData | undefined>
   }
 };
 
-// export const fetchAllCategories = async (): Promise<CategoryData[]> => {
+
+
+//instead of route 
+// export const fetchAllEvents = async (): Promise<EventData[]> => {
 //   try {
-//     const response = await axios.get("https://3.75.235.214/api/categories", {
+//     const response: AxiosResponse<{ data: EventData[] }> = await axios.get("https://inputoutput.be/api/events", {
 //       headers: getHeaders(),
 //       httpsAgent: httpsAgent,
 //     });
@@ -89,9 +92,45 @@ export const fetchEventById = async (id: string): Promise<EventData | undefined>
 //       throw new Error(`API Error: ${response.status}`);
 //     }
 
-//     return response.data.data || [];
+//     const eventsData = response.data.data || [];
+//     return eventsData;
+//   } catch (error) {
+//     console.error("Error fetching events:", error);
+//     return [];
+//   }
+// };
+
+// export const fetchAllCategories = async (): Promise<string[]> => {
+//   try {
+//     const response: AxiosResponse<{ data: string[] }> = await axios.get("https://inputoutput.be/api/categories", {
+//       headers: getHeaders(),
+//       httpsAgent: httpsAgent,
+//     });
+//     if (response.status !== 200) {
+//       throw new Error(`API Error: ${response.status}`);
+//     }
+//     const categoriesData = response.data.data || [];
+//     return categoriesData;
 //   } catch (error) {
 //     console.error("Error fetching categories:", error);
+//     return [];
+//   }}
+
+//   export const fetchAllStories = async (): Promise<Story[]> => {
+//   try {
+//     const response: AxiosResponse<{ data: Story[] }> = await axios.get("https://inputoutput.be/api/stories", {
+//       headers: getHeaders(),
+//       httpsAgent: httpsAgent,
+//     });
+
+//     if (response.status !== 200) {
+//       throw new Error(`API Error: ${response.status}`);
+//     }
+
+//     const storiesData = response.data.data || [];
+//     return storiesData;
+//   } catch (error) {
+//     console.error("Error fetching stories:", error);
 //     return [];
 //   }
 // };

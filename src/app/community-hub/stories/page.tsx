@@ -25,14 +25,21 @@ const transformStoryData = (story: Story) => {
     date: formatDate(story.created_at),
   };
 };
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default async function StoriesPage() {
   let storiesResponse: Story[] = [];
   try {
-    const response: Response = await fetch(`${baseUrl}/api/stories`, {
-      next: { revalidate: 60 },
-    });
+    const response: Response = await fetch(
+      "https://inputoutput.be/api/stories",
+      {
+        next: { revalidate: 60 },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+        },
+      }
+    );
     const data = await response.json();
     if (Array.isArray(data)) {
       storiesResponse = data;
