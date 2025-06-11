@@ -25,16 +25,14 @@ const transformStoryData = (story: Story) => {
     date: formatDate(story.created_at),
   };
 };
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 export default async function StoriesPage() {
   let storiesResponse: Story[] = [];
   try {
-    const response: Response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/stories`,
-      {
-        next: { revalidate: 60 },
-      }
-    );
+    const response: Response = await fetch(`${baseUrl}/api/stories`, {
+      next: { revalidate: 60 },
+    });
     storiesResponse = await response.json();
     if (!storiesResponse || !Array.isArray(storiesResponse)) {
       throw new Error("Invalid stories data format");
