@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Alef } from "next/font/google";
 import "./globals.css";
-import { LanguageProvider } from "../contexts/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/contexts/AuthContext";
 const alef = Alef({
@@ -58,11 +57,9 @@ export default function RootLayout({
         <meta name="next-size-adjust" />
       </head>
       <body className={`${alef.variable}  antialiased`}>
-        <LanguageProvider>
-          <AuthProvider>
-            {children} <Toaster />
-          </AuthProvider>
-        </LanguageProvider>
+        <AuthProvider>
+          {children} <Toaster />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,16 +1,11 @@
-"use client";
-
 import Image from "next/image";
 import ArrowButton from "@/components/homeComponents/ArrowButton";
-import { useLanguage } from "@/contexts/LanguageContext";
 import Link from "next/link";
 import Header from "@/components/homeComponents/Header";
 import Footer from "../components/homeComponents/Footer";
 import Carousel3D from "../components/homeComponents/Carousel3D";
 
 export default function Home() {
-  const { t } = useLanguage();
-
   return (
     <>
       <Header />
@@ -30,17 +25,17 @@ export default function Home() {
 
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
             <h1 className="text-white text-8xl drop-shadow-[0_8px_8px_rgba(0,0,0,0.8)] font-bold">
-              {t("reflektaTitle")}
+              Reflekta
             </h1>
             <p className="text-white text-2xl mt-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)] mb-5">
-              {t("reflektaDescription")}
+              A platform for sharing, connecting, and reflecting together.
             </p>
 
             <Link
-              className="bg-pink text-black px-4 py-2 rounded-full mt-4"
               href="/community-hub"
+              className="inline-flex items-center gap-2 bg-white opacity-80  text-black font-semibold px-8 py-3 rounded-full mt-4 shadow-xl shadow-[#553a5c]/30 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-[#bca6c9]/30 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[#bca6c9] focus:ring-offset-2"
             >
-              Join the Community
+              <p>Join the Community</p>
             </Link>
           </div>
 
