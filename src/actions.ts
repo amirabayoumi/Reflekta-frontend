@@ -1,7 +1,7 @@
 "use server";
 
 
-import { revalidatePath } from "next/cache";
+import {  revalidateTag } from "next/cache";
 import { getTicketPdf, addNewStory, addCommentToStory } from "./queries";
 
 type initialStateType = {
@@ -108,7 +108,8 @@ export async function addCommentToStoryAction(
     );
 
 
-  revalidatePath(`/community-hub/stories/${storyId}`);
+    // Revalidate the path tags: ["story"]
+    revalidateTag("story");
 
     return { type: "success", message: "Comment added successfully!" };
   } catch (error) {

@@ -60,17 +60,17 @@ export default async function StoriesPage() {
       <div className="container mx-auto px-4 py-6">
         {transformedStories.length > 0 ? (
           <>
-            {/* Add Story Button */}
+     
             <div className="mb-4 text-center">
               <AddStory />
             </div>
 
-            {/* Floating Circles for Medium+ screens */}
+           
             <div className="relative w-full h-[60vh] mb-8 hidden md:block">
               <FloatingCircles stories={transformedStories} />
             </div>
 
-            {/* Grid View for Mobile Screens */}
+           
             <div className="md:hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 {transformedStories.map((story) => (
@@ -86,7 +86,6 @@ export default async function StoriesPage() {
                         </div>
                         <div className="ml-3">
                           <p className="font-medium text-sm">
-                            {/* Show author name instead of user ID */}
                             {story.user_name ||
                               (story.user && story.user.name) ||
                               "Unknown"}
@@ -127,4 +126,11 @@ export default async function StoriesPage() {
       </div>
     </div>
   );
+}
+
+//genrate ssg
+export async function generateStaticParams() {
+  const response = await fetch("https://inputoutput.be/api/stories");
+  const data = await response.json();
+  return data.map((story: Story) => ({ id: String(story.id) }));
 }

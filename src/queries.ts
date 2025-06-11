@@ -1,6 +1,4 @@
 import {
-  EventData,
-
   registerData,
   userData,
   LoginResponse,
@@ -10,8 +8,6 @@ import {
 } from "./types";
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
-// import { Buffer } from 'buffer';
-// import 'dotenv/config';
 
 
 // Change the environment variable reference
@@ -22,118 +18,15 @@ const getHeaders = () => ({
   "Authorization": `Bearer ${AUTH_TOKEN}`,
 });
 
-console.log("Using AUTH_TOKEN:", AUTH_TOKEN); 
+
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false,
 });
 
-// export const fetchAllEvents = async (): Promise<EventData[]> => {
-//   try {
-//     const response = await axios.get("https://3.75.235.214/api/events", {
-//       headers: getHeaders(),
-//       httpsAgent: httpsAgent,
-      
-      
-
-//     });
-// console.log("David");
-//     if (response.status !== 200) {
-//       throw new Error(`API Error: ${response.status}`);
-//     }
-
-//     let eventsData: EventData[] = [];
-
-//     if (response.data && response.data.data && Array.isArray(response.data.data)) {
-//       eventsData = response.data.data;
-//     }
-
-//     if (eventsData.length === 0) {
-//       console.warn("Could not extract events from API response:", response.data);
-//       return [];
-//     }
-
-//     return eventsData;
-//   } catch (error: unknown) {
-//     console.error("Error fetching events:", error);
-//     return [];
-//   }
-// };
-
-export const fetchEventById = async (id: string): Promise<EventData | undefined> => {
-  try {
-    const response = await axios.get(`https://inputoutput.be/api/events/${id}`, {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
-    });
-
-    if (response.status !== 200) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching event by ID:", error);
-    return undefined;
-  }
-};
 
 
 
-//instead of route 
-// export const fetchAllEvents = async (): Promise<EventData[]> => {
-//   try {
-//     const response: AxiosResponse<{ data: EventData[] }> = await axios.get("https://inputoutput.be/api/events", {
-//       headers: getHeaders(),
-//       httpsAgent: httpsAgent,
-//     });
-
-//     if (response.status !== 200) {
-//       throw new Error(`API Error: ${response.status}`);
-//     }
-
-//     const eventsData = response.data.data || [];
-//     return eventsData;
-//   } catch (error) {
-//     console.error("Error fetching events:", error);
-//     return [];
-//   }
-// };
-
-// export const fetchAllCategories = async (): Promise<string[]> => {
-//   try {
-//     const response: AxiosResponse<{ data: string[] }> = await axios.get("https://inputoutput.be/api/categories", {
-//       headers: getHeaders(),
-//       httpsAgent: httpsAgent,
-//     });
-//     if (response.status !== 200) {
-//       throw new Error(`API Error: ${response.status}`);
-//     }
-//     const categoriesData = response.data.data || [];
-//     return categoriesData;
-//   } catch (error) {
-//     console.error("Error fetching categories:", error);
-//     return [];
-//   }}
-
-//   export const fetchAllStories = async (): Promise<Story[]> => {
-//   try {
-//     const response: AxiosResponse<{ data: Story[] }> = await axios.get("https://inputoutput.be/api/stories", {
-//       headers: getHeaders(),
-//       httpsAgent: httpsAgent,
-//     });
-
-//     if (response.status !== 200) {
-//       throw new Error(`API Error: ${response.status}`);
-//     }
-
-//     const storiesData = response.data.data || [];
-//     return storiesData;
-//   } catch (error) {
-//     console.error("Error fetching stories:", error);
-//     return [];
-//   }
-// };
 
 export const registerUser = async (registerData: registerData): Promise<RegisterResponse> => {
   try {
@@ -218,12 +111,7 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
   }
 };
 
-// Helper function to get token from cookie (non-HttpOnly)
-// const getTokenFromCookie = (): string | null => {
-//   if (typeof document === 'undefined') return null;
-//   const match = document.cookie.match(/(?:^|;\s*)token=([^;]*)/);
-//   return match ? decodeURIComponent(match[1]) : null;
-// };
+
 
 export const fetchUserData = async (token?: string): Promise<UserData | null> => {
   try {
@@ -256,20 +144,6 @@ export const fetchUserData = async (token?: string): Promise<UserData | null> =>
   }
 };
 
-// Update the test function to pass a token
-export const testAuthAndUserData = async (token?: string): Promise<{userData: UserData | null}> => {
-  console.log("=== Testing User Data ===");
-  
-  // Test user data fetching with provided token
-  const userData = await fetchUserData(token);
-  console.log("User data fetch result:", userData ? "Success" : "Failed");
-  if (userData) {
-    console.log("User name:", userData.name);
-    console.log("User email:", userData.email);
-  }
-  
-  return { userData };
-};
 
 
 type Ticketdata = {
@@ -325,21 +199,20 @@ export function downloadPdfBlob(blob: Blob, filename = "ticket.pdf"): void {
 
 
 
-export const fetchStoryById = async (id: string): Promise<Story | undefined> => {
-  try {
-    const response = await axios.get(`https://inputoutput.be/api/stories/${id}`, {
-      headers: getHeaders(),
-      httpsAgent: httpsAgent,
-    });
-    if (response.status !== 200) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching story by ID:", error);
-    return undefined;
-  }
-};
+//   try {
+//     const response = await axios.get(`https://inputoutput.be/api/stories/${id}`, {
+//       headers: getHeaders(),
+//       httpsAgent: httpsAgent,
+//     });
+//     if (response.status !== 200) {
+//       throw new Error(`API Error: ${response.status}`);
+//     }
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching story by ID:", error);
+//     return undefined;
+//   }
+// };
 type NewStoryData = {
   title: string;
   content: string;
@@ -376,8 +249,7 @@ export type StoryCommentResponse = {
   story_id: number;
 };
 
-// story_id: parseInt(storyId),
-// content: content,
+
 export const addCommentToStory = async (
   storyId: number, 
   commentData: StoryComment,
@@ -402,10 +274,7 @@ export const addCommentToStory = async (
       }
     );
     
-    if (response.status !== 200) {
-      throw new Error(`API Error: ${response.status}`);
-    }
-    
+   
     return response.data;
   } catch (error) {
     console.error("Error adding comment to story:", error);

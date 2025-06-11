@@ -1,29 +1,26 @@
 import { notFound } from "next/navigation";
-import { fetchEventById } from "@/queries";
-// import { slugit } from "@/helper";
-
 import { Calendar, Clock, MapPin, ArrowLeft, User } from "lucide-react";
 import Link from "next/link";
 import TicketGenerator from "@/components/eventsComponents/TicketGenerator";
 import ReusableMap from "@/components/eventsComponents/ReusableMap";
-import type { EventData } from "@/types";
+import type { EventData, CategoryData } from "@/types";
 import type { Metadata } from "next";
-// import { slugit } from "@/helper";
-export const dynamicParams = true;
-// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+import { slugit } from "@/helper";
 
 interface PageParams {
   id: string;
   slug: string;
 }
+
+const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 export const generateMetadata = async ({
   params,
 }: {
   params: Promise<PageParams>;
 }): Promise<Metadata> => {
-  const { id, slug } = await params;
-  const resp = (await fetchEventById(id)) as { data: EventData } | undefined;
-  if (!id || !slug) {
+  const { id } = await params;
+
+  if (!id) {
     return {
       title: "Event Details",
       description: "reflekta - Community Hub - Event Details",
@@ -41,44 +38,40 @@ export const generateMetadata = async ({
         ],
       },
     };
+  }
+
+  const resp = await fetch(`https://inputoutput.be/api/events/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+
+  if (!resp.ok) {
     return {
-      title: "Event Details",
-      description: "Detailed information about the event",
-      openGraph: {
-        title: "Event Details",
-        description: "Detailed information about the event",
-        siteName: "Community Hub",
-        images: [
-          {
-            url: "/images/event-details-og.jpg",
-            width: 1200,
-            height: 630,
-            alt: "Event Details",
-          },
-        ],
-        type: "website",
-      },
-      twitter: {
-        card: "summary_large_image",
-        title: "Event Details",
-        description: "Detailed information about the event",
-        images: ["/images/event-details-og.jpg"],
-      },
+      title: "Event Not Found",
+      description: "The event you're looking for does not exist.",
     };
   }
+
+  const json = await resp.json();
+  const event = json.data;
+
   return {
-    title: ` ${resp?.data?.title}-Event Details`,
-
+    title: `${event.title} - Event Details`,
+    description:
+      event.description || "reflekta - Community Hub - Event Details",
     openGraph: {
-      title: `Reflekta - Community Hub - Event Details - ${resp?.data?.title}`,
-
+      title: `Reflekta - Community Hub - Event Details - ${event.title}`,
+      description:
+        event.description || "reflekta - Community Hub - Event Details",
       siteName: "Reflekta",
       images: [
         {
-          url: `https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png`,
+          url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
           width: 1200,
           height: 630,
-          alt: `Event Details`,
+          alt: "Event Details",
         },
       ],
       type: "website",
@@ -89,40 +82,31 @@ export const generateMetadata = async ({
 const page = async ({ params }: { params: Promise<PageParams> }) => {
   const { id } = await params;
 
-  const rawEvent = (await fetchEventById(id)) as
-    | { data: EventData | EventData[] }
-    | undefined;
+  const rawEvent = await fetch(`https://inputoutput.be/api/events/${id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${authToken}`,
+    },
+    next: { revalidate: 3600 }, // Revalidate every hour
+  });
 
-  if (!rawEvent || !rawEvent.data) {
+  if (!rawEvent.ok) {
     notFound();
   }
 
-  // Normalize data
-  let eventData = rawEvent.data;
-
-  if (Array.isArray(eventData)) {
-    eventData =
-      eventData.find((e) => String(e.id) === String(id)) ?? eventData[0];
-  }
-
-  if (!eventData) {
-    notFound();
-  }
-
-  const categories = Array.isArray(eventData.categories)
-    ? eventData.categories.map((cat) =>
-        typeof cat === "string" ? cat : cat.name ?? "general"
-      )
-    : [];
+  const json = await rawEvent.json();
+  const eventData = json.data;
 
   const event: EventData = {
     ...eventData,
-    categories: categories.map((name) => ({
-      id: 0,
-      name,
-      created_at: "",
-      updated_at: "",
-    })),
+    categories: Array.isArray(eventData.categories)
+      ? eventData.categories.map((cat: CategoryData) => ({
+          id: 0,
+          name: typeof cat === "string" ? cat : cat.name ?? "general",
+          created_at: "",
+          updated_at: "",
+        }))
+      : [],
   };
 
   const formatDate = (dateString: string) => {
@@ -230,28 +214,30 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
                   </div>
                 </div>
 
-                {categories.length > 0 && (
+                {event.categories.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-4">
-                    {categories.map((category) => (
+                    {event.categories.map((category) => (
                       <span
-                        key={category}
+                        key={category.name}
                         className="px-3 py-1 bg-[#f3edf7] text-[#553a5c] text-sm rounded-full"
                       >
-                        {category}
+                        {category.name}
                       </span>
                     ))}
                   </div>
                 )}
               </div>
 
-              <div className="h-[300px] rounded-lg overflow-hidden shadow-md">
-                <ReusableMap
-                  events={mapEvent}
-                  center={[event.latitude, event.longitude]}
-                  zoom={14} // Closer zoom for a single event
-                  className="h-full w-full"
-                />
-              </div>
+              {event.latitude && event.longitude && (
+                <div className="h-[300px] rounded-lg overflow-hidden shadow-md">
+                  <ReusableMap
+                    events={mapEvent}
+                    center={[event.latitude, event.longitude]}
+                    zoom={14}
+                    className="h-full w-full"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="mb-8">
@@ -276,31 +262,29 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
     </div>
   );
 };
-// const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-// export async function generateStaticParams(): Promise<PageParams[]> {
-//   try {
-//     const response = await fetch(`${baseUrl}/api/events`);
 
-//     if (!response.ok) {
-//       console.error(
-//         `Failed to fetch events: ${response.status} ${response.statusText}`
-//       );
-//       return [];
-//     }
+// Generate static params for SSG
+export async function generateStaticParams(): Promise<PageParams[]> {
+  const response = await fetch("https://inputoutput.be/api/events", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${authToken}`,
+    },
+  });
+  if (!response.ok) {
+    return [];
+  }
 
-//     const events = await response.json();
-//     if (!events || !Array.isArray(events)) {
-//       return [];
-//     }
+  const data = await response.json();
 
-//     return events.map((event) => ({
-//       id: String(event.id),
-//       slug: slugit(event.title),
-//     }));
-//   } catch (err) {
-//     console.error("Error in generateStaticParams:", err);
-//     return [];
-//   }
-// }
+  if (!data || !Array.isArray(data.data)) {
+    return [];
+  }
+
+  return data.data.map((event: EventData) => ({
+    id: String(event.id),
+    slug: slugit(event.title),
+  }));
+}
 
 export default page;
