@@ -1,4 +1,3 @@
-export const dynamic = "force-dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CalendarIcon, MessageSquare, User } from "lucide-react";
@@ -234,11 +233,7 @@ export async function generateStaticParams(): Promise<PageParams[]> {
 
   const data = await response.json();
 
-  if (!data || !Array.isArray(data.data)) {
-    return [];
-  }
-
-  return data.data.map((story: { id: string; title: string }) => ({
+  return data.map((story: { id: string; title: string }) => ({
     id: String(story.id),
     slug: slugit(story.title),
   }));
