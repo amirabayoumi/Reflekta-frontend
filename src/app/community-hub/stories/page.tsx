@@ -33,8 +33,12 @@ export default async function StoriesPage() {
     const response: Response = await fetch(`${baseUrl}/api/stories`, {
       next: { revalidate: 60 },
     });
-    storiesResponse = await response.json();
-    if (!storiesResponse || !Array.isArray(storiesResponse)) {
+    const data = await response.json();
+    if (Array.isArray(data)) {
+      storiesResponse = data;
+    } else if (data && Array.isArray(data.data)) {
+      storiesResponse = data.data;
+    } else {
       throw new Error("Invalid stories data format");
     }
   } catch (error) {
