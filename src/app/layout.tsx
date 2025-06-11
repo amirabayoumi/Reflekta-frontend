@@ -3,7 +3,7 @@ import { Alef } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "../contexts/LanguageContext";
 import { Toaster } from "@/components/ui/sonner";
-import { AuthProvider } from "@/context/AuthContext";
+import { AuthProvider } from "@/contexts/AuthContext";
 const alef = Alef({
   subsets: ["latin"],
   weight: ["400", "700"],

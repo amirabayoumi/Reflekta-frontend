@@ -4,8 +4,12 @@ import { slugit } from "@/helper";
 
 async function fetchEvents(): Promise<FormatedEvent[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`, {
-      cache: "no-store",
+    const res = await fetch(`https://inputoutput.be/api/events`, {
+      next: { revalidate: 60 },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+      },
     });
     const data = await res.json();
     if (Array.isArray(data)) return data;

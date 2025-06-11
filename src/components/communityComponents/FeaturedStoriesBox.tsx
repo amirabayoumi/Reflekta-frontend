@@ -3,8 +3,12 @@ import type { Story } from "@/types";
 
 async function fetchStories(): Promise<Story[]> {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/stories`, {
-      cache: "no-store",
+    const res = await fetch("https://inputoutput.be/api/stories", {
+      next: { revalidate: 60 },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
+      },
     });
     const data = await res.json();
     if (Array.isArray(data)) return data;
