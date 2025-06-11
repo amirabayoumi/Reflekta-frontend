@@ -62,7 +62,7 @@ const httpsAgent = new https.Agent({
 
 export const fetchEventById = async (id: string): Promise<EventData | undefined> => {
   try {
-    const response = await axios.get(`https://3.75.235.214/api/events/${id}`, {
+    const response = await axios.get(`https://inputoutput.be/api/events/${id}`, {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
@@ -99,7 +99,7 @@ export const fetchEventById = async (id: string): Promise<EventData | undefined>
 export const registerUser = async (registerData: registerData): Promise<RegisterResponse> => {
   try {
     const response: AxiosResponse<RegisterResponse> = await axios.post(
-      "https://3.75.235.214/api/register",
+      "https://inputoutput.be/api/register",
       registerData,
    
     );
@@ -135,11 +135,11 @@ export const registerUser = async (registerData: registerData): Promise<Register
 
 export const loginUser = async (userData: userData): Promise<LoginResponse> => {
   try {
-    console.log("Logging in user with data:", userData);
-    console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
+    // console.log("Logging in user with data:", userData);
+    // console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
     console.log("Headers being sent:", getHeaders());
     const response: AxiosResponse<LoginResponse> = await axios.post(
-      "https://3.75.235.214/api/login",
+      "https://inputoutput.be/api/login",
       userData,
     
     );
@@ -193,7 +193,7 @@ export const fetchUserData = async (token?: string): Promise<UserData | null> =>
       console.warn("No token provided to fetchUserData");
       return null;
     }
-    const response = await axios.get("https://3.75.235.214/api/user", {
+    const response = await axios.get("https://inputoutput.be/api/user", {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
@@ -288,7 +288,7 @@ export function downloadPdfBlob(blob: Blob, filename = "ticket.pdf"): void {
 
 export const fetchStoryById = async (id: string): Promise<Story | undefined> => {
   try {
-    const response = await axios.get(`https://3.75.235.214/api/stories/${id}`, {
+    const response = await axios.get(`https://inputoutput.be/api/stories/${id}`, {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
@@ -310,7 +310,7 @@ type NewStoryData = {
 
 export const addNewStory = async (storyData: NewStoryData): Promise<Story | null> => {
   try {
-    const response = await axios.post("https://3.75.235.214/api/stories", storyData, {
+    const response = await axios.post("https://inputoutput.be/api/stories", storyData, {
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
@@ -352,7 +352,7 @@ export const addCommentToStory = async (
     }
     
     const response = await axios.post(
-      `https://3.75.235.214/api/stories/${storyId}/comments`, 
+      `https://inputoutput.be/api/stories/${storyId}/comments`, 
       commentData, 
       {
         headers: {
