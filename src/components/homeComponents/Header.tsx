@@ -73,23 +73,20 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="flex flex-col space-y-4 p-4 text-white rounded">
-            <Link href="/" className="hover:text-pink  transition-colors">
+        <div className="md:hidden flex justify-center items-center">
+          <div className="flex flex-col space-y-4 p-4 text-white rounded items-center">
+            <Link href="/" className="hover:text-pink transition-colors">
               Home
             </Link>
-            <Link href="/about" className="hover:text-pink  transition-colors">
+            <Link href="/about" className="hover:text-pink transition-colors">
               About Us
             </Link>
-            <Link
-              href="/contact"
-              className="hover:text-pink  transition-colors"
-            >
+            <Link href="/contact" className="hover:text-pink transition-colors">
               Contact
             </Link>
             <Link
               href="/community-hub"
-              className="hover:text-pink  transition-colors"
+              className="hover:text-pink transition-colors"
             >
               Start Here
             </Link>

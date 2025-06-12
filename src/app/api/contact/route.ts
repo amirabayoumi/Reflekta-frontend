@@ -102,7 +102,7 @@ export async function POST(request: Request) {
 
       <!-- CTA Button -->
       <div style="text-align:center;margin-top:24px;">
-        <a href="https://reflekta.vercel.app" target="_blank" style="display:inline-block;background:#553a5c;color:#ffffff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
+        <a href="https://reflekta-frontend.vercel.app" target="_blank" style="display:inline-block;background:#553a5c;color:#ffffff;padding:12px 24px;text-decoration:none;border-radius:8px;font-weight:bold;box-shadow:0 2px 4px rgba(0,0,0,0.1);">
           Visit Our Site
         </a>
       </div>

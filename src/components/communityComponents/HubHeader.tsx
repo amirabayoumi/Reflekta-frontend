@@ -37,7 +37,7 @@ const HubHeader = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-10">
+        <nav className="hidden lg:flex items-center space-x-10">
           <Link
             href="/"
             className="text-gray-700 hover:text-[#553a5c] font-medium text-lg"
@@ -62,13 +62,13 @@ const HubHeader = () => {
             <>
               <Link
                 href="/dashboard"
-                className="bg-[#886f80] text-white px-5 py-2.5 rounded-lg hover:bg-[#553a5c] transition-colors font-medium text-sm"
+                className="bg-gradient-to-r from-[#886f80] to-[#553a5c] text-white px-5 py-2.5 rounded-full font-medium text-sm shadow hover:from-[#553a5c] hover:to-[#886f80] transition-all"
               >
                 View Dashboard
               </Link>
               <button
                 onClick={() => setShowLogoutConfirm(true)}
-                className="ml-4 bg-gray-200 text-[#553a5c] px-5 py-2.5 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm"
+                className="ml-4 bg-white text-[#553a5c] px-5 py-2.5 rounded-full font-semibold text-sm shadow hover:bg-gray-200 transition-all"
               >
                 Logout
               </button>
@@ -76,7 +76,7 @@ const HubHeader = () => {
           ) : (
             <button
               onClick={() => setIsShowLogin(true)}
-              className="bg-[#886f80] text-white px-5 py-2.5 rounded-lg hover:bg-[#553a5c] transition-colors font-medium text-sm"
+              className="bg-gradient-to-r from-[#886f80] to-[#553a5c] text-white px-5 py-2.5 rounded-full font-medium text-sm shadow hover:from-[#553a5c] hover:to-[#886f80] transition-all"
             >
               Sign In or Register
             </button>
@@ -85,7 +85,7 @@ const HubHeader = () => {
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden text-gray-700"
+          className="lg:hidden text-gray-700"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -94,37 +94,28 @@ const HubHeader = () => {
 
       {/* Mobile Navigation */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200">
-          <div className="container mx-auto py-4 px-4 space-y-4">
-            <Link href="/" className="block text-gray-700 hover:text-gray-900">
+        <div className="lg:hidden bg-white border-t border-gray-200 mt-2 flex justify-center items-center">
+          <div className="flex flex-col space-y-4 p-4 text-[#553a5c] rounded items-center w-full max-w-xs">
+            <Link href="/" className="hover:text-pink transition-colors">
               Home
             </Link>
-            <Link
-              href="/contact"
-              className="block text-gray-700 hover:text-gray-900"
-            >
+            <Link href="/contact" className="hover:text-pink transition-colors">
               Contact
             </Link>
-            <Link
-              href="/about"
-              className="block text-gray-700 hover:text-gray-900"
-            >
+            <Link href="/about" className="hover:text-pink transition-colors">
               About Us
             </Link>
-
-            {/* Mobile Sign In, Dashboard, or Logout */}
             {user ? (
               <>
                 <Link
                   href="/dashboard"
-                  className="w-full px-4 py-2 rounded-full text-white text-left"
-                  style={{ backgroundColor: "#886f80" }}
+                  className="w-full px-4 py-2 rounded-full text-white text-center bg-gradient-to-r from-[#886f80] to-[#553a5c] font-medium shadow hover:from-[#553a5c] hover:to-[#886f80] transition-all"
                 >
                   View Dashboard
                 </Link>
                 <button
                   onClick={() => setShowLogoutConfirm(true)}
-                  className="w-full mt-2 px-4 py-2 rounded-full text-[#553a5c] bg-gray-200 text-left"
+                  className="mt-2 px-4 py-2 rounded-full bg-white text-[#553a5c] text-center font-semibold shadow-lg hover:bg-gray-100 transition-all inline-block cursor-pointer w-full"
                 >
                   Logout
                 </button>
@@ -132,8 +123,7 @@ const HubHeader = () => {
             ) : (
               <button
                 onClick={() => setIsShowLogin(true)}
-                className="w-full px-4 py-2 rounded-full text-white text-left"
-                style={{ backgroundColor: "#886f80" }}
+                className="w-full px-4 py-2 rounded-full text-white text-center bg-gradient-to-r from-[#886f80] to-[#553a5c] font-medium shadow hover:from-[#553a5c] hover:to-[#886f80] transition-all"
               >
                 Sign In or Register
               </button>

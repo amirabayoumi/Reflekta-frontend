@@ -8,8 +8,6 @@ const sections = [
     link: "/community-hub/events",
     description:
       "Join us for cultural events, workshops, and meetups to celebrate diversity and foster connections.",
-    stats: "42 upcoming events",
-    bg: "bg-[#bca6c9]",
   },
   {
     imageUrl:
@@ -18,8 +16,6 @@ const sections = [
     link: "/community-hub/help",
     description:
       "Access language assistance, educational guidance, and professional mentorship from community volunteers.",
-    stats: "40+ support services",
-    bg: "bg-[#f7d2d2]",
   },
   {
     imageUrl:
@@ -28,8 +24,6 @@ const sections = [
     link: "/community-hub/stories",
     description:
       "Read inspiring stories from community members and share your own journey.",
-    stats: "108 stories",
-    bg: "bg-[#dad5c7]",
   },
   {
     imageUrl:
@@ -38,8 +32,6 @@ const sections = [
     link: "/community-hub/legal",
     description:
       "Find information on residence permits, family reunification, employment rights, and connect with pro bono legal advisors.",
-    stats: "45+ resources",
-    bg: "bg-[#937195]/25",
   },
 ];
 
@@ -53,10 +45,8 @@ const CommunitySections = () => {
             className="group flex justify-center"
             key={section.title}
           >
-            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-lg h-full w-full max-w-[400px]">
-              <div
-                className={`${section.bg} h-56 relative flex items-center justify-center`}
-              >
+            <div className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 transform group-hover:-translate-y-2 group-hover:shadow-lg h-full w-full max-w-[400px] flex flex-col">
+              <div className={`h-56 relative flex items-center justify-center`}>
                 <Image
                   src={section.imageUrl}
                   alt={section.title}
@@ -65,15 +55,12 @@ const CommunitySections = () => {
                   className="object-cover w-full h-full opacity-80"
                 />
               </div>
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1">
                 <h3 className="text-xl font-semibold text-[#553a5c] mb-2">
                   {section.title}
                 </h3>
-                <p className="text-gray-600">{section.description}</p>
-                <div className="mt-4 flex justify-between items-center">
-                  <span className="text-sm text-[#886f80]">
-                    {section.stats}
-                  </span>
+                <p className="text-gray-600 flex-1">{section.description}</p>
+                <div className="flex justify-end mt-6">
                   <span className="text-[#553a5c] group-hover:underline">
                     Explore →
                   </span>

@@ -51,7 +51,13 @@ const HubFooter = () => (
         </div>
 
         <div className="text-center md:text-left">
-          <h4 className="font-medium mb-4">Community</h4>
+          <Link
+            href="/community-hub"
+            className="hover:text-[#553a5c] transition-colors duration-200"
+          >
+            <h4 className="font-medium mb-4">Community Hub</h4>
+          </Link>
+
           <ul className="space-y-3 text-sm text-white/80">
             <li>
               <Link
@@ -63,10 +69,10 @@ const HubFooter = () => (
             </li>
             <li>
               <Link
-                href="/community-hub/jobs"
+                href="/community-hub/help"
                 className="hover:text-[#553a5c] transition-colors duration-200"
               >
-                Jobs Board
+                Give and Get Help
               </Link>
             </li>
             <li>
@@ -79,10 +85,10 @@ const HubFooter = () => (
             </li>
             <li>
               <Link
-                href="/community-hub/legal-faq"
+                href="/community-hub/legal"
                 className="hover:text-[#553a5c] transition-colors duration-200"
               >
-                Legal FAQ
+                Legal FAQs
               </Link>
             </li>
           </ul>
@@ -116,7 +122,7 @@ const HubFooter = () => (
 
     <div className="border-t border-white/20 py-6 text-center">
       <p className="text-sm md:text-base text-white/60">
-        &copy; 2023 Reflekta. All rights reserved.
+        &copy; {new Date().getFullYear()} Reflekta. All rights reserved.
       </p>
     </div>
   </footer>

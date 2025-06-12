@@ -58,7 +58,12 @@ const Footer = () => {
           </div>
 
           <div className="text-center md:text-left">
-            <h4 className="font-medium mb-4">Community</h4>
+            <Link
+              href="/community-hub"
+              className="hover:text-[#bca6c9] transition-colors duration-200"
+            >
+              <h4 className="font-medium mb-4">Community Hub</h4>
+            </Link>
             <ul className="space-y-3 text-sm text-white/80">
               <li>
                 <Link
@@ -70,10 +75,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/community-hub/jobs"
+                  href="/community-hub/help"
                   className="hover:text-[#bca6c9] transition-colors duration-200"
                 >
-                  Jobs Board
+                  Give and Get Help
                 </Link>
               </li>
               <li>
@@ -86,10 +91,10 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="/community-hub/legal-faq"
+                  href="/community-hub/legal"
                   className="hover:text-[#bca6c9] transition-colors duration-200"
                 >
-                  Legal FAQ
+                  Legal FAQs
                 </Link>
               </li>
             </ul>
@@ -124,7 +129,7 @@ const Footer = () => {
 
       <div className="border-t border-gray-800 py-6 text-center">
         <p className="text-sm md:text-base text-white/60">
-          © 2023 Reflekta. All rights reserved.
+          © {new Date().getFullYear()} Reflekta. All rights reserved.
         </p>
       </div>
     </footer>
