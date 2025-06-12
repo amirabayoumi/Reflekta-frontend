@@ -24,11 +24,12 @@ export default function Home() {
           </div>
 
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-            <h1 className="text-white text-8xl drop-shadow-[0_8px_8px_rgba(0,0,0,0.8)] font-bold">
+            <h1 className="text-white text-7xl sm:text-9xl drop-shadow-[0_8px_8px_rgba(0,0,0,0.8)] font-bold">
               Reflekta
             </h1>
-            <p className="text-white text-2xl mt-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)] mb-5">
-              A platform for sharing, connecting, and reflecting together.
+            <p className="text-white text-xl sm:text-4xl mt-4 drop-shadow-[0_4px_4px_rgba(0,0,0,0.7)] mb-5">
+              Our space is a cultural bridge, a place where local communities
+              and newcomers in Belgium connect, share, and grow together.
             </p>
 
             <Link
@@ -42,23 +43,26 @@ export default function Home() {
           <ArrowButton />
         </main>
       </div>
-      <section id="web-sections" className="min-h-screen bg-black p-8">
-        <h2 className="text-4xl text-pink mt-15 text-center font-alef">
-          One world, Many reflections.
+
+      <section
+        id="web-sections"
+        className="hidden sm:block min-h-screen bg-black p-8"
+      >
+        <h2 className="text-4xl sm:text-5xl text-pink mt-10 text-center font-alef leading-tight">
+          <span className="block sm:inline">One world,</span>
+          <span className="block sm:inline"> Many reflections.</span>
         </h2>
-        <p className="text-white text-2xl mt-4 text-center font-alef">
+        <p className="text-white text-xl sm:text-2xl mt-4 text-center font-alef max-w-xl mx-auto">
           Connect Through Our Sections
         </p>
 
-        <div className=" flex flex-col items-center">
-          <div className="w-full max-w-4xl h-200">
-            {" "}
+        <div className="flex flex-col items-center">
+          <div className="w-full max-w-4xl h-60 sm:h-80 md:h-96">
             <Carousel3D />
           </div>
-
           <div className="flex justify-center space-x-8 mt-6"></div>
         </div>
-      </section>{" "}
+      </section>
       <Footer />
     </>
   );

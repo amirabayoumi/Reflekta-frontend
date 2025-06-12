@@ -10,7 +10,7 @@ export default function About() {
       <main className="bg-gradient-to-br from-purple to-black font-alef text-white">
         <section className="min-h-[50vh] flex items-center px-6 py-12 md:px-12">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-5xl font-bold mb-6 text-center">
+            <h1 className="text-5xl font-bold mb-6 text-center mt-8">
               About Reflekta
             </h1>
             <p className="text-xl text-beige/70 text-center max-w-3xl mx-auto">
