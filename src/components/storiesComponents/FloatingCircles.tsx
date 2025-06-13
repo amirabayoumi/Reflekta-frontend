@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState, useMemo, useRef, useEffect } from "react";
 import type { Story } from "@/types";
+import { slugit } from "@/helper";
 
 interface FloatingCirclesProps {
   stories: Story[];
@@ -308,7 +309,9 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
           onMouseEnter={() => handleMouseEnter(story.id.toString())}
           onMouseLeave={() => handleMouseLeave(story.id.toString())}
         >
-          <Link href={`/community-hub/stories/${story.id}`} key={story.id}>
+          <Link
+            href={`/community-hub/stories/${story.id}/${slugit(story.title)}`}
+          >
             <div className="flex flex-col items-center justify-center p-3 text-center w-full h-full">
               {/* Show author name instead of user ID */}
               <h4
