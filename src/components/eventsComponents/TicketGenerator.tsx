@@ -66,7 +66,16 @@ const TicketGenerator = ({ event }: TicketGeneratorProps) => {
             <p className="text-gray-600">
               Enjoy our free tickets for all community events!
             </p>
-            <Dialog>
+            <Dialog
+              onOpenChange={(open) => {
+                if (open) {
+                  // Reset state when dialog opens
+                  const formData = new FormData();
+                  formData.set("reset", "true");
+                  action(formData);
+                }
+              }}
+            >
               <DialogTrigger>
                 <div className="bg-gradient-to-r from-lavender to-[#9e86a2] text-white px-5 py-2.5 rounded-full flex items-center gap-2.5 hover:from-[#9e86a2] hover:to-lavender shadow-md transition-all duration-300 transform hover:scale-105 font-medium border border-[#ffffff20]">
                   Get Tickets

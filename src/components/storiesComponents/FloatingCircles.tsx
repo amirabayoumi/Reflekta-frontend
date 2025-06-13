@@ -294,7 +294,7 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
           className={`absolute rounded-full bg-white shadow-lg flex items-center justify-center cursor-pointer circle
             ${
               hoveredCircle === story.id.toString()
-                ? "scale-110 z-20 ring-4 ring-[#937195]"
+                ? "scale-110 z-20  shadow-xl shadow-[#bca6c9]/30 "
                 : "scale-100 z-10"
             }
           `}

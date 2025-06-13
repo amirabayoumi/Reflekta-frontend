@@ -5,14 +5,17 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   ReactNode,
 } from "react";
-import { fetchUserData } from "@/queries";
-import type { UserData } from "@/types";
+import { fetchUserData, fetchUserComments, fetchUserStories } from "@/queries";
+import type { UserData, StoryComment, Story } from "@/types";
 
 // Define the shape of your auth context
 export interface AuthContextType {
   user: UserData | null;
+  userStories?: Story[] | null;
+  userComments?: StoryComment[] | null;
   token: string | null;
   isLoading: boolean;
   error: string | null;
@@ -36,16 +39,44 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// Use secret from environment variable
+const SECRET = process.env.NEXT_PUBLIC_TOKEN_SECRET || "default_secret";
+
+// Simple XOR "encryption" with base64 for reversible encoding (not secure for production)
+function xorEncryptDecrypt(input: string, secret: string): string {
+  let output = "";
+  for (let i = 0; i < input.length; i++) {
+    output += String.fromCharCode(
+      input.charCodeAt(i) ^ secret.charCodeAt(i % secret.length)
+    );
+  }
+  return output;
+}
+
+function encodeToken(token: string): string {
+  const xored = xorEncryptDecrypt(token, SECRET);
+  return btoa(xored);
+}
+
+function decodeToken(encoded: string): string {
+  const xored = atob(encoded);
+  return xorEncryptDecrypt(xored, SECRET);
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<UserData | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [userStories, setUserStories] = useState<Story[] | null>(null);
+  const [userComments, setUserComments] = useState<StoryComment[] | null>(null);
 
   // Memoize the refreshUserData function to prevent unnecessary re-renders
   const refreshUserData = useCallback(async () => {
     if (!token) {
       setUser(null);
+      setUserStories(null);
+      setUserComments(null);
       setIsLoading(false);
       return;
     }
@@ -55,68 +86,96 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setError(null);
       const userData = await fetchUserData(token);
       setUser(userData);
+      if (userData) {
+        const userId = userData.id;
+        const [stories, comments] = await Promise.all([
+          fetchUserStories(userId, token),
+          fetchUserComments(userId, token),
+        ]);
+        setUserStories(stories);
+        setUserComments(comments);
+      }
     } catch (err) {
       console.error("Failed to refresh user data:", err);
       setError("Failed to load user data");
       setUser(null);
+      setUserStories(null);
+      setUserComments(null);
     } finally {
       setIsLoading(false);
     }
-  }, [token]); // Only depend on token
+  }, [token]);
 
-  // Load token from localStorage on mount
+  // Encapsulate token and localStorage logic (now with hashing)
+  const updateToken = useCallback((newToken: string | null) => {
+    setToken(newToken);
+    try {
+      if (newToken) {
+        const encoded = encodeToken(newToken);
+        localStorage.setItem("auth_token_encoded", encoded);
+      } else {
+        localStorage.removeItem("auth_token_encoded");
+      }
+    } catch (e) {
+      console.error("localStorage error:", e);
+    }
+  }, []);
+
+  // Load token from localStorage on mount (decode if present)
   useEffect(() => {
     try {
-      const storedToken = localStorage.getItem("auth_token");
-      if (storedToken) {
-        setToken(storedToken);
+      const encoded = localStorage.getItem("auth_token_encoded");
+      if (encoded) {
+        const decoded = decodeToken(encoded);
+        setToken(decoded);
+      } else {
+        setIsLoading(false);
       }
     } catch (e) {
       console.error("Error accessing localStorage:", e);
-    } finally {
-      if (!token) {
-        setIsLoading(false); // Ensure we're not loading forever if no token
-      }
+      setIsLoading(false);
     }
-  }, []); // Empty dependency array since this should only run on mount
+  }, []);
 
   // Fetch user data whenever token changes
   useEffect(() => {
     if (token) {
       refreshUserData();
-      try {
-        localStorage.setItem("auth_token", token);
-      } catch (e) {
-        console.error("Error saving to localStorage:", e);
-      }
     }
-  }, [token, refreshUserData]); // Include refreshUserData in dependencies
+  }, [token, refreshUserData]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     setUser(null);
-    setToken(null);
-    // Clear from localStorage too
-    try {
-      localStorage.removeItem("auth_token");
-    } catch (e) {
-      console.error("Error removing from localStorage:", e);
-    }
-  };
+    setUserStories(null);
+    setUserComments(null);
+    updateToken(null);
+  }, [updateToken]);
 
-  // Load user data on initial mount
-  useEffect(() => {
-    refreshUserData();
-  }, [refreshUserData]); // Include refreshUserData in dependencies
-
-  const value = {
-    user,
-    token,
-    isLoading,
-    error,
-    setToken,
-    logout,
-    refreshUserData,
-  };
+  // Memoize context value to avoid unnecessary re-renders
+  const value = useMemo(
+    () => ({
+      user,
+      userStories,
+      userComments,
+      token,
+      isLoading,
+      error,
+      setToken: updateToken,
+      logout,
+      refreshUserData,
+    }),
+    [
+      user,
+      userStories,
+      userComments,
+      token,
+      isLoading,
+      error,
+      updateToken,
+      logout,
+      refreshUserData,
+    ]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

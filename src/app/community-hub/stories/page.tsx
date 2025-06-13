@@ -60,17 +60,18 @@ export default async function StoriesPage() {
       <div className="container mx-auto px-4 py-6">
         {transformedStories.length > 0 ? (
           <>
-     
+            <div className="text-center mb-8 text-2xl font-bold text-[#553a5c]">
+              Stories float around us, arriving without our choosing just like
+              the people we meet by chance in life.
+            </div>
             <div className="mb-4 text-center">
               <AddStory />
             </div>
 
-           
             <div className="relative w-full h-[60vh] mb-8 hidden md:block">
               <FloatingCircles stories={transformedStories} />
             </div>
 
-           
             <div className="md:hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                 {transformedStories.map((story) => (

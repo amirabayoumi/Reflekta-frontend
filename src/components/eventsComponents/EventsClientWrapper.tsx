@@ -124,17 +124,17 @@ export default function EventsClientWrapper({
   // Extract just the cities for the location filter
   const belgianCities = [
     // Flatten the nested structure to get just the city names
-    "Antwerpen",
+    "Antwerp",
     "Gent",
     "Leuven",
     "Brugge",
-    "Mechelen", // Vlaanderen
+    "Mechelen",
     "Liège",
     "Namur",
     "Charleroi",
     "Mons",
-    "Spa", // Wallonia
-    "Brussels", // Brussels
+    "Spa",
+    "Brussels",
   ];
 
   return (

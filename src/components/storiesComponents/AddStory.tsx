@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function ShareStoryButton() {
   const initialState = { type: "", message: "" };
+
   const { user } = useAuth();
 
   const [state, action, isPending] = useActionState(
@@ -36,10 +37,19 @@ export default function ShareStoryButton() {
   }
 
   return (
-    <Dialog>
+    <Dialog
+      onOpenChange={(open) => {
+        if (open) {
+          // Reset state when dialog opens
+          const formData = new FormData();
+          formData.set("reset", "true");
+          action(formData);
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="bg-[#553a5c] hover:bg-[#937195] text-white">
-          Share Story
+          Let Your Story Float
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
