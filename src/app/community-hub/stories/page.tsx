@@ -2,6 +2,7 @@ import FloatingCircles from "@/components/storiesComponents/FloatingCircles";
 import Link from "next/link";
 import { Story } from "@/types";
 import AddStory from "@/components/storiesComponents/AddStory";
+import { slugit } from "@/helper";
 
 // Helper to format dates
 const formatDate = (dateString: string) => {
@@ -77,7 +78,7 @@ export default async function StoriesPage() {
                 {transformedStories.map((story) => (
                   <Link
                     key={story.id}
-                    href={`/community-hub/stories/${story.id}`}
+                    href={`/community-hub/stories/${story.id}/${slugit(story.title)}`}
                     className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
                   >
                     <div className="p-4">
