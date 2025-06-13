@@ -9,7 +9,6 @@ import {
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
 
-
 // Change the environment variable reference
 const AUTH_TOKEN = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
@@ -113,33 +112,26 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
 
 
 
+// Use fetch instead of axios and add a Next.js cache tag for revalidation
 export const fetchUserData = async (token?: string): Promise<UserData | null> => {
   try {
     if (!token) {
-      // Do not throw error, just log and return null
       console.warn("No token provided to fetchUserData");
       return null;
     }
-    const response = await axios.get("https://inputoutput.be/api/user", {
+    const res = await fetch("https://inputoutput.be/api/user", {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      httpsAgent: httpsAgent,
+      next: { tags: ["user-data"] },
     });
-    if (response.status !== 200) return null;
-    console.log("User data fetched successfully:", response.data);
-    return response.data;
-
+    if (!res.ok) return null;
+    const data = await res.json();
+    console.log("User data fetched successfully:", data);
+    return data;
   } catch (error) {
     console.error("Error fetching user data:", error);
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error details:", {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        responseData: error.response?.data,
-      });
-    }
     return null;
   }
 };
@@ -199,20 +191,7 @@ export function downloadPdfBlob(blob: Blob, filename = "ticket.pdf"): void {
 
 
 
-//   try {
-//     const response = await axios.get(`https://inputoutput.be/api/stories/${id}`, {
-//       headers: getHeaders(),
-//       httpsAgent: httpsAgent,
-//     });
-//     if (response.status !== 200) {
-//       throw new Error(`API Error: ${response.status}`);
-//     }
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching story by ID:", error);
-//     return undefined;
-//   }
-// };
+
 type NewStoryData = {
   title: string;
   content: string;
@@ -279,5 +258,153 @@ export const addCommentToStory = async (
   } catch (error) {
     console.error("Error adding comment to story:", error);
     return null;
+  }
+};
+
+
+// userDashboard fetch async functions
+
+export const fetchUserStories = async (id: number, token: string): Promise<Story[] | null> => {
+  try {
+    const res = await fetch(
+      `https://inputoutput.be/api/users/${id}/stories`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        // Add a tag for Next.js cache revalidation
+        next: { tags: ["user-stories"] },
+      }
+    );
+    if (!res.ok) return null;
+    // Optionally revalidate after mutation elsewhere:
+    // revalidateTag("user-stories");
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching user stories:", error);
+    return null;
+  }
+};
+
+export const fetchUserComments = async (id: number, token: string): Promise<StoryCommentResponse[] | null> => {
+  try {
+    const res = await fetch(
+      `https://inputoutput.be/api/users/${id}/comments`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        next: { tags: ["user-comments"] },
+      }
+    );
+    if (!res.ok) return null;
+    // Optionally revalidate after mutation elsewhere:
+    // revalidateTag("user-comments");
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching user comments:", error);
+    return null;
+  }
+};
+
+
+interface editStoryData {
+  title: string;
+  content: string;
+}
+//edit story
+export const editStory = async (id: number, storyData: editStoryData, token: string): Promise<Story | null> => {
+  try {
+    const response = await axios.put(`https://inputoutput.be/api/stories/${id}`, storyData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      httpsAgent: httpsAgent,
+    });
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error editing story:", error);
+    return null;
+  }
+}
+
+
+// delete story
+export const deleteStory = async (id: number, token: string): Promise<boolean> => {
+  try {
+    const response = await axios.delete(`https://inputoutput.be/api/stories/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      httpsAgent: httpsAgent,
+    });
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    return false;
+  }
+}
+
+// Edit comment
+export const editComment = async (
+  commentId: number,
+  commentData: { content: string },
+  token: string
+): Promise<StoryCommentResponse | null> => {
+  try {
+    const response = await axios.put(
+      `https://inputoutput.be/api/comments/${commentId}`,
+      commentData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        httpsAgent: httpsAgent,
+      }
+    );
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return response.data;
+  } catch (error) {
+    console.error("Error editing comment:", error);
+    return null;
+  }
+};
+
+// Delete comment
+export const deleteComment = async (
+  commentId: number,
+  token: string
+): Promise<boolean> => {
+  try {
+    const response = await axios.delete(
+      `https://inputoutput.be/api/comments/${commentId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        httpsAgent: httpsAgent,
+      }
+    );
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return true;
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    return false;
   }
 };

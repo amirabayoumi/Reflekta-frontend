@@ -30,7 +30,7 @@ export default async function EventsPage() {
     const response: Response = await fetch(
       "https://inputoutput.be/api/events",
       {
-        next: { revalidate: 3600 },
+        next: { revalidate: 60 },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
@@ -63,7 +63,7 @@ export default async function EventsPage() {
     const response: Response = await fetch(
       "https://inputoutput.be/api/categories",
       {
-        next: { revalidate: 3600 },
+        next: { revalidate: 60 },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,

@@ -2,7 +2,7 @@
 
 
 import {  revalidateTag } from "next/cache";
-import { getTicketPdf, addNewStory, addCommentToStory } from "./queries";
+import { getTicketPdf, addNewStory, addCommentToStory, editStory, deleteStory, editComment, deleteComment } from "./queries";
 
 type initialStateType = {
   type: string;
@@ -12,6 +12,11 @@ type initialStateType = {
 
 export async function downloadTicket(initialState: initialStateType , formData: FormData) {
   try {
+
+if (formData.get("reset") === "true") {
+    return { type: "", message: "", pdfData: "" }; // Return initial state
+  }
+
     const eventName = formData.get("eventname") as string;
     const numberOfAdults = Number(formData.get("numberOfAdults") || 1);
     
@@ -54,6 +59,11 @@ type initialStoryStateType = {
 
 export async function addNewStoryAction(initialState: initialStoryStateType, formData: FormData) {
   try {
+
+
+     if (formData.get("reset") === "true") {
+    return { message: "", type: "" }; // Return initial state
+  }
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const userId = formData.get("userId") as string;
@@ -72,9 +82,11 @@ export async function addNewStoryAction(initialState: initialStoryStateType, for
       content: content,
       user_id: parseInt(userId),
     });
+
+
     
 
-    return { type: "success", message: "Story added successfully!" };
+    return { type: "success", message: "Story added successfully! Admin will review it first and shortly publish it." };
   } catch (error) {
     console.error("Error adding new story:", error);
     return { type: "error", message: "Failed to add story." };
@@ -115,5 +127,145 @@ export async function addCommentToStoryAction(
   } catch (error) {
     console.error("Error adding comment:", error);
     return { type: "error", message: "Failed to add comment." };
+  }
+}
+
+
+
+export async function editStoryAction(
+  initialState: initialStoryStateType,
+  formData: FormData
+) {
+  try {
+    const storyId = formData.get("storyId") as string;
+    const title = formData.get("title") as string;
+    const content = formData.get("content") as string;
+    const token = formData.get("token") as string;
+
+    const stroyData = {
+      title: title,
+      content: content,
+    };
+    // Validate inputs
+    if (!storyId || !title || !content) {
+      return { type: "error", message: "All fields are required." };
+    }
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+    // Call the query to edit the story
+    await editStory(
+      parseInt(storyId),
+      stroyData,
+      token
+    );
+
+    // Revalidate both tags
+    revalidateTag("story");
+    revalidateTag("user-stories"); // Add this to update user's stories list
+
+    return { type: "success", message: "Story edited successfully!" };
+  } catch (error) {
+    console.error("Error editing story:", error);
+    return { type: "error", message: "Failed to edit story." };
+  }
+}
+
+
+
+export async function deleteStoryAction(
+  initialState: initialStoryStateType,
+  formData: FormData
+) {
+  try {
+    const storyId = formData.get("storyId") as string;
+    const token = formData.get("token") as string;
+
+    // Validate inputs
+    if (!storyId) {
+      return { type: "error", message: "Story ID is required." };
+    }
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+
+    // Call the query to delete the story
+    await deleteStory(parseInt(storyId), token);
+
+    // Revalidate both tags
+    revalidateTag("story");
+    revalidateTag("user-stories"); // Add this to update user's stories list
+
+    return { type: "success", message: "Story deleted successfully!" };
+  } catch (error) {
+    console.error("Error deleting story:", error);
+    return { type: "error", message: "Failed to delete story." };
+  }
+}
+
+export async function editCommentAction(
+  initialState: initialStoryStateType,
+  formData: FormData
+) {
+  try {
+    const commentId = formData.get("commentId") as string;
+    const content = formData.get("content") as string;
+    const token = formData.get("token") as string;
+
+    if (!commentId || !content) {
+      return { type: "error", message: "All fields are required." };
+    }
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+
+    const result = await editComment(
+      parseInt(commentId),
+      { content },
+      token
+    );
+
+    if (!result) {
+      return { type: "error", message: "Failed to edit comment." };
+    }
+
+    revalidateTag("story");
+    revalidateTag("user-comments"); // Add this to update user's comments list
+
+    return { type: "success", message: "Comment edited successfully!" };
+  } catch (error) {
+    console.error("Error editing comment:", error);
+    return { type: "error", message: "Failed to edit comment." };
+  }
+}
+
+export async function deleteCommentAction(
+  initialState: initialStoryStateType,
+  formData: FormData
+) {
+  try {
+    const commentId = formData.get("commentId") as string;
+    const token = formData.get("token") as string;
+
+    if (!commentId) {
+      return { type: "error", message: "Comment ID is required." };
+    }
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+
+    const result = await deleteComment(parseInt(commentId), token);
+
+    if (!result) {
+      return { type: "error", message: "Failed to delete comment." };
+    }
+
+    revalidateTag("story");
+    revalidateTag("user-comments"); // Add this to update user's comments list
+    
+    return { type: "success", message: "Comment deleted successfully!" };
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    return { type: "error", message: "Failed to delete comment." };
   }
 }
