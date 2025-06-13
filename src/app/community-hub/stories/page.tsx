@@ -78,7 +78,9 @@ export default async function StoriesPage() {
                 {transformedStories.map((story) => (
                   <Link
                     key={story.id}
-                    href={`/community-hub/stories/${story.id}/${slugit(story.title)}`}
+                    href={`/community-hub/stories/${story.id}/${slugit(
+                      story.title
+                    )}`}
                     className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
                   >
                     <div className="p-4">
@@ -130,9 +132,3 @@ export default async function StoriesPage() {
   );
 }
 
-//genrate ssg
-export async function generateStaticParams() {
-  const response = await fetch("https://inputoutput.be/api/stories");
-  const data = await response.json();
-  return data.map((story: Story) => ({ id: String(story.id) }));
-}
