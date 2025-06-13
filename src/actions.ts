@@ -3,6 +3,7 @@
 
 import {  revalidateTag } from "next/cache";
 import { getTicketPdf, addNewStory, addCommentToStory, editStory, deleteStory, editComment, deleteComment } from "./queries";
+// import { redirect } from "next/navigation";
 
 type initialStateType = {
   type: string;
@@ -121,7 +122,7 @@ export async function addCommentToStoryAction(
 
 
     // Revalidate the path tags: ["story"]
-    revalidateTag("story");
+    revalidateTag("stories");
 
     return { type: "success", message: "Comment added successfully!" };
   } catch (error) {
@@ -162,6 +163,7 @@ export async function editStoryAction(
 
     // Revalidate both tags
     revalidateTag("story");
+    revalidateTag("stories");
     revalidateTag("user-stories"); // Add this to update user's stories list
 
     return { type: "success", message: "Story edited successfully!" };
@@ -193,14 +195,16 @@ export async function deleteStoryAction(
     await deleteStory(parseInt(storyId), token);
 
     // Revalidate both tags
-    revalidateTag("story");
-    revalidateTag("user-stories"); // Add this to update user's stories list
+    revalidateTag("stories");
+ 
 
-    return { type: "success", message: "Story deleted successfully!" };
+    return({ type: "success", message: "Story deleted successfully!" });
+
   } catch (error) {
     console.error("Error deleting story:", error);
     return { type: "error", message: "Failed to delete story." };
   }
+
 }
 
 export async function editCommentAction(

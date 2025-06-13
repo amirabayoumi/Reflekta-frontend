@@ -6,6 +6,10 @@ import ShareButton from "@/components/storiesComponents/ShareButton";
 import type { Story, StoryComment } from "@/types";
 import type { Metadata } from "next";
 import { slugit } from "@/helper";
+import EditStory from "@/components/userDashboardComponent/EditStory";
+import DeleteStory from "@/components/userDashboardComponent/DeleteStory";
+import DeleteComment from "@/components/userDashboardComponent/DeleteComment";
+import EditComment from "@/components/userDashboardComponent/EditComment";
 
 type PageParams = {
   id: string;
@@ -76,7 +80,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
     },
-    next: { revalidate: 3600, tags: ["story"] }, // Revalidate every hour
+    next: { tags: ["story"] }, // Revalidate every hour
   });
 
   if (!resp.ok) {
@@ -136,7 +140,10 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
           <span className="font-medium">{storyAuthor}</span>
         </div>
       </div>
-
+      <div className="flex justify-end space-x-2 p-4 bg-gray-50 border-b border-gray-200">
+        <EditStory story={story} />
+        <DeleteStory story={story} />
+      </div>
       {/* Story content */}
       <div className="p-6 md:p-8">
         <div className="flex flex-wrap items-center text-sm text-gray-600 mb-8 gap-5 border-b border-gray-100 pb-5">
@@ -196,6 +203,10 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
                     </div>
                   </div>
                   <p className="text-gray-700">{comment.content}</p>
+                  <div className="mt-4 flex justify-end space-x-2">
+                    <DeleteComment comment={comment} />
+                    <EditComment comment={comment} />
+                  </div>
                 </div>
               );
             })}
