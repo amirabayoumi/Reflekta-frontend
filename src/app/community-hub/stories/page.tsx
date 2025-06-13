@@ -34,7 +34,7 @@ export default async function StoriesPage() {
     const response: Response = await fetch(
       "https://inputoutput.be/api/stories",
       {
-        next: { revalidate: 60 },
+        next: { tags: ["stories"] },
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,
@@ -131,4 +131,3 @@ export default async function StoriesPage() {
     </div>
   );
 }
-
