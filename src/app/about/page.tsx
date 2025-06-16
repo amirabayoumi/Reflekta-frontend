@@ -14,9 +14,11 @@ export default function About() {
               About Reflekta
             </h1>
             <p className="text-xl text-beige/70 text-center max-w-3xl mx-auto">
-              Reflekta is a cultural bridge — a space where locals and newcomers
-              in Belgium connect, share, and grow through creativity and
-              community.
+              Reflekta is more than a platform, it&apos;s a bridge between
+              cultures. We help newcomers and locals in Belgium understand each
+              other by celebrating differences, sharing stories, and creating
+              real human connection. Because true integration starts with
+              empathy.
             </p>
           </div>
         </section>
@@ -48,9 +50,9 @@ export default function About() {
                   <h3 className="text-2xl font-bold mb-3">Our Vision</h3>
                 </div>
                 <p className="text-beige/80">
-                  We envision a world where shared stories and opportunities
-                  help people from all walks of life feel seen, heard, and
-                  connected.
+                  We envision a world where cultural differences are not
+                  barriers but bridges, where stories help us listen better,
+                  connect deeper, and grow together.
                 </p>
               </div>
 
@@ -64,7 +66,7 @@ export default function About() {
                 </div>
                 <p className="text-beige/80">
                   Diversity, empathy, creativity, and collaboration guide
-                  everything we do — online and in real life.
+                  everything we do online and in real life.
                 </p>
               </div>
             </div>
@@ -77,18 +79,23 @@ export default function About() {
               <div>
                 <h2 className="text-3xl font-bold mb-6">Our Story</h2>
                 <p className="text-beige/70 mb-4">
-                  Reflekta began as a grassroots initiative during a time of
-                  disconnection. Our goal: to connect people across backgrounds
-                  in Belgium through culture and collaboration.
+                  Reflekta was born from a deep need to bridge cultural
+                  misunderstandings especially the gap between individualistic
+                  and collectivistic values that often define Belgian society
+                  and migrant communities. What started as grassroots dialogue
+                  has grown into a digital movement.
                 </p>
                 <p className="text-beige/70 mb-4">
-                  From small meetups to a growing digital platform, we’ve
-                  created a space where stories, ideas, and opportunities are
-                  exchanged freely.
+                  We believe that stories are the most powerful way to
+                  understand one another. Through shared experiences, we open
+                  minds, challenge assumptions, and bring people closer. Every
+                  story on Reflekta is a window into a world an invitation to
+                  connect.
                 </p>
                 <p className="text-beige/70">
-                  Today, Reflekta continues to grow — grounded in inclusion,
-                  shaped by our community, and powered by shared purpose.
+                  Reflekta continues to grow as a community-powered platform
+                  where respect, inclusion, and curiosity guide the journey
+                  toward mutual understanding.
                 </p>
               </div>
               <div className="relative h-80 w-full rounded-xl overflow-hidden">
@@ -108,25 +115,51 @@ export default function About() {
             <h2 className="text-3xl font-bold mb-10 text-center">
               Meet Our Team
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((member) => (
-                <div key={member} className="bg-gray-200/10 p-6 rounded-xl">
-                  <div className="relative h-64 w-full mb-4 rounded-lg overflow-hidden">
+            <div className="flex justify-center">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl">
+                <div className="bg-gray-200/10 p-6 rounded-xl">
+                  <div className="relative w-full mb-4 rounded-lg overflow-hidden aspect-[1/1.2]">
                     <Image
-                      src="https://res.cloudinary.com/djuqnuesr/image/upload/v1746640579/R_4_jz8tja.png"
-                      alt={`Team member ${member}`}
+                      src="/picofme.png"
+                      alt="Team member 1"
                       fill
                       className="object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-bold">Team Member {member}</h3>
-                  <p className="text-sm text-beige/70 mb-3">Position / Role</p>
+                  <h3 className="text-xl font-bold">Amira Bayoumi</h3>
+                  <p className="text-sm text-beige/70 mb-3">Lead Developer</p>
                   <p className="text-beige/80">
-                    Dedicated to empowering people from all cultures through
-                    creative collaboration and inclusive digital spaces.
+                    Amira is the driving force behind Reflekta&apos;s digital
+                    experience designing and developing the entire platform from
+                    the ground up. From UX design to front-end and back-end
+                    development, she brings the concept to life through clean
+                    code, inclusive design, and a deep commitment to building
+                    real cultural connections online.
                   </p>
                 </div>
-              ))}
+
+                <div className="bg-gray-200/10 p-6 rounded-xl">
+                  <div className="relative w-full mb-4 rounded-lg overflow-hidden aspect-[1/1.2]">
+                    <Image
+                      src="/picofmeyy.png"
+                      alt="Team member 2"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold">Yasmin Bayoumi</h3>
+                  <p className="text-sm text-beige/70 mb-3">
+                    Project Visionary
+                  </p>
+                  <p className="text-beige/80">
+                    Yasmin sparked the original idea for Reflekta envisioning a
+                    space where cultural diversity is celebrated through
+                    storytelling and dialogue. Her concept laid the foundation
+                    for the platform&apos;s core themes of inclusion, empathy,
+                    and human connection across cultures.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
