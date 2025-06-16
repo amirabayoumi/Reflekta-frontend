@@ -4,6 +4,24 @@ import Link from "next/link";
 import Header from "@/components/homeComponents/Header";
 import Footer from "../components/homeComponents/Footer";
 import Carousel3D from "../components/homeComponents/Carousel3D";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Reflekta",
+  description: "Reflekta - A Cultural Bridge in Belgium",
+  openGraph: {
+    title: "Reflekta",
+    description: "Reflekta - A Cultural Bridge in Belgium",
+    siteName: "Reflekta",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        width: 1200,
+        height: 630,
+        alt: "Reflekta Background",
+      },
+    ],
+  },
+};
 
 export default function Home() {
   return (

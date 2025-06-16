@@ -8,6 +8,25 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Legal FAQ - Community Hub | Reflekta",
+  description:
+    "Find answers to common legal questions related to immigration and residency in Belgium.",
+  openGraph: {
+    title: "Legal FAQ - Community Hub | Reflekta",
+    description:
+      "Find answers to common legal questions related to immigration and residency in Belgium.",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        width: 1200,
+        height: 630,
+        alt: "Legal FAQ - Community Hub",
+      },
+    ],
+  },
+};
 
 interface FAQItem {
   id: string;
