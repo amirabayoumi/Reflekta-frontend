@@ -17,18 +17,18 @@ import { StoryComment } from "@/types";
 
 const EditComment = ({ comment }: { comment: StoryComment }) => {
   const { user, token } = useAuth();
-
+  console.log(user);
   const initialState = { type: "", message: "" };
   const [editState, editAction, isEditPending] = useActionState(
     editCommentAction,
     initialState
   );
 
-  if (!user || !comment ) {
+  if (!user || (user.id !== comment.user_id && !user.is_admin)) {
     console.warn(
       "User not authorized to edit this comment or no comments available"
     );
-    return null; 
+    return null;
   }
 
   return (

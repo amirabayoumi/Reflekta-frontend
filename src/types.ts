@@ -77,6 +77,7 @@ export interface UserData {
   id: number;
   name: string;
   email: string;
+  is_admin: number;
   email_verified_at: string | null;
   two_factor_secret: string | null;
   two_factor_recovery_codes: string | null;

@@ -25,7 +25,7 @@ const DeleteStory = ({ story }: { story: Story }) => {
   );
   const { user, token } = useAuth();
 
-  if (!user || user.id !== story.user_id) {
+  if (!user || (user.id !== story.user_id && !user.is_admin)) {
     console.warn("User not authorized to delete this story");
     return null; // Don't render if user is not logged in or doesn't own the story
   }
