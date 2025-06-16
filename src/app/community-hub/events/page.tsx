@@ -22,10 +22,15 @@ export const metadata: Metadata = {
 
 const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
+type SearchParams = {
+  location?: string;
+  category?: string;
+};
+
 export default async function EventsPage({
   searchParams,
 }: {
-  searchParams: { location?: string; category?: string };
+  searchParams: SearchParams;
 }) {
   let eventsData: EventData[] = [];
   let categoryData: CategoryData[] = [];
@@ -114,9 +119,7 @@ export default async function EventsPage({
     start_date: event.start_date,
     end_date: event.end_date,
     organizer: event.organizer,
-    categories: Array.isArray(event.categories)
-      ? event.categories
-      : [],
+    categories: Array.isArray(event.categories) ? event.categories : [],
     created_at: event.created_at,
     updated_at: event.updated_at,
   }));
