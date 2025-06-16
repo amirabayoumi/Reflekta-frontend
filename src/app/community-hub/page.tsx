@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     description: "Explore the community hub for events, stories, and more.",
     images: [
       {
-        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1746640579/R_4_jz8tja.png",
         width: 1200,
         height: 630,
       },
