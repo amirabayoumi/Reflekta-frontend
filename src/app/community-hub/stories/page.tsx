@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: "Reflekta",
     images: [
       {
-        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1746640579/R_4_jz8tja.png",
         width: 1000,
         height: 1000,
         alt: "Community Hub Stories",
