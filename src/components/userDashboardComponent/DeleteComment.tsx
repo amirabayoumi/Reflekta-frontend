@@ -26,7 +26,7 @@ const DeleteComment = ({ comment }: { comment: StoryComment }) => {
     initialState
   );
 
-  if (!user || user.id !== comment.user_id) {
+  if (!user || (user.id !== comment.user_id && !user.is_admin)) {
     console.warn("User not authorized to delete this comment");
     return null; // Don't render if user is not logged in or doesn't own the comment
   }
