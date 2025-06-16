@@ -42,7 +42,7 @@ export type FormatedEvent = {
   start_date: string;
   end_date: string;
   organizer: string;
-  categories: string[];
+  categories: CategoryData[];
   created_at: string;
   updated_at: string;
 };

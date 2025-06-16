@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   MapPin,
@@ -14,47 +14,15 @@ import "leaflet/dist/leaflet.css";
 import type { CategoryData, EventData, FormatedEvent } from "@/types";
 import ReusableMap from "@/components/eventsComponents/ReusableMap";
 import { slugit } from "@/helper";
+import { useRouter, usePathname } from "next/navigation";
 
 interface EventsClientWrapperProps {
   initialEvents: FormatedEvent[];
-  categories: CategoryData[]; // loosely typed for API flexibility
-  locations: (number | string)[];
+  categories: CategoryData[];
+  locations: string[];
+  initialLocationFilter?: string;
+  initialCategoryFilter?: string;
 }
-
-// Filter events based on current filter state
-const filterEvents = (
-  events: EventData[],
-  category: string,
-  location: string,
-  query: string
-) => {
-  return events.filter((event) => {
-    const matchesCategory =
-      category === "all" ||
-      event.categories.some((cat: CategoryData | string) =>
-        typeof cat === "string" ? cat === category : cat.name === category
-      );
-
-    // More precise city matching - check for city name at the beginning or after a comma
-    const matchesLocation =
-      location === "all" ||
-      (event.location &&
-        (event.location.toLowerCase() === location.toLowerCase() || // Exact match
-          event.location
-            .toLowerCase()
-            .startsWith(location.toLowerCase() + ",") || // City at start
-          event.location
-            .toLowerCase()
-            .includes(", " + location.toLowerCase()))); // City after comma
-
-    const matchesQuery =
-      !query ||
-      event.title.toLowerCase().includes(query.toLowerCase()) ||
-      event.description?.toLowerCase().includes(query.toLowerCase());
-
-    return matchesCategory && matchesLocation && matchesQuery;
-  });
-};
 
 // Format date for display
 const formatDate = (dateString: string | number | Date) => {
@@ -79,10 +47,20 @@ const getMapCenter = (events: EventData[]): [number, number] => {
 export default function EventsClientWrapper({
   initialEvents,
   categories = [],
+  initialLocationFilter,
+  initialCategoryFilter,
 }: EventsClientWrapperProps) {
-  const [category, setCategory] = useState("all");
-  const [location, setLocation] = useState("all");
-  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // State for filters
+  const [locationFilter, setLocationFilter] = useState<string | undefined>(
+    initialLocationFilter || "all"
+  );
+  const [categoryFilter, setCategoryFilter] = useState<string | undefined>(
+    initialCategoryFilter || "all"
+  );
+  const [searchQuery, setSearchQuery] = useState("");
   const [mapExpanded, setMapExpanded] = useState(true);
   const [mapKey, setMapKey] = useState(0);
 
@@ -94,36 +72,8 @@ export default function EventsClientWrapper({
       }))
     : [{ id: 1, name: "General" }];
 
-  const filteredEvents = filterEvents(
-    initialEvents.map((event) => ({
-      ...event,
-      categories: (event.categories as (CategoryData | string)[]).map(
-        (cat, index) =>
-          typeof cat === "string"
-            ? {
-                id: index, // Use a number for id to match CategoryData type
-                name: cat,
-                created_at: "",
-                updated_at: "",
-              } // Ensure unique key for string categories
-            : { ...cat, id: typeof cat.id === "number" ? cat.id : index } // Ensure id is a number
-      ),
-    })),
-    category,
-    location,
-    query
-  );
-
-  const toggleMap = () => {
-    setMapExpanded(!mapExpanded);
-    if (!mapExpanded) {
-      setTimeout(() => setMapKey((prev) => prev + 1), 100);
-    }
-  };
-
   // Extract just the cities for the location filter
   const belgianCities = [
-    // Flatten the nested structure to get just the city names
     "Antwerp",
     "Gent",
     "Leuven",
@@ -136,6 +86,64 @@ export default function EventsClientWrapper({
     "Spa",
     "Brussels",
   ];
+
+  // Filter events based on current filter state
+  const filteredEvents = initialEvents.filter((event) => {
+    const matchesCategory =
+      categoryFilter === "all" ||
+      event.categories.some((cat) =>
+        typeof cat === "string"
+          ? cat === categoryFilter
+          : cat.name === categoryFilter
+      );
+
+    // More precise city matching - check for city name at the beginning or after a comma
+    const matchesLocation =
+      locationFilter === "all" ||
+      (event.location &&
+        (event.location.toLowerCase() === locationFilter?.toLowerCase() || // Exact match
+          event.location
+            .toLowerCase()
+            .startsWith(locationFilter?.toLowerCase() + ",") || // City at start
+          event.location
+            .toLowerCase()
+            .includes(", " + locationFilter?.toLowerCase()))); // City after comma
+
+    const matchesQuery =
+      !searchQuery ||
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesCategory && matchesLocation && matchesQuery;
+  });
+
+  const toggleMap = () => {
+    setMapExpanded(!mapExpanded);
+    if (!mapExpanded) {
+      setTimeout(() => setMapKey((prev) => prev + 1), 100);
+    }
+  };
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (locationFilter && locationFilter !== "all") {
+      params.set("location", locationFilter);
+    }
+
+    if (categoryFilter && categoryFilter !== "all") {
+      params.set("category", categoryFilter);
+    }
+
+    const queryString = params.toString();
+    const url = queryString
+      ? `${String(pathname)}?${queryString}`
+      : String(pathname);
+
+    // Use replace to avoid creating new history entries for every filter change
+    router.replace(url, { scroll: false });
+  }, [locationFilter, categoryFilter, pathname, router]);
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -152,8 +160,8 @@ export default function EventsClientWrapper({
               type="text"
               placeholder="Search events..."
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
 
@@ -161,8 +169,8 @@ export default function EventsClientWrapper({
           <div className="flex items-center">
             <Filter size={20} className="text-gray-500 mr-2" />
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)} // THIS LINE WAS WRONG
               className="py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
             >
               <option value="all">All Categories</option>
@@ -178,8 +186,8 @@ export default function EventsClientWrapper({
           <div className="flex items-center">
             <MapPin size={20} className="text-gray-500 mr-2" />
             <select
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
               className="py-3 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
             >
               <option value="all">All Locations</option>
@@ -299,9 +307,9 @@ export default function EventsClientWrapper({
             </p>
             <button
               onClick={() => {
-                setCategory("all");
-                setLocation("all");
-                setQuery("");
+                setCategoryFilter("all");
+                setLocationFilter("all");
+                setSearchQuery("");
               }}
               className="mt-4 text-[#553a5c] hover:underline"
             >

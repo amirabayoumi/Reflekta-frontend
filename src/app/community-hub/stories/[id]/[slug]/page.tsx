@@ -242,9 +242,13 @@ export async function generateStaticParams(): Promise<PageParams[]> {
     return [];
   }
 
-  const data = await response.json();
+  const stories = await response.json();
 
-  return data.map((story: { id: string; title: string }) => ({
+  if (!Array.isArray(stories)) {
+    return [];
+  }
+
+  return stories.map((story: { id: number; title: string }) => ({
     id: String(story.id),
     slug: slugit(story.title),
   }));

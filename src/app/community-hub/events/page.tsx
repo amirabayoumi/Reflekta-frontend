@@ -22,21 +22,30 @@ export const metadata: Metadata = {
 
 const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
-export default async function EventsPage() {
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: { location?: string; category?: string };
+}) {
   let eventsData: EventData[] = [];
   let categoryData: CategoryData[] = [];
+  const locationFilter = searchParams.location;
+  const categoryFilter = searchParams.category;
 
   try {
-    const response: Response = await fetch(
-      "https://inputoutput.be/api/events",
-      {
-        next: { revalidate: 60 },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
+    let eventsUrl = "https://inputoutput.be/api/events";
+
+    if (locationFilter) {
+      eventsUrl += `?location=${encodeURIComponent(locationFilter)}`;
+    }
+
+    const response: Response = await fetch(eventsUrl, {
+      next: { revalidate: 60 },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
     const eventsResponse: EventData[] = await response.json();
     if (eventsResponse) {
       if (Array.isArray(eventsResponse)) {
@@ -106,7 +115,7 @@ export default async function EventsPage() {
     end_date: event.end_date,
     organizer: event.organizer,
     categories: Array.isArray(event.categories)
-      ? event.categories.map((cat) => cat.name)
+      ? event.categories
       : [],
     created_at: event.created_at,
     updated_at: event.updated_at,
@@ -128,6 +137,8 @@ export default async function EventsPage() {
         initialEvents={formattedEvents}
         categories={categoryData}
         locations={uniqueLocations}
+        initialLocationFilter={locationFilter}
+        initialCategoryFilter={categoryFilter}
       />
     </div>
   );
