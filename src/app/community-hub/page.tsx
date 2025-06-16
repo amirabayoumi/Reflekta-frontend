@@ -3,6 +3,24 @@ import UserProfileSummary from "../../components/communityComponents/UserProfile
 import FeaturedEventsBox from "@/components/communityComponents/FeaturedEventsBox";
 import FeaturedStoriesBox from "@/components/communityComponents/FeaturedStoriesBox";
 
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Community Hub | Reflekta",
+  description: "Explore the community hub for events, stories, and more.",
+  openGraph: {
+    title: "Community Hub | Reflekta",
+    description: "Explore the community hub for events, stories, and more.",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+};
+
 export default function CommunityHub() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f8f5fa] to-[#e6e0eb] text-gray-700 font-alef">

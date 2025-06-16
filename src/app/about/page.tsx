@@ -3,6 +3,25 @@ import Image from "next/image";
 import { FaHandHoldingHeart, FaLightbulb, FaUsers } from "react-icons/fa";
 import Header from "@/components/homeComponents/Header";
 import Footer from "@/components/homeComponents/Footer";
+
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "About Reflekta",
+  description:
+    "Learn about Reflekta's mission to bridge cultural gaps in Belgium through storytelling and community.",
+  openGraph: {
+    title: "About Reflekta",
+    description:
+      "Learn about Reflekta's mission to bridge cultural gaps in Belgium through storytelling and community.",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+};
 export default function About() {
   return (
     <>

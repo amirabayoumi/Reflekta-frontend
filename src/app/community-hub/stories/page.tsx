@@ -3,6 +3,24 @@ import Link from "next/link";
 import { Story } from "@/types";
 import AddStory from "@/components/storiesComponents/AddStory";
 import { slugit } from "@/helper";
+import { Metadata } from "next";
+export const metadata: Metadata = {
+  title: "Stories - Community Hub ",
+  description: "Community Hub - Stories",
+  openGraph: {
+    title: "Reflekta - Community Hub - Stories",
+    description: "Explore stories in the community hub",
+    siteName: "Reflekta",
+    images: [
+      {
+        url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
+        width: 1000,
+        height: 1000,
+        alt: "Community Hub Stories",
+      },
+    ],
+  },
+};
 
 // Helper to format dates
 const formatDate = (dateString: string) => {

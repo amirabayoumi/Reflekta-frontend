@@ -30,7 +30,7 @@ export const generateMetadata = async ({
         siteName: "reflekta",
         images: [
           {
-            url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
+            url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1749149982/Untitled_design_vrodpv.png",
             width: 1200,
             height: 630,
             alt: "Event Details",
