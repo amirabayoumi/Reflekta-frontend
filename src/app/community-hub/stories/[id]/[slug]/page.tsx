@@ -23,6 +23,25 @@ export const generateMetadata = async ({
   params: Promise<PageParams>;
 }): Promise<Metadata> => {
   const { id } = await params;
+  if (!id) {
+    return {
+      title: "Story Details",
+      description: "reflekta - Community Hub - Story Details",
+      openGraph: {
+        title: "Story Details",
+        description: "reflekta - Community Hub - Story Details",
+        siteName: "Reflekta",
+        images: [
+          {
+            url: "https://res.cloudinary.com/djuqnuesr/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1746640579/R_4_jz8tja.png",
+            width: 1200,
+            height: 630,
+            alt: "Story Details",
+          },
+        ],
+      },
+    };
+  }
 
   const resp = await fetch(`https://inputoutput.be/api/stories/${id}`, {
     headers: {
@@ -38,23 +57,15 @@ export const generateMetadata = async ({
     };
   }
 
-  const json = await resp.json();
-  const story: Story | undefined = json.data;
-
-  if (!story) {
-    return {
-      title: "Story Not Found",
-      description: "The story you're looking for does not exist.",
-    };
-  }
+  const story = await resp.json();
 
   return {
-    title: `${story.title} - Story Details`,
+    title: `${story.title}`,
     description:
       story.content?.slice(0, 150) ||
       "reflekta - Community Hub - Story Details",
     openGraph: {
-      title: `Reflekta - Community Hub - Story Details - ${story.title}`,
+      title: `Reflekta - Community Hub - Story - ${story.title}`,
       description:
         story.content?.slice(0, 150) ||
         "reflekta - Community Hub - Story Details",

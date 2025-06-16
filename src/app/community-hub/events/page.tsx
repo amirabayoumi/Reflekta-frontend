@@ -22,21 +22,37 @@ export const metadata: Metadata = {
 
 const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
-export default async function EventsPage() {
+type SearchParams = {
+  location?: string;
+  category?: string;
+};
+
+export default async function EventsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const resolvedSearchParams = await searchParams;
+
   let eventsData: EventData[] = [];
   let categoryData: CategoryData[] = [];
+  const locationFilter = resolvedSearchParams?.location;
+  const categoryFilter = resolvedSearchParams?.category;
 
   try {
-    const response: Response = await fetch(
-      "https://inputoutput.be/api/events",
-      {
-        next: { revalidate: 60 },
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-      }
-    );
+    let eventsUrl = "https://inputoutput.be/api/events";
+
+    if (locationFilter) {
+      eventsUrl += `?location=${encodeURIComponent(locationFilter)}`;
+    }
+
+    const response: Response = await fetch(eventsUrl, {
+      next: { revalidate: 60 },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
     const eventsResponse: EventData[] = await response.json();
     if (eventsResponse) {
       if (Array.isArray(eventsResponse)) {
@@ -105,9 +121,7 @@ export default async function EventsPage() {
     start_date: event.start_date,
     end_date: event.end_date,
     organizer: event.organizer,
-    categories: Array.isArray(event.categories)
-      ? event.categories.map((cat) => cat.name)
-      : [],
+    categories: Array.isArray(event.categories) ? event.categories : [],
     created_at: event.created_at,
     updated_at: event.updated_at,
   }));
@@ -128,6 +142,8 @@ export default async function EventsPage() {
         initialEvents={formattedEvents}
         categories={categoryData}
         locations={uniqueLocations}
+        initialLocationFilter={locationFilter}
+        initialCategoryFilter={categoryFilter}
       />
     </div>
   );
