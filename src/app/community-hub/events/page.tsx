@@ -30,12 +30,14 @@ type SearchParams = {
 export default async function EventsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
+  const resolvedSearchParams = await searchParams;
+
   let eventsData: EventData[] = [];
   let categoryData: CategoryData[] = [];
-  const locationFilter = searchParams.location;
-  const categoryFilter = searchParams.category;
+  const locationFilter = resolvedSearchParams?.location;
+  const categoryFilter = resolvedSearchParams?.category;
 
   try {
     let eventsUrl = "https://inputoutput.be/api/events";
