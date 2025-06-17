@@ -3,7 +3,7 @@
 
 import {  revalidateTag } from "next/cache";
 import { getTicketPdf, addNewStory, addCommentToStory, editStory, deleteStory, editComment, deleteComment } from "./queries";
-// import { redirect } from "next/navigation";
+import { uploadProfilePhoto , deleteProfile ,editUserProfile } from "./queries";
 
 type initialStateType = {
   type: string;
@@ -85,7 +85,10 @@ export async function addNewStoryAction(initialState: initialStoryStateType, for
     });
 
 
-    
+    revalidateTag("story");
+revalidateTag("stories");
+revalidateTag("user-stories"); 
+revalidateTag("user-data");
 
     return { type: "success", message: "Story added successfully! Admin will review it first and shortly publish it." };
   } catch (error) {
@@ -123,7 +126,7 @@ export async function addCommentToStoryAction(
 
     // Revalidate the path tags: ["story"]
     revalidateTag("stories");
-
+    revalidateTag("user-data"); 
     return { type: "success", message: "Comment added successfully!" };
   } catch (error) {
     console.error("Error adding comment:", error);
@@ -161,10 +164,10 @@ export async function editStoryAction(
       token
     );
 
-    // Revalidate both tags
     revalidateTag("story");
     revalidateTag("stories");
-    revalidateTag("user-stories"); // Add this to update user's stories list
+    revalidateTag("user-stories"); 
+    revalidateTag("user-data"); // Revalidate user data to reflect changes
 
     return { type: "success", message: "Story edited successfully!" };
   } catch (error) {
@@ -195,7 +198,10 @@ export async function deleteStoryAction(
     await deleteStory(parseInt(storyId), token);
 
     // Revalidate both tags
-    revalidateTag("stories");
+ revalidateTag("story");
+revalidateTag("stories");
+revalidateTag("user-stories"); 
+revalidateTag("user-data");
  
 
     return({ type: "success", message: "Story deleted successfully!" });
@@ -233,8 +239,12 @@ export async function editCommentAction(
       return { type: "error", message: "Failed to edit comment." };
     }
 
+
+    revalidateTag("user-comments"); 
     revalidateTag("story");
-    revalidateTag("user-comments"); // Add this to update user's comments list
+revalidateTag("stories");
+revalidateTag("user-stories"); 
+revalidateTag("user-data");
 
     return { type: "success", message: "Comment edited successfully!" };
   } catch (error) {
@@ -264,12 +274,128 @@ export async function deleteCommentAction(
       return { type: "error", message: "Failed to delete comment." };
     }
 
+  
+    revalidateTag("user-comments"); 
     revalidateTag("story");
-    revalidateTag("user-comments"); // Add this to update user's comments list
+revalidateTag("stories");
+revalidateTag("user-stories"); 
+revalidateTag("user-data");
     
     return { type: "success", message: "Comment deleted successfully!" };
   } catch (error) {
     console.error("Error deleting comment:", error);
     return { type: "error", message: "Failed to delete comment." };
+  }
+}
+
+
+
+
+
+ export async function uploadProfilePhotoAction( 
+  initialState: { type: string; message: string },
+  formData: FormData
+) {
+  try {
+    const file = formData.get("file") as File;
+    const token = formData.get("token") as string;
+
+    if (!file) {
+      return { type: "error", message: "File is required." };
+    }
+    
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+    
+    // Add size validation on server side too
+    const maxSizeInMB = 1;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024;
+    
+    if (file.size > maxSizeInBytes) {
+      return { type: "error", message: `Image must be less than ${maxSizeInMB}MB.` };
+    }
+    
+    if (!file.type.startsWith("image/")) {
+      return { type: "error", message: "Please select an image file." };
+    }
+
+    const result = await uploadProfilePhoto(file, token);
+
+    if (!result) {
+      return { type: "error", message: "Failed to upload profile photo. be sure to upload a .jpg or .png file with a maximum size of 1MB" };
+    } 
+
+    revalidateTag("user-data");
+    return { type: "success", message: "Profile photo uploaded successfully!" };
+  }
+  catch (error) {
+    console.error("Error uploading profile photo:", error);
+    return { 
+      type: "error", 
+      message: error instanceof Error 
+        ? `Error: ${error.message}` 
+        : "Failed to upload profile photo."
+    };
+  }
+}
+
+
+export async function deleteProfileAction(
+  initialState: { type: string; message: string },
+  formData: FormData
+) {
+  try {
+    const token = formData.get("token") as string;
+    const id = formData.get("id") as string;
+
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+
+    const result = await deleteProfile(token, parseInt(id));
+    if (!result) {
+      return { type: "error", message: "Failed to delete profile." };
+    }
+
+    revalidateTag("user-data");
+    return { type: "success", message: "Profile deleted successfully!" };
+  } catch (error) {
+    console.error("Error deleting profile:", error);
+    return { type: "error", message: "Failed to delete profile." };
+  }
+}
+
+
+export async function editUserProfileAction(
+  initialState: { type: string; message: string },
+  formData: FormData
+) {
+  try {
+    const name = formData.get("name") as string;
+    const token = formData.get("token") as string;
+    const id = formData.get("id") as string;
+
+    if (!name ) {
+      return { type: "error", message: "Name are required." };
+    }
+    if (!token) {
+      return { type: "error", message: "Authentication issue." };
+    }
+
+    const result = await editUserProfile(token , parseInt(id), {
+      name: name,
+     
+    });
+
+    if (!result) {
+      return { type: "error", message: "Failed to edit profile." };
+    }
+
+    revalidateTag("user-data");
+    return { type: "success", message: "Profile edited successfully!" };
+  } catch (error) {
+    console.error("Error editing profile:", error);
+    return { type: "error", message: "Failed to edit profile." };
   }
 }

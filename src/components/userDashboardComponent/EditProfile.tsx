@@ -1,5 +1,5 @@
 "use client";
-import { editStoryAction } from "@/actions";
+import { editUserProfileAction } from "@/actions";
 import { useAuth } from "@/hooks/useAuth";
 import { useActionState } from "react";
 import {
@@ -14,9 +14,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { LoaderPinwheel, Edit } from "lucide-react";
-import { Story } from "@/types";
-import { Textarea } from "@/components/ui/textarea";
-const EditStory = ({ story }: { story: Story }) => {
+
+const EditProfile = () => {
   const { user, token, refreshUserData } = useAuth();
   const initialState = { type: "", message: "" };
   type EditState = { type: string; message: string };
@@ -25,7 +24,7 @@ const EditStory = ({ story }: { story: Story }) => {
     prevState: EditState,
     formData: FormData
   ) => {
-    const result = await editStoryAction(prevState, formData);
+    const result = await editUserProfileAction(prevState, formData);
 
     if (result.type === "success") {
       refreshUserData?.(); // call refresh only on success
@@ -38,53 +37,41 @@ const EditStory = ({ story }: { story: Story }) => {
     wrappedEditAction,
     initialState
   );
-  if (!user || (user.id !== story.user_id && !user.is_admin)) {
+  if (!user) {
     return null; // Don't render if user is not logged in or doesn't own the story
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button
-          type="button"
-          className="bg-[#553a5c] hover:bg-[#413743] text-white px-4 py-1 rounded-md cursor-pointer"
-        >
-          Edit <Edit className="h-4 w-4 inline-block ml-1" />
+        <Button className="bg-gradient-to-r from-[#553a5c] to-[#937195] hover:opacity-90 text-white gap-2 px-8 py-6 text-lg font-medium rounded-xl shadow-md flex-1 sm:max-w-[200px]">
+          <Edit size={22} />
+          Edit Profile Name
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Story</DialogTitle>
+          <DialogTitle>Edit Profile Name</DialogTitle>
           <DialogDescription>
-            Update your story details and save changes.
+            Update your profile name and save changes.
           </DialogDescription>
         </DialogHeader>
         <form action={editAction} className="space-y-4">
-          <input type="hidden" name="storyId" value={story.id} />
           <input type="hidden" name="token" value={token || ""} />
-          <input type="hidden" name="userId" value={user?.id || ""} />
+          <input type="hidden" name="id" value={user?.id || ""} />
           <div>
             <label className="block text-sm font-medium mb-1 text-[#553a5c]">
-              Title
+              Name
             </label>
             <input
               type="text"
-              name="title"
-              defaultValue={story.title}
-              className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
+              name="name"
+              defaultValue={user.name}
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#553a5c] transition-colors"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1 text-[#553a5c]">
-              Content
-            </label>
-            <Textarea
-              rows={5}
-              name="content"
-              defaultValue={story.content}
-              className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
-            />
-          </div>
+
           <DialogFooter className="mt-4 flex gap-2">
             <Button
               type="submit"
@@ -124,4 +111,4 @@ const EditStory = ({ story }: { story: Story }) => {
   );
 };
 
-export default EditStory;
+export default EditProfile;

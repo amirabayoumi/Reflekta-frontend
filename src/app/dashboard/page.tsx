@@ -18,7 +18,7 @@ export default function DashboardPage() {
         <div>
           <Link
             href="/community-hub"
-            className=" m-5 inline-flex items-center gap-2 bg-gradient-to-r from-[#886f80] to-[#553a5c] text-white px-5 py-2.5 rounded-full shadow-lg hover:from-[#553a5c] hover:to-[#886f80] transition-all font-semibold text-base"
+            className="m-5 inline-flex items-center gap-2 bg-gradient-to-r from-[#886f80] to-[#553a5c] text-white px-5 py-2.5 rounded-full shadow-lg hover:from-[#553a5c] hover:to-[#886f80] transition-all font-semibold text-base"
           >
             <ArrowLeft className="w-5 h-5" />
             Back to Community Hub
@@ -27,7 +27,7 @@ export default function DashboardPage() {
 
         <div className="flex-1 flex flex-col justify-center items-center">
           <div className="w-full max-w-5xl mx-auto px-4 pb-20 flex flex-col justify-center items-center">
-            <div className="w-full bg-white rounded-xl shadow-md overflow-hidden flex flex-col justify-center items-center">
+            <div className="w-full bg-white rounded-xl shadow-md overflow-hidden">
               <Tabs defaultValue="profile" className="w-full">
                 <TabsList className="flex w-full p-0 bg-transparent border-b border-gray-200">
                   <TabsTrigger
@@ -48,30 +48,25 @@ export default function DashboardPage() {
                   >
                     My Content
                   </TabsTrigger>
-                  <TabsTrigger
-                    value="saved"
-                    className="flex-1 py-4 text-sm font-medium text-gray-600 data-[state=active]:bg-[#553a5c]  rounded-none border-b-2 border-transparent  data-[state=active]:text-[#ffffff]  transition-all"
-                  >
-                    Saved
-                  </TabsTrigger>
                 </TabsList>
-                <div className="min-h-[500px]  flex flex-col justify-center items-center">
+                <div className="h-[600px]">
                   <TabsContent
                     value="profile"
-                    className="mt-0 focus:outline-none w-full flex flex-col justify-center items-center"
+                    className="mt-0 focus:outline-none w-full h-full p-6 overflow-y-auto"
                   >
                     <ProfileSection />
                   </TabsContent>
 
                   <TabsContent
                     value="activity"
-                    className="mt-0 focus:outline-none w-full flex flex-col justify-center items-center"
+                    className="mt-0 focus:outline-none w-full h-full p-6 overflow-y-auto"
                   >
                     <ActivitySection />
                   </TabsContent>
+
                   <TabsContent
                     value="content"
-                    className="mt-0 focus:outline-none w-full flex flex-col justify-center items-center"
+                    className="mt-0 focus:outline-none w-full h-full p-6 overflow-y-auto"
                   >
                     <ContentSection />
                   </TabsContent>

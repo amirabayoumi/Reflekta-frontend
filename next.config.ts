@@ -48,7 +48,16 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "unsplash.com", // Added non-wildcard version
       },
+      {
+        protocol: "https",
+        hostname: "inputoutput.be",
+      },
     ],
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '5mb', // Increased body size limit for server actions
+    },
   },
 };
 
