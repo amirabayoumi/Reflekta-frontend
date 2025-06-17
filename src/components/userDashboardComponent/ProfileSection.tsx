@@ -1,54 +1,171 @@
 "use client";
+
 import { useAuth } from "@/hooks/useAuth";
+import { Camera, Loader2, Shield } from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { useActionState } from "react";
+import { uploadProfilePhotoAction } from "@/actions";
+import DeleteProfile from "./DeleteProfile";
+import EditProfile from "./EditProfile";
 
 const ProfileSection = () => {
-  const { user } = useAuth();
+  const { user, token, refreshUserData } = useAuth();
 
-  const getInitials = (name: string) =>
-    name
-      ? name
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .toUpperCase()
-          .substring(0, 2)
-      : "";
+  const initialState = { type: "", message: "" };
+  type UploadState = { type: string; message: string };
+
+  const uploadProfilePhotoActionWrapper = async (
+    prevState: UploadState,
+    formData: FormData
+  ) => {
+    const result = await uploadProfilePhotoAction(prevState, formData);
+
+    if (result.type === "success") {
+      refreshUserData?.();
+    }
+
+    return result;
+  };
+
+  const [photoState, photoAction, isPhotoUploading] = useActionState(
+    uploadProfilePhotoActionWrapper,
+    initialState
+  );
+
+  if (!user) {
+    return null;
+  }
+
+  // Get user initials for avatar placeholder if no photo is set
+  const getInitials = () => {
+    if (!user?.name) return "?";
+    return user.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
-    <>
-      {!user && (
-        <div className="flex-1 flex flex-col items-center justify-center p-6 bg-gray-50 dark:bg-[#242424] w-full">
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-            Please sign in to view your profile.
-          </p>
-          <button className="w-full bg-[#553a5c] hover:bg-[#6b4b72] text-white py-2 rounded-md transition-colors text-sm font-medium">
-            Sign In
-          </button>
+    <div className=" flex flex-col items-center">
+      <div className="relative group mb-4">
+        <div className="w-48 h-48 sm:w-52 sm:h-52 rounded-full overflow-hidden bg-[#f0ebf4] border-6 border-[#937195]/30 shadow-xl transition-transform duration-300 group-hover:scale-105">
+          {user?.profile_photo_path ? (
+            <Image
+              src={`https://inputoutput.be/storage/${user.profile_photo_path}`}
+              alt="Profile-photo"
+              width={208}
+              height={208}
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#553a5c] to-[#937195] text-white text-6xl font-bold">
+              {getInitials()}
+            </div>
+          )}
+        </div>
+
+        <form action={photoAction} className="absolute inset-0">
+          <input type="hidden" name="token" value={token || ""} />
+          <label
+            htmlFor="file"
+            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/50 opacity-0 group-hover:opacity-100 cursor-pointer transition-all duration-300 backdrop-blur-sm"
+          >
+            <div className="flex flex-col items-center transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+              {isPhotoUploading ? (
+                <Loader2 className="text-white h-12 w-12 animate-spin" />
+              ) : (
+                <>
+                  <Camera className="text-white h-12 w-12 mb-3" />
+                  <span className="text-white text-base font-medium bg-black/30 px-4 py-2 rounded-full">
+                    Change Photo
+                  </span>
+                </>
+              )}
+            </div>
+          </label>
+          <input
+            type="file"
+            id="file"
+            name="file"
+            accept="image/*"
+            multiple={false} // explicitly disallow multiple files
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file && file.size > 5 * 1024 * 1024) {
+                alert("Image must be less than 5MB.");
+                return;
+              }
+              if (file) {
+                e.target.form?.requestSubmit();
+              }
+            }}
+            className="hidden"
+          />
+        </form>
+      </div>
+
+      {photoState.type && (
+        <div
+          className={cn(
+            " w-full p-5 rounded-xl text-center transition-all duration-300 shadow-md text-lg font-medium",
+            photoState.type === "success"
+              ? "bg-green-50 text-green-700 border border-green-100"
+              : "bg-red-50 text-red-700 border border-red-100"
+          )}
+        >
+          {photoState.message}
         </div>
       )}
-      {user && (
-        <div className="flex-1 flex flex-col items-center p-6 bg-gray-50 dark:bg-[#242424] w-full  ">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#553a5c] to-[#886f80] flex items-center justify-center mb-4">
-            <span className="text-2xl font-bold text-white">
-              {getInitials(user.name)}
+
+      <div className="w-full p-8 rounded-xl bg-[#fbf9fc] shadow-md border border-gray-100 mb-4 mt-2">
+        <div className="flex flex-col space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-3 items-center">
+            <span className="text-gray-500 font-medium flex items-center justify-center sm:justify-start text-lg">
+              Name:
             </span>
+            <h3 className="text-2xl font-semibold text-[#553a5c] flex flex-wrap items-center gap-3">
+              {user?.name}
+              {user?.is_admin === 1 && (
+                <span className="inline-flex items-center bg-gradient-to-r from-[#553a5c] to-[#937195] text-white px-4 py-1 rounded-full text-sm font-medium shadow-sm">
+                  <Shield className="h-4 w-4 mr-1.5" />
+                  Admin
+                </span>
+              )}
+            </h3>
           </div>
-          <h2 className="text-xl font-medium mb-1">{user.name}</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">
-            {user.email}
-          </p>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mb-6">
-            Joined{" "}
-            {user.created_at
-              ? new Date(user.created_at).toLocaleDateString()
-              : ""}
-          </p>
-          <button className="w-full bg-[#553a5c] hover:bg-[#6b4b72] text-white py-2 rounded-md transition-colors text-sm font-medium">
-            Edit Profile
-          </button>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-3 items-center">
+            <span className="text-gray-500 font-medium flex items-center justify-center sm:justify-start text-lg">
+              Email:
+            </span>
+            <p className="text-gray-700 text-lg">{user?.email}</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[150px_1fr] gap-3 items-center">
+            <span className="text-gray-500 font-medium flex items-center justify-center sm:justify-start text-lg">
+              Member since:
+            </span>
+            <p className="text-gray-600 text-lg">
+              {new Date(user?.created_at || "").toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          </div>
         </div>
-      )}
-    </>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 w-full justify-center">
+     <EditProfile />
+
+        <DeleteProfile />
+      </div>
+    </div>
   );
 };
+
 export default ProfileSection;

@@ -3,15 +3,18 @@
 import { useAuth } from "@/hooks/useAuth";
 import EditStory from "./EditStory";
 import DeleteStory from "./DeleteStory";
+import Link from "next/link";
+import { slugit } from "@/helper";
+import { ExternalLink } from "lucide-react";
 
 const ContentSection = () => {
   const { userStories } = useAuth();
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-[60vh] w-full">
+    <div className="flex flex-col justify-start min-h-[60vh] w-full">
       <h2 className="text-2xl font-bold mb-6 text-[#553a5c]">Your Stories</h2>
       {userStories && userStories.length > 0 ? (
-        <ul className="w-full max-w-2xl space-y-6">
+        <ul className="w-full space-y-6">
           {userStories.map((story) => (
             <li
               key={story.id}
@@ -36,16 +39,25 @@ const ContentSection = () => {
                   </div>
                   <div className="text-gray-700 mt-1">{story.content}</div>
                 </div>
-               
-              </div> <div className="flex gap-2 mt-2 md:mt-0 ">
-                  <EditStory story={story} />
-                  <DeleteStory story={story} />
-                </div>
+              </div>
+              <div className="flex gap-2 mt-2 md:mt-0">
+                <Link
+                  href={`/community-hub/stories/${story.id}/${slugit(
+                    story.title
+                  )}`}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-sm rounded bg-[#553a5c] text-white hover:bg-[#6c4b73] transition-colors"
+                >
+                  <ExternalLink size={14} />
+                  View Story
+                </Link>
+                <EditStory story={story} />
+                <DeleteStory story={story} />
+              </div>
             </li>
           ))}
         </ul>
       ) : (
-        <div className="bg-white/80 rounded-lg shadow p-8 text-center text-gray-500 mt-10">
+        <div className="bg-white/80 rounded-lg shadow p-8 text-gray-500 mt-10">
           <p>No stories found.</p>
         </div>
       )}

@@ -327,6 +327,7 @@ export const editStory = async (id: number, storyData: editStoryData, token: str
     if (response.status !== 200) {
       throw new Error(`API Error: ${response.status}`);
     }
+
     return response.data;
   } catch (error) {
     console.error("Error editing story:", error);
@@ -408,3 +409,86 @@ export const deleteComment = async (
     return false;
   }
 };
+
+
+
+
+
+
+
+
+
+//post user profile photo post to https://inputoutput.be/api/update-profile-photo
+export const uploadProfilePhoto = async (file: File, token: string): Promise<{ url: string; message: string } | null> => {
+  try {
+    const formData = new FormData();
+    formData.append("profile_photo", file);
+
+    const response = await axios.post("https://inputoutput.be/api/update-profile-photo", formData, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+      httpsAgent: httpsAgent,
+    });
+
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+
+   return {
+  url: response.data.profile_photo_url,
+  message: response.data.message
+};
+  } catch (error) {
+    console.error("Error uploading profile photo:", error);
+    return null;
+  }
+};
+
+
+// delete user profile 
+export const deleteProfile = async (token: string , id: number): Promise<{ message: string } | null> => {
+  try {
+    const response = await axios.delete(`https://inputoutput.be/api/users/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+      httpsAgent: httpsAgent,
+    });
+
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+
+    return { message: response.data.message };
+  } catch (error) {
+    console.error("Error deleting profile photo:", error);
+    return null;
+  }
+};
+
+type UpdateUserData = {
+  name?: string;
+
+
+};
+
+//edit user profile
+export const editUserProfile = async (token: string , id: number, updatedUserData: UpdateUserData): Promise<{ message: string } | null> => {
+  try {
+    const response = await axios.patch(`https://inputoutput.be/api/users/${id}`, updatedUserData, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      httpsAgent: httpsAgent,
+    });
+    if (response.status !== 200) {
+      throw new Error(`API Error: ${response.status}`);
+    }
+    return { message: response.data.message };
+  } catch (error) {
+    console.error("Error editing user profile:", error);
+    return null;
+  }
+}
