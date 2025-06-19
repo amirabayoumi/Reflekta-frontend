@@ -1,7 +1,6 @@
 import HubHeader from "@/components/communityComponents/HubHeader";
 import HubFooter from "@/components/communityComponents/HubFooter";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ProfileSection from "@/components/userDashboardComponent/ProfileSection";
 import ActivitySection from "@/components/userDashboardComponent/ActivitySection";
