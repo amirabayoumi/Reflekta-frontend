@@ -327,6 +327,10 @@ revalidateTag("user-data");
     } 
 
     revalidateTag("user-data");
+    revalidateTag("stories");
+    revalidateTag("story");
+  
+
     return { type: "success", message: "Profile photo uploaded successfully!" };
   }
   catch (error) {
