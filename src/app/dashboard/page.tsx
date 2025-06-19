@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import ProfileSection from "@/components/userDashboardComponent/ProfileSection";
 import ActivitySection from "@/components/userDashboardComponent/ActivitySection";
 import ContentSection from "@/components/userDashboardComponent/ContentSection";
+import SectionNav from "@/components/communityComponents/SectionNav";
 
 export default function DashboardPage() {
   return (
@@ -14,17 +15,8 @@ export default function DashboardPage() {
       <div className="bg-gradient-to-br from-black to-[#937195]/90 text-white py-6">
         <h1 className="text-4xl text-center">Profile Dashboard</h1>
       </div>
-      <div className="min-h-screen flex flex-col bg-[#f5f5f5] text-[#333] font-sans">
-        <div>
-          <Link
-            href="/community-hub"
-            className="m-5 inline-flex items-center gap-2 bg-gradient-to-r from-[#886f80] to-[#553a5c] text-white px-5 py-2.5 rounded-full shadow-lg hover:from-[#553a5c] hover:to-[#886f80] transition-all font-semibold text-base"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Community Hub
-          </Link>
-        </div>
-
+      <div className="flex flex-col bg-[#f5f5f5] text-[#333] font-sans">
+        <SectionNav />
         <div className="flex-1 flex flex-col justify-center items-center">
           <div className="w-full max-w-5xl mx-auto px-4 pb-20 flex flex-col justify-center items-center">
             <div className="w-full bg-white rounded-xl shadow-md overflow-hidden">

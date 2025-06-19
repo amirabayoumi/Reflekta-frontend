@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
 
 const UserProfileSummary: React.FC = () => {
   // Use the auth context instead of direct API calls
@@ -31,8 +32,22 @@ const UserProfileSummary: React.FC = () => {
       {isLoggedIn ? (
         <div className="w-full flex flex-col items-center justify-center">
           <div className="text-center mb-6">
-            <div className="w-20 h-20 rounded-full bg-white/20 mx-auto mb-3 flex items-center justify-center">
-              <span className="text-2xl">{getInitials(user.name)}</span>
+            <div className="w-40 h-40 rounded-full bg-white/20 mx-auto mb-3 flex items-center justify-center">
+              {user.profile_photo_path ? (
+                <Image
+                  src={
+                    "https://inputoutput.be/storage/" + user.profile_photo_path
+                  }
+                  alt="Profile"
+                  className="w-full h-full object-cover rounded-full"
+                  width={200}
+                  height={200}
+                />
+              ) : (
+                <div className="text-2xl font-bold">
+                  {getInitials(user.name)}
+                </div>
+              )}
             </div>
             <h3 className="font-medium text-lg">Welcome, {user.name}!</h3>
           </div>
