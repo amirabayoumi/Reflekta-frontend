@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ArrowLeft, CalendarIcon, MessageSquare, User } from "lucide-react";
 import AddComment from "@/components/storiesComponents/AddComment";
 import ShareButton from "@/components/storiesComponents/ShareButton";
@@ -10,6 +10,7 @@ import EditStory from "@/components/userDashboardComponent/EditStory";
 import DeleteStory from "@/components/userDashboardComponent/DeleteStory";
 import DeleteComment from "@/components/userDashboardComponent/DeleteComment";
 import EditComment from "@/components/userDashboardComponent/EditComment";
+import Image from "next/image";
 
 type PageParams = {
   id: string;
@@ -95,7 +96,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
   });
 
   if (!resp.ok) {
-    notFound();
+    redirect("/community-hub/stories"); // Redirect to stories if not found
   }
 
   const story: Story = await resp.json();
@@ -144,11 +145,23 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
         <h1 className="text-3xl md:text-4xl font-semibold text-center mb-6 tracking-tight">
           {story.title}
         </h1>
-        <div className="flex justify-center items-center space-x-3">
-          <div className="bg-white/20 p-2 rounded-full">
-            <User size={18} />
-          </div>
-          <span className="font-medium">{storyAuthor}</span>
+        <div className="flex justify-center items-center space-x-4">
+          {story.user && story.user.profile_photo_path ? (
+            <div className="h-14 w-14 rounded-full overflow-hidden border-2 border-white/40 flex-shrink-0">
+              <Image
+                src={`https://inputoutput.be/storage/${story.user.profile_photo_path}`}
+                alt={` profile photo`}
+                width={56}
+                height={56}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <div className="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <User size={30} />
+            </div>
+          )}
+          <span className="font-medium text-lg">{storyAuthor}</span>
         </div>
       </div>
       <div className="flex justify-end space-x-2 p-4 bg-gray-50 border-b border-gray-200">
@@ -202,9 +215,21 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
                 >
                   <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-100">
                     <div className="flex items-center">
-                      <div className="h-8 w-8 bg-[#553a5c]/20 rounded-full flex items-center justify-center mr-3">
-                        <User size={14} className="text-[#553a5c]" />
-                      </div>
+                      {comment.user && comment.user.profile_photo_path ? (
+                        <div className="h-10 w-10 rounded-full overflow-hidden border border-[#553a5c]/20 flex-shrink-0 mr-3">
+                          <Image
+                            src={`https://inputoutput.be/storage/${comment.user.profile_photo_path}`}
+                            alt={`profile photo`}
+                            width={40}
+                            height={40}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className="h-10 w-10 bg-[#553a5c]/20 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
+                          <User size={22} className="text-[#553a5c]" />
+                        </div>
+                      )}
                       <div className="font-medium text-[#553a5c]">
                         {commentAuthor}
                       </div>
