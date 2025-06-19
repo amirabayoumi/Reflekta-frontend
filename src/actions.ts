@@ -393,6 +393,9 @@ export async function editUserProfileAction(
     }
 
     revalidateTag("user-data");
+    revalidateTag("stories");
+    revalidateTag("story");
+
     return { type: "success", message: "Profile edited successfully!" };
   } catch (error) {
     console.error("Error editing profile:", error);
