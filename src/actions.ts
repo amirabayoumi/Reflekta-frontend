@@ -1,9 +1,18 @@
 "use server";
 
-
-import {  revalidateTag } from "next/cache";
+import { revalidateTag } from "next/cache";
 import { getTicketPdf, addNewStory, addCommentToStory, editStory, deleteStory, editComment, deleteComment } from "./queries";
-import { uploadProfilePhoto , deleteProfile ,editUserProfile } from "./queries";
+import { uploadProfilePhoto, deleteProfile, editUserProfile } from "./queries";
+
+const badWords = (process.env.BAD_WORDS || "").split(",");
+
+function containsBadWords(text: string): boolean {
+  const lowercaseText = text.toLowerCase();
+  return badWords.some(word => 
+    lowercaseText.includes(word) || 
+    lowercaseText.match(new RegExp(`\\b${word.split('').join('[^a-zA-Z0-9]*')}\\b`))
+  );
+}
 
 type initialStateType = {
   type: string;
@@ -11,12 +20,11 @@ type initialStateType = {
   pdfData: string;
 };
 
-export async function downloadTicket(initialState: initialStateType , formData: FormData) {
+export async function downloadTicket(initialState: initialStateType, formData: FormData) {
   try {
-
-if (formData.get("reset") === "true") {
-    return { type: "", message: "", pdfData: "" }; // Return initial state
-  }
+    if (formData.get("reset") === "true") {
+      return { type: "", message: "", pdfData: "" };
+    }
 
     const eventName = formData.get("eventname") as string;
     const numberOfAdults = Number(formData.get("numberOfAdults") || 1);
@@ -46,25 +54,17 @@ if (formData.get("reset") === "true") {
   }
 }
 
-// type NewStoryData = {
-//   title: string;
-//   content: string;
-//   user_id: number;
-// };
-
 type initialStoryStateType = {
   type: string;
   message: string;
-
 };
 
 export async function addNewStoryAction(initialState: initialStoryStateType, formData: FormData) {
   try {
-
-
-     if (formData.get("reset") === "true") {
-    return { message: "", type: "" }; // Return initial state
-  }
+    if (formData.get("reset") === "true") {
+      return { message: "", type: "" };
+    }
+    
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const userId = formData.get("userId") as string;
@@ -74,9 +74,14 @@ export async function addNewStoryAction(initialState: initialStoryStateType, for
       return { type: "error", message: "All fields are required." };
     }
 
-  
- 
- 
+    // Check for bad words in title and content
+    if (containsBadWords(title)) {
+      return { type: "error", message: "Your story title contains inappropriate language. Please revise and try again." };
+    }
+    
+    if (containsBadWords(content)) {
+      return { type: "error", message: "Your story content contains inappropriate language. Please revise and try again." };
+    }
 
     await addNewStory({
       title: title,
@@ -84,11 +89,10 @@ export async function addNewStoryAction(initialState: initialStoryStateType, for
       user_id: parseInt(userId),
     });
 
-
     revalidateTag("story");
-revalidateTag("stories");
-revalidateTag("user-stories"); 
-revalidateTag("user-data");
+    revalidateTag("stories");
+    revalidateTag("user-stories"); 
+    revalidateTag("user-data");
 
     return { type: "success", message: "Story added successfully! Admin will review it first and shortly publish it." };
   } catch (error) {
@@ -96,7 +100,6 @@ revalidateTag("user-data");
     return { type: "error", message: "Failed to add story." };
   }
 }
-
 
 export async function addCommentToStoryAction(
   initialState: initialStoryStateType,
@@ -111,8 +114,13 @@ export async function addCommentToStoryAction(
     if (!storyId || !content ) {
       return { type: "error", message: "All fields are required." };
     }
-    if( !token ) {
+    if (!token) {
       return { type: "error", message: "Authentication issue." };
+    }
+
+    // Check for bad words in comment content
+    if (containsBadWords(content)) {
+      return { type: "error", message: "Your comment contains inappropriate language. Please revise and try again." };
     }
 
     // Call the query to add the comment
@@ -120,9 +128,7 @@ export async function addCommentToStoryAction(
       parseInt(storyId),
       { content: content },
       token 
-
     );
-
 
     // Revalidate the path tags: ["story"]
     revalidateTag("stories");
@@ -134,8 +140,6 @@ export async function addCommentToStoryAction(
   }
 }
 
-
-
 export async function editStoryAction(
   initialState: initialStoryStateType,
   formData: FormData
@@ -146,10 +150,6 @@ export async function editStoryAction(
     const content = formData.get("content") as string;
     const token = formData.get("token") as string;
 
-    const stroyData = {
-      title: title,
-      content: content,
-    };
     // Validate inputs
     if (!storyId || !title || !content) {
       return { type: "error", message: "All fields are required." };
@@ -157,6 +157,21 @@ export async function editStoryAction(
     if (!token) {
       return { type: "error", message: "Authentication issue." };
     }
+
+    // Check for bad words in title and content
+    if (containsBadWords(title)) {
+      return { type: "error", message: "Your story title contains inappropriate language. Please revise and try again." };
+    }
+    
+    if (containsBadWords(content)) {
+      return { type: "error", message: "Your story content contains inappropriate language. Please revise and try again." };
+    }
+
+    const stroyData = {
+      title: title,
+      content: content,
+    };
+    
     // Call the query to edit the story
     await editStory(
       parseInt(storyId),
@@ -167,7 +182,7 @@ export async function editStoryAction(
     revalidateTag("story");
     revalidateTag("stories");
     revalidateTag("user-stories"); 
-    revalidateTag("user-data"); // Revalidate user data to reflect changes
+    revalidateTag("user-data");
 
     return { type: "success", message: "Story edited successfully!" };
   } catch (error) {
@@ -175,8 +190,6 @@ export async function editStoryAction(
     return { type: "error", message: "Failed to edit story." };
   }
 }
-
-
 
 export async function deleteStoryAction(
   initialState: initialStoryStateType,
@@ -198,19 +211,16 @@ export async function deleteStoryAction(
     await deleteStory(parseInt(storyId), token);
 
     // Revalidate both tags
- revalidateTag("story");
-revalidateTag("stories");
-revalidateTag("user-stories"); 
-revalidateTag("user-data");
+    revalidateTag("story");
+    revalidateTag("stories");
+    revalidateTag("user-stories"); 
+    revalidateTag("user-data");
  
-
     return({ type: "success", message: "Story deleted successfully!" });
-
   } catch (error) {
     console.error("Error deleting story:", error);
     return { type: "error", message: "Failed to delete story." };
   }
-
 }
 
 export async function editCommentAction(
@@ -229,6 +239,11 @@ export async function editCommentAction(
       return { type: "error", message: "Authentication issue." };
     }
 
+    // Check for bad words in comment content
+    if (containsBadWords(content)) {
+      return { type: "error", message: "Your comment contains inappropriate language. Please revise and try again." };
+    }
+
     const result = await editComment(
       parseInt(commentId),
       { content },
@@ -239,12 +254,11 @@ export async function editCommentAction(
       return { type: "error", message: "Failed to edit comment." };
     }
 
-
     revalidateTag("user-comments"); 
     revalidateTag("story");
-revalidateTag("stories");
-revalidateTag("user-stories"); 
-revalidateTag("user-data");
+    revalidateTag("stories");
+    revalidateTag("user-stories"); 
+    revalidateTag("user-data");
 
     return { type: "success", message: "Comment edited successfully!" };
   } catch (error) {
@@ -274,12 +288,11 @@ export async function deleteCommentAction(
       return { type: "error", message: "Failed to delete comment." };
     }
 
-  
     revalidateTag("user-comments"); 
     revalidateTag("story");
-revalidateTag("stories");
-revalidateTag("user-stories"); 
-revalidateTag("user-data");
+    revalidateTag("stories");
+    revalidateTag("user-stories"); 
+    revalidateTag("user-data");
     
     return { type: "success", message: "Comment deleted successfully!" };
   } catch (error) {
@@ -288,11 +301,7 @@ revalidateTag("user-data");
   }
 }
 
-
-
-
-
- export async function uploadProfilePhotoAction( 
+export async function uploadProfilePhotoAction( 
   initialState: { type: string; message: string },
   formData: FormData
 ) {
@@ -330,7 +339,6 @@ revalidateTag("user-data");
     revalidateTag("stories");
     revalidateTag("story");
   
-
     return { type: "success", message: "Profile photo uploaded successfully!" };
   }
   catch (error) {
@@ -343,7 +351,6 @@ revalidateTag("user-data");
     };
   }
 }
-
 
 export async function deleteProfileAction(
   initialState: { type: string; message: string },
@@ -370,7 +377,6 @@ export async function deleteProfileAction(
   }
 }
 
-
 export async function editUserProfileAction(
   initialState: { type: string; message: string },
   formData: FormData
@@ -380,16 +386,20 @@ export async function editUserProfileAction(
     const token = formData.get("token") as string;
     const id = formData.get("id") as string;
 
-    if (!name ) {
+    if (!name) {
       return { type: "error", message: "Name are required." };
     }
     if (!token) {
       return { type: "error", message: "Authentication issue." };
     }
 
-    const result = await editUserProfile(token , parseInt(id), {
+    // Check for bad words in name
+    if (containsBadWords(name)) {
+      return { type: "error", message: "Your profile name contains inappropriate language. Please choose a different name." };
+    }
+
+    const result = await editUserProfile(token, parseInt(id), {
       name: name,
-     
     });
 
     if (!result) {
