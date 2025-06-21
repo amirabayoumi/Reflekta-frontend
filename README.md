@@ -234,5 +234,14 @@ The application is fully responsive with:
 
 ---
 
+## 📝 Project Presentation
+
+I've documented my development journey in this presentation:
+[Reflekta Development Journey on Canva](https://www.canva.com/design/DAGqQ3dlleU/wlLU3Bf_C0APxoy_DQJZnw/view?utm_content=DAGqQ3dlleU&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hc9bf6e8974#1)
+
+This presentation showcases the process, challenges, and solutions encountered while building the Reflekta platform.
+
+---
+
 *Created with ❤️ by Amira Bayoumi*
 
