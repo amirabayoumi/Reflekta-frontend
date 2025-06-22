@@ -27,6 +27,7 @@ export default function About() {
     <>
       <Header />
       <main className="bg-gradient-to-br from-purple to-black font-alef text-white">
+        {/* First section */}
         <section className="min-h-[50vh] flex items-center px-6 py-12 md:px-12">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-5xl font-bold mb-6 text-center mt-8">
@@ -91,7 +92,7 @@ export default function About() {
             </div>
           </div>
         </section>
-
+        {/* our story section */}
         <section className="px-6 py-16 md:px-12">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
@@ -129,6 +130,7 @@ export default function About() {
           </div>
         </section>
 
+        {/* our team section */}
         <section className="px-6 py-16 md:px-12 bg-white/5">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl font-bold mb-10 text-center">
@@ -182,7 +184,7 @@ export default function About() {
             </div>
           </div>
         </section>
-
+        {/* get involved section redirect to contact page */}
         <section className="px-6 py-16 md:px-12">
           <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-6">

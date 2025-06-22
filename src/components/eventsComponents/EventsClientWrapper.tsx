@@ -11,18 +11,10 @@ import {
   ChevronUp,
 } from "lucide-react";
 import "leaflet/dist/leaflet.css";
-import type { CategoryData, EventData, FormatedEvent } from "@/types";
+import type { EventData, EventsClientWrapperProps } from "@/types";
 import ReusableMap from "@/components/eventsComponents/ReusableMap";
 import { slugit } from "@/helper";
 import { useRouter, usePathname } from "next/navigation";
-
-interface EventsClientWrapperProps {
-  initialEvents: FormatedEvent[];
-  categories: CategoryData[];
-  locations: string[];
-  initialLocationFilter?: string;
-  initialCategoryFilter?: string;
-}
 
 // Format date for display
 const formatDate = (dateString: string | number | Date) => {
@@ -208,7 +200,7 @@ export default function EventsClientWrapper({
           onClick={toggleMap}
         >
           <h2 className="text-xl font-semibold text-[#553a5c]">
-            Event Locations Map
+            Events Locations Map
           </h2>
           {mapExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
         </div>
@@ -222,7 +214,7 @@ export default function EventsClientWrapper({
               key={mapKey}
               events={filteredEvents}
               center={getMapCenter(filteredEvents)}
-              zoom={8}
+              zoom={7}
               className="h-full w-full"
             />
           )}
@@ -241,17 +233,24 @@ export default function EventsClientWrapper({
                 key={event.id}
                 className="bg-white rounded-lg shadow-md overflow-hidden"
               >
-                <div className="h-40 bg-gray-300 relative">
+                {/* <div className="h-40 bg-gray-300 relative">
                   <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#553a5c]/30 to-[#937195]/30">
-                    <span className="text-lg font-medium text-white">
-                      {event.categories
-                        .map((cat) =>
-                          typeof cat === "string" ? cat : cat.name
-                        )
-                        .join(", ")}
+                    <span className="text-lg font-medium text-white text-center px-3 max-w-[90%] truncate">
+                      {event.categories.length > 2
+                        ? `${event.categories
+                            .slice(0, 2)
+                            .map((cat) =>
+                              typeof cat === "string" ? cat : cat.name
+                            )
+                            .join(", ")} +${event.categories.length - 2}`
+                        : event.categories
+                            .map((cat) =>
+                              typeof cat === "string" ? cat : cat.name
+                            )
+                            .join(", ")}
                     </span>
                   </div>
-                </div>
+                </div> */}
                 <div className="p-4">
                   <h3 className="font-medium text-lg mb-1 text-[#553a5c]">
                     {event.title}
@@ -272,16 +271,16 @@ export default function EventsClientWrapper({
                   <p className="text-gray-600 text-sm mb-4">
                     <strong>Organizer:</strong> {event.organizer}
                   </p>
-                  <div className="flex justify-between items-center">
-                    <div className="flex flex-wrap gap-1">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div className="flex flex-wrap gap-1 max-w-full sm:max-w-[65%]">
                       {event.categories.map((cat, index) => (
                         <span
                           key={
                             typeof cat === "string"
-                              ? `string-${index}` // Unique key for string categories
-                              : cat.id || `generated-${index}` // Unique key for CategoryData
+                              ? `string-${index}`
+                              : cat.id || `generated-${index}`
                           }
-                          className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded"
+                          className="text-xs text-gray-500 px-2 py-1 bg-gray-100 rounded inline-block mb-1"
                         >
                           {typeof cat === "string" ? cat : cat.name}
                         </span>
@@ -291,7 +290,7 @@ export default function EventsClientWrapper({
                       href={`/community-hub/events/${event.id}/${slugit(
                         event.title
                       )}`}
-                      className="text-sm bg-[#886f80] text-white px-4 py-1 rounded hover:bg-[#553a5c] transition-colors"
+                      className="text-sm bg-[#886f80] text-white px-4 py-1 rounded hover:bg-[#553a5c] transition-colors whitespace-nowrap"
                     >
                       View Details
                     </Link>

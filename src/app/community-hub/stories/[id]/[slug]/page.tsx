@@ -11,17 +11,13 @@ import DeleteStory from "@/components/userDashboardComponent/DeleteStory";
 import DeleteComment from "@/components/userDashboardComponent/DeleteComment";
 import EditComment from "@/components/userDashboardComponent/EditComment";
 import Image from "next/image";
-
-type PageParams = {
-  id: string;
-  slug: string;
-};
+import type { DetailPageParams } from "@/types";
 
 const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 export const generateMetadata = async ({
   params,
 }: {
-  params: Promise<PageParams>;
+  params: Promise<DetailPageParams>;
 }): Promise<Metadata> => {
   const { id } = await params;
   if (!id) {
@@ -84,7 +80,7 @@ export const generateMetadata = async ({
   };
 };
 
-const page = async ({ params }: { params: Promise<PageParams> }) => {
+const page = async ({ params }: { params: Promise<DetailPageParams> }) => {
   const { id } = await params;
 
   const resp = await fetch(`https://inputoutput.be/api/stories/${id}`, {
@@ -266,7 +262,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
   );
 };
 
-export async function generateStaticParams(): Promise<PageParams[]> {
+export async function generateStaticParams(): Promise<DetailPageParams[]> {
   const response = await fetch("https://inputoutput.be/api/stories", {
     headers: {
       "Content-Type": "application/json",

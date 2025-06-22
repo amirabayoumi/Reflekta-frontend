@@ -12,16 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { LoaderPinwheel, Download, Ticket } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-
-interface TicketGeneratorProps {
-  event: {
-    id: number | string;
-    title: string;
-    start_date: string;
-    location: string;
-    organizer?: string;
-  };
-}
+import type { TicketGeneratorProps } from "@/types";
 
 const TicketGenerator = ({ event }: TicketGeneratorProps) => {
   // Use auth context instead of manual cookie checks

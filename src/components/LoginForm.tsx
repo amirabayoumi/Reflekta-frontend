@@ -6,11 +6,7 @@ import { X } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useActionState } from "react";
 import { loginUserAction, registerUserAction } from "@/actions";
-
-interface LoginFormProps {
-  isShowLogin: boolean;
-  onClose: () => void;
-}
+import { LoginFormProps } from "@/types";
 
 const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
   const [isFlipped, setIsFlipped] = useState(false);

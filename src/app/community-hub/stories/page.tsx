@@ -80,8 +80,9 @@ export default async function StoriesPage() {
         {transformedStories.length > 0 ? (
           <>
             <div className="text-center mb-8 text-2xl font-bold text-[#553a5c]">
-              Stories float around us, arriving without our choosing just like
-              the people we meet by chance in life.
+              Stories float around us, arriving without our choosing, just like
+              the people we meet by chance in life. They come unplanned, yet
+              each one leaves a mark, quietly shaping the paths we take.
             </div>
             <div className="mb-4 text-center">
               <AddStory />

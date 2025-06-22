@@ -1,12 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState, useMemo, useRef, useEffect } from "react";
-import type { Story } from "@/types";
+import type { FloatingCirclesProps } from "@/types";
 import { slugit } from "@/helper";
 
-interface FloatingCirclesProps {
-  stories: Story[];
-}
+
 
 const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
   // Track if we're mounted on the client
@@ -53,7 +51,6 @@ const FloatingCircles: React.FC<FloatingCirclesProps> = ({ stories }) => {
   }, []);
 
   const storyCircles = useMemo(() => {
-    // Sort stories by created_at with newest first
     const sortedStories = [...stories].sort((a, b) => {
       return (
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()

@@ -9,22 +9,10 @@ import React, {
   ReactNode,
 } from "react";
 import { fetchUserData, fetchUserComments, fetchUserStories } from "@/queries";
-import type { UserData, StoryComment, Story } from "@/types";
+import type { UserData, StoryComment, Story, AuthContextType } from "@/types";
 
-// Define the shape of your auth context
-export interface AuthContextType {
-  user: UserData | null;
-  userStories?: Story[] | null;
-  userComments?: StoryComment[] | null;
-  token: string | null;
-  isLoading: boolean;
-  error: string | null;
-  setToken: (token: string | null) => void;
-  logout: () => void;
-  refreshUserData: () => Promise<void>;
-}
 
-// Create context with default values
+
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
