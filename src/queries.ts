@@ -32,19 +32,22 @@ export const registerUser = async (registerData: registerData): Promise<Register
     const response: AxiosResponse<RegisterResponse> = await axios.post(
       "https://inputoutput.be/api/register",
       registerData,
-   
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // No Authorization header for registration
+        },
+        httpsAgent: httpsAgent,
+      }
     );
 
     if (response.status !== 200) {
       const message = response.data ? JSON.stringify(response.data) : `Registration failed with status ${response.status}`;
-      console.error(`Registration failed: ${response.status} - ${message}`);
       return { success: false, message };
     }
 
-    console.log("Registration response:", response.data);
     return response.data;
   } catch (error: unknown) {
-    console.error("Error registering user:", error);
     let message = "Registration failed";
 
     if (
@@ -66,17 +69,20 @@ export const registerUser = async (registerData: registerData): Promise<Register
 
 export const loginUser = async (userData: userData): Promise<LoginResponse> => {
   try {
-    // console.log("Logging in user with data:", userData);
-    // console.log("Using AUTH_TOKEN:", AUTH_TOKEN); // Should now show the value
-    console.log("Headers being sent:", getHeaders());
     const response: AxiosResponse<LoginResponse> = await axios.post(
       "https://inputoutput.be/api/login",
       userData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          // No Authorization header for login
+        },
+        httpsAgent: httpsAgent,
+      }
     );
 
     if (response.status !== 200) {
       const message = response.data ? JSON.stringify(response.data) : `Login failed with status ${response.status}`;
-      console.error(`Login failed: ${response.status} - ${message}`);
       return { success: false, message };
     }
 
@@ -89,13 +95,11 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
       "error" in response.data.data &&
       (response.data.data as { error?: string }).error === "Invalid credentials"
     ) {
-      console.log("Login failed: Invalid credentials");
       return response.data; // Return the exact error structure from the API
     }
 
     return response.data;
   } catch (error: unknown) {
-    // console.error("Error logging in user:", error);
     let message = "Login failed";
 
     if (
@@ -116,8 +120,6 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
           typeof responseData.data === "object" && responseData.data !== null &&
           "error" in responseData.data && 
           responseData.data.error === "Invalid credentials") {
-        
-        console.log("Returning exact invalid credentials error");
         return responseData as LoginResponse;
       }
       
@@ -136,7 +138,6 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
 export const fetchUserData = async (token?: string): Promise<UserData | null> => {
   try {
     if (!token) {
-      console.warn("No token provided to fetchUserData");
       return null;
     }
     const res = await fetch("https://inputoutput.be/api/user", {
@@ -148,10 +149,8 @@ export const fetchUserData = async (token?: string): Promise<UserData | null> =>
     });
     if (!res.ok) return null;
     const data = await res.json();
-    console.log("User data fetched successfully:", data);
     return data;
-  } catch (error) {
-    console.error("Error fetching user data:", error);
+  } catch {
     return null;
   }
 };
@@ -185,7 +184,7 @@ export async function getTicketPdf(ticketData: Ticketdata): Promise<Blob> {
     const blob = await response.blob();
     return blob;
   } catch (error) {
-    console.error("❌ Error generating ticket PDF:", error);
+    console.error(" Error generating ticket PDF:", error);
     throw error;
   }
 }
@@ -202,9 +201,8 @@ export function downloadPdfBlob(blob: Blob, filename = "ticket.pdf"): void {
     a.click();
     a.remove();
     window.URL.revokeObjectURL(url);
-    console.log("✅ PDF downloaded successfully.");
   } else {
-    console.warn("Cannot download in non-browser environment");
+    // Do nothing in non-browser environment
   }
 }
 
@@ -230,8 +228,8 @@ export const addNewStory = async (storyData: NewStoryData): Promise<Story | null
     }
     return response.data;
   } catch (error) {
-    console.error("Error adding new story:", error);
-    return null;
+    // Throw the error instead of returning null
+    throw error;
   }
 };
 
@@ -257,8 +255,7 @@ export const addCommentToStory = async (
   try {
     // No fallback to cookies, only use the provided token
     if (!token) {
-      console.warn("No token provided, cannot add comment");
-      return null;
+      throw new Error("No authentication token provided");
     }
     
     const response = await axios.post(
@@ -273,11 +270,10 @@ export const addCommentToStory = async (
       }
     );
     
-   
     return response.data;
   } catch (error) {
-    console.error("Error adding comment to story:", error);
-    return null;
+    // Throw the error instead of returning null
+    throw error;
   }
 };
 
@@ -297,13 +293,13 @@ export const fetchUserStories = async (id: number, token: string): Promise<Story
         next: { tags: ["user-stories"] },
       }
     );
-    if (!res.ok) return null;
-    // Optionally revalidate after mutation elsewhere:
-    // revalidateTag("user-stories");
+    if (!res.ok) {
+      throw new Error(`API Error: ${res.status}`);
+    }
     return await res.json();
   } catch (error) {
-    console.error("Error fetching user stories:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 };
 
@@ -319,13 +315,13 @@ export const fetchUserComments = async (id: number, token: string): Promise<Stor
         next: { tags: ["user-comments"] },
       }
     );
-    if (!res.ok) return null;
-    // Optionally revalidate after mutation elsewhere:
-    // revalidateTag("user-comments");
+    if (!res.ok) {
+      throw new Error(`API Error: ${res.status}`);
+    }
     return await res.json();
   } catch (error) {
-    console.error("Error fetching user comments:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 };
 
@@ -350,8 +346,8 @@ export const editStory = async (id: number, storyData: editStoryData, token: str
 
     return response.data;
   } catch (error) {
-    console.error("Error editing story:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 }
 
@@ -370,8 +366,8 @@ export const deleteStory = async (id: number, token: string): Promise<boolean> =
     }
     return true;
   } catch (error) {
-    console.error("Error deleting story:", error);
-    return false;
+    // Throw the error instead of just logging it
+    throw error;
   }
 }
 
@@ -398,8 +394,8 @@ export const editComment = async (
     }
     return response.data;
   } catch (error) {
-    console.error("Error editing comment:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 };
 
@@ -424,8 +420,8 @@ export const deleteComment = async (
     }
     return true;
   } catch (error) {
-    console.error("Error deleting comment:", error);
-    return false;
+    // Throw the error instead of just logging it
+    throw error;
   }
 };
 
@@ -459,8 +455,8 @@ export const uploadProfilePhoto = async (file: File, token: string): Promise<{ u
   message: response.data.message
 };
   } catch (error) {
-    console.error("Error uploading profile photo:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 };
 
@@ -481,8 +477,8 @@ export const deleteProfile = async (token: string , id: number): Promise<{ messa
 
     return { message: response.data.message };
   } catch (error) {
-    console.error("Error deleting profile photo:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 };
 
@@ -507,7 +503,7 @@ export const editUserProfile = async (token: string , id: number, updatedUserDat
     }
     return { message: response.data.message };
   } catch (error) {
-    console.error("Error editing user profile:", error);
-    return null;
+    // Throw the error instead of just logging it
+    throw error;
   }
 }

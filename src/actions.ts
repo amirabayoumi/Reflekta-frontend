@@ -443,8 +443,11 @@ export async function loginUserAction(
       return { type: "success", message: "Successfully logged in!", token: response.data.token };
     } else {
       // Check if the error is the specific "Invalid credentials" message
+      // Fix the TypeScript error by adding proper type checking
       if (response.message === "Unauthorized" && 
           response.data && 
+          typeof response.data === "object" &&
+          "error" in response.data &&
           response.data.error === "Invalid credentials") {
         return { 
           type: "error", 
@@ -460,7 +463,7 @@ export async function loginUserAction(
       };
     }
   } catch (error) {
-    console.error("Login error:", error);
+    // Remove console.error statements
     
     // Check for the specific error structure from the API
     interface ErrorWithResponse {
@@ -573,7 +576,7 @@ export async function registerUserAction(
       }
     }
   } catch (error) {
-    console.error("Registration error:", error);
+    // Remove console.error statements
     
     // Enhanced error handling for duplicate emails with better type safety
     if (error && typeof error === "object") {
