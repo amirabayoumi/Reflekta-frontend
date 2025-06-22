@@ -9,7 +9,7 @@ import {
 import https from 'https';
 import axios, { AxiosResponse } from 'axios';
 
-// Change the environment variable reference
+
 const AUTH_TOKEN = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
 const getHeaders = () => ({
@@ -82,15 +82,14 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
     }
 
     // Remove the cookie handling part since we're using pure token auth
-    if (response.data.success && response.data.data?.token) {
-      // Return the original token for auth context to use
-      // No encoding needed as we're not using cookies anymore
-      console.log("Login successful, returning token");
-    }
+    // if (response.data.success && response.data.data?.token) {
+
+    //   console.log("Login successful, returning token");
+    // }
 
     return response.data;
   } catch (error: unknown) {
-    console.error("Error logging in user:", error);
+    // console.error("Error logging in user:", error);
     let message = "Login failed";
 
     if (
