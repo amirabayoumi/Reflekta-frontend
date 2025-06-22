@@ -223,7 +223,7 @@ export const addNewStory = async (storyData: NewStoryData): Promise<Story | null
       headers: getHeaders(),
       httpsAgent: httpsAgent,
     });
-    if (response.status !== 200) {
+    if (response.status !== 200 && response.status !== 201) {
       throw new Error(`API Error: ${response.status}`);
     }
     return response.data;
