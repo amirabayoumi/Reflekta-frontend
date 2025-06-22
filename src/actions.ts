@@ -3,6 +3,7 @@
 import { revalidateTag } from "next/cache";
 import { getTicketPdf, addNewStory, addCommentToStory, editStory, deleteStory, editComment, deleteComment } from "./queries";
 import { uploadProfilePhoto, deleteProfile, editUserProfile } from "./queries";
+import { loginUser, registerUser } from "./queries";
 
 const badWords = (process.env.BAD_WORDS || "").split(",");
 
@@ -414,5 +415,174 @@ export async function editUserProfileAction(
   } catch (error) {
     console.error("Error editing profile:", error);
     return { type: "error", message: "Failed to edit profile." };
+  }
+}
+
+export async function loginUserAction(
+  initialState: { type: string; message: string; token: string },
+  formData: FormData
+) {
+  try {
+    // Check if this is a reset request
+    if (formData.get("reset") === "true") {
+      return { type: "", message: "", token: "" };
+    }
+    
+    const email = formData.get("email")?.toString() || "";
+    const password = formData.get("password")?.toString() || "";
+    
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { type: "error", message: "Please enter a valid email address", token: "" };
+    }
+
+    const response = await loginUser({ email, password });
+
+    if (response.success && response.data?.token) {
+      return { type: "success", message: "Successfully logged in!", token: response.data.token };
+    } else {
+      return { 
+        type: "error", 
+        message: response.message || "Invalid email or password", 
+        token: "" 
+      };
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    let errorMessage = "Login failed. Please try again.";
+    
+    if (error && typeof error === "object" && "message" in error) {
+      errorMessage = (error as { message: string }).message;
+    }
+    
+    return { type: "error", message: errorMessage, token: "" };
+  }
+}
+
+export async function registerUserAction(
+  initialState: { type: string; message: string },
+  formData: FormData
+) {
+  try {
+    // Check if this is a reset request
+    if (formData.get("reset") === "true") {
+      return { type: "", message: "" };
+    }
+    
+    const name = formData.get("username")?.toString() || "";
+    const email = formData.get("email")?.toString() || "";
+    const password = formData.get("password")?.toString() || "";
+    const confirmPassword = formData.get("confirmPassword")?.toString() || "";
+
+    // Check for bad words in username
+    if (containsBadWords(name)) {
+      return { type: "error", message: "Your username contains inappropriate language. Please choose a different username." };
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return { type: "error", message: "Please enter a valid email address" };
+    }
+
+    // Password validation
+    if (password !== confirmPassword) {
+      return { type: "error", message: "Passwords do not match" };
+    }
+
+    if (password.length < 6) {
+      return { type: "error", message: "Password must be at least 6 characters long" };
+    }
+
+    const userData = {
+      name,
+      email,
+      password,
+      confirm_password: confirmPassword,
+    };
+
+    const result = await registerUser(userData);
+
+    if (result.success) {
+      return { type: "success", message: "Registration successful!" };
+    } else {
+      // Check for common error messages in the response
+      if (result.message) {
+        if (
+          result.message.includes("Duplicate entry") ||
+          result.message.includes("already exists") ||
+          result.message.includes("Integrity constraint violation") ||
+          result.message.includes("users_email_unique")
+        ) {
+          return { 
+            type: "error", 
+            message: "This email is already registered. Please use a different email or sign in." 
+          };
+        } else {
+          return { type: "error", message: result.message };
+        }
+      } else {
+        return { type: "error", message: "Registration failed" };
+      }
+    }
+  } catch (error) {
+    console.error("Registration error:", error);
+    
+    // Enhanced error handling for duplicate emails with better type safety
+    if (error && typeof error === "object") {
+      let errorMsg = "Registration failed";
+      
+      // Define interface for common error shapes
+      interface ErrorWithResponse {
+        response?: {
+          data?: unknown;
+        };
+        message?: string;
+      }
+      
+      const typedError = error as ErrorWithResponse;
+      
+      // Check for response data in the error
+      if (typedError.response && typedError.response.data) {
+        const responseData = typedError.response.data;
+        
+        if (typeof responseData === "string" && (
+          responseData.includes("Duplicate entry") || 
+          responseData.includes("users_email_unique") ||
+          responseData.includes("Integrity constraint violation")
+        )) {
+          return { 
+            type: "error", 
+            message: "This email is already registered. Please use a different email or sign in." 
+          };
+        }
+      }
+      
+      // Check for error message
+      if (typedError.message && typeof typedError.message === "string") {
+        const msg = typedError.message;
+        if (
+          msg.includes("Duplicate") ||
+          msg.includes("unique") ||
+          msg.includes("Integrity constraint") ||
+          msg.includes("1062") ||
+          msg.includes("UniqueConstraintViolationException")
+        ) {
+          return { 
+            type: "error", 
+            message: "This email is already registered. Please use a different email or sign in." 
+          };
+        } else {
+          // Update errorMsg if we have a message but it's not about duplicate emails
+          errorMsg = msg;
+        }
+      }
+      
+      // Use the errorMsg variable
+      return { type: "error", message: errorMsg };
+    }
+    
+    return { type: "error", message: "Registration failed. Please try again." };
   }
 }

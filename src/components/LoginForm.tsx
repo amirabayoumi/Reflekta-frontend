@@ -1,15 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import { registerUser, loginUser } from "../queries";
 import { useAuth } from "@/hooks/useAuth";
-
-interface RegisterResponse {
-  success: boolean;
-  message?: string;
-}
+import { useActionState } from "react";
+import { loginUserAction, registerUserAction } from "@/actions";
 
 interface LoginFormProps {
   isShowLogin: boolean;
@@ -22,12 +18,53 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loginSuccess, setLoginSuccess] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get the auth context
   const { setToken } = useAuth();
+
+  // Setup useActionState for login and register
+  const initialLoginState = { type: "", message: "", token: "" };
+  const [loginState, loginAction, isLoginPending] = useActionState(
+    loginUserAction,
+    initialLoginState
+  );
+
+  const initialRegisterState = { type: "", message: "" };
+  const [registerState, registerAction, isRegisterPending] = useActionState(
+    registerUserAction,
+    initialRegisterState
+  );
+
+  // Handle login success
+  useEffect(() => {
+    if (loginState.type === "success" && loginState.token) {
+      setToken(loginState.token);
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
+    }
+  }, [loginState, setToken]);
+
+  // Handle registration success
+  useEffect(() => {
+    if (registerState.type === "success") {
+      // Save the current password before flipping
+      const currentPassword = password;
+
+      setIsFlipped(false);
+
+      // After flipping to sign in, preserve the email and password
+      setTimeout(() => {
+        // Keep the email and password for easier sign in
+        setPassword(currentPassword);
+      }, 700); // Delay slightly to match the flip animation
+
+      // Clear registration success message after a delay
+      setTimeout(() => {
+        registerAction(new FormData()); // Reset the form state
+      }, 3000);
+    }
+  }, [registerState, password, registerAction]);
 
   const handleClose = () => {
     setIsFlipped(false);
@@ -35,82 +72,33 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
     setPassword("");
     setUsername("");
     setConfirmPassword("");
-    setErrorMessage("");
-    setLoginSuccess(false);
+
+    // Create a FormData object with a reset flag
+    const resetFormData = new FormData();
+    resetFormData.append("reset", "true");
+
+    // Reset both login and register states
+    loginAction(resetFormData);
+    registerAction(resetFormData);
     onClose();
   };
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage("");
-    setIsSubmitting(true);
+  // Handle when flipping the card - also reset any error messages
+  const handleFlip = (flip: boolean) => {
+    // Reset error messages when switching between forms
+    const resetFormData = new FormData();
+    resetFormData.append("reset", "true");
 
-    try {
-      const response = await loginUser({ email, password });
-
-      if (response.success && response.data?.token) {
-        // Store the token in auth context - this will also save to localStorage
-        setToken(response.data.token);
-
-        setLoginSuccess(true);
-        setTimeout(() => {
-          handleClose();
-        }, 1000);
-      } else {
-        setErrorMessage(response.message || "Login failed");
-      }
-    } catch (error: unknown) {
-      if (
-        error &&
-        typeof error === "object" &&
-        error !== null &&
-        "message" in error &&
-        typeof (error as { message?: unknown }).message === "string"
-      ) {
-        setErrorMessage((error as { message: string }).message);
-      } else {
-        setErrorMessage("Login failed");
-      }
-    } finally {
-      setIsSubmitting(false);
+    if (flip) {
+      loginAction(resetFormData);
+    } else {
+      registerAction(resetFormData);
     }
+
+    setIsFlipped(flip);
   };
 
-  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
-      return;
-    }
-    const userData = {
-      name: username,
-      email,
-      password,
-      confirm_password: confirmPassword,
-    };
-    try {
-      const result = (await registerUser(userData)) as RegisterResponse;
-      if (result.success) {
-        setIsFlipped(false);
-        setErrorMessage("Registration successful. Please sign in.");
-        setEmail(email);
-        setPassword(password);
-      } else {
-        setErrorMessage(result.message || "Registration failed");
-      }
-    } catch (error: unknown) {
-      if (
-        error &&
-        typeof error === "object" &&
-        "message" in error &&
-        typeof (error as { message?: unknown }).message === "string"
-      ) {
-        setErrorMessage((error as { message: string }).message);
-      } else {
-        setErrorMessage("Registration failed");
-      }
-    }
-  };
+  // Email validation function
 
   if (!isShowLogin) {
     return null;
@@ -132,7 +120,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
           transition={{ duration: 0.6 }}
           style={{
             transformStyle: "preserve-3d",
-            height: isFlipped ? "520px" : "380px",
+            height: isFlipped ? "550px" : "400px",
             transition: "transform 0.6s, scale 0.6s, height 0.6s",
           }}
         >
@@ -157,10 +145,11 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               </button>
             </div>
 
-            <form className="space-y-5" onSubmit={handleSignIn}>
+            <form className="space-y-5" action={loginAction}>
               <div>
                 <input
                   type="email"
+                  name="email"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -172,6 +161,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               <div>
                 <input
                   type="password"
+                  name="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -180,30 +170,36 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
                 />
               </div>
 
-              {errorMessage && (
+              {loginState.type === "error" && (
                 <div className="text-red-500 text-sm text-center">
-                  {errorMessage}
+                  {loginState.message}
                 </div>
               )}
-              {loginSuccess && (
-                <div className="text-green-500 text-sm text-center">
+              {loginState.type === "success" && (
+                <div className="text-green-900 text-sm text-center">
                   Successfully logged in!
+                </div>
+              )}
+              {registerState.type === "success" && (
+                <div className="text-green-900 text-sm text-center">
+                  Registration successful! You can now sign in with your
+                  credentials.
                 </div>
               )}
 
               <button
                 type="submit"
                 className="w-full py-3 bg-[#553a5c] hover:bg-[#937195] text-white font-medium rounded-lg transition-colors"
-                disabled={isSubmitting}
+                disabled={isLoginPending}
               >
-                {isSubmitting ? "Signing In..." : "Sign In"}
+                {isLoginPending ? "Signing In..." : "Sign In"}
               </button>
             </form>
 
             <p className="mt-6 text-center text-gray-600">
               Don&apos;t have an account?{" "}
               <button
-                onClick={() => setIsFlipped(true)}
+                onClick={() => handleFlip(true)}
                 className="text-[#553a5c] font-medium hover:text-[#937195] focus:outline-none"
               >
                 Sign Up
@@ -232,10 +228,11 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               </button>
             </div>
 
-            <form className="space-y-4" onSubmit={handleSignUp}>
+            <form className="space-y-4" action={registerAction}>
               <div>
                 <input
                   type="text"
+                  name="username"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -247,6 +244,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               <div>
                 <input
                   type="email"
+                  name="email"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -258,6 +256,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               <div>
                 <input
                   type="password"
+                  name="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -269,6 +268,7 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
               <div>
                 <input
                   type="password"
+                  name="confirmPassword"
                   placeholder="Confirm Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
@@ -277,18 +277,30 @@ const LoginForm = ({ isShowLogin, onClose }: LoginFormProps) => {
                 />
               </div>
 
+              {registerState.type === "error" && (
+                <div className="text-red-500 text-sm text-center">
+                  {registerState.message}
+                </div>
+              )}
+              {registerState.type === "success" && (
+                <div className="text-green-900 text-sm text-center">
+                  Registration successful! You can now sign in.
+                </div>
+              )}
+
               <button
                 type="submit"
                 className="w-full py-3 bg-[#553a5c] hover:bg-[#937195] text-white font-medium rounded-lg transition-colors"
+                disabled={isRegisterPending}
               >
-                Sign Up
+                {isRegisterPending ? "Signing Up..." : "Sign Up"}
               </button>
             </form>
 
             <p className="mt-6 text-center text-gray-600">
               Already have an account?{" "}
               <button
-                onClick={() => setIsFlipped(false)}
+                onClick={() => handleFlip(false)}
                 className="text-[#553a5c] font-medium hover:text-[#937195] focus:outline-none"
               >
                 Sign In
