@@ -79,10 +79,9 @@ const EditStory = ({ story }: { story: Story }) => {
               Content
             </label>
             <Textarea
-              rows={5}
               name="content"
               defaultValue={story.content}
-              className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-[#553a5c]"
+              className="border border-gray-300 rounded px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-[#553a5c] h-48 max-h-48 overflow-y-auto"
             />
           </div>
           <DialogFooter className="mt-4 flex gap-2">
