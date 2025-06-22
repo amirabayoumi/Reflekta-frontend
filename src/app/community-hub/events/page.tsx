@@ -1,6 +1,7 @@
 import EventsClientWrapper from "@/components/eventsComponents/EventsClientWrapper";
 import { Metadata } from "next";
 import type { CategoryData, EventData, FormatedEvent } from "@/types";
+import { SearchParamsEventPage } from "@/types";
 
 export const metadata: Metadata = {
   title: "Events - Community Hub ",
@@ -22,15 +23,10 @@ export const metadata: Metadata = {
 
 const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 
-type SearchParams = {
-  location?: string;
-  category?: string;
-};
-
 export default async function EventsPage({
   searchParams,
 }: {
-  searchParams: Promise<SearchParams>;
+  searchParams: Promise<SearchParamsEventPage>;
 }) {
   const resolvedSearchParams = await searchParams;
 

@@ -18,13 +18,10 @@ const AddComment = ({ storyId }: { storyId: number }) => {
     addCommentToStoryAction,
     initialState
   );
-  // Get token from auth context
   const { user, token } = useAuth();
 
-  // Ensure we have a valid token or an empty string
   const tokenValue = token || "";
 
-  // Show sign-in prompt if user is not logged in
   if (!user) {
     return (
       <div className="p-6 md:p-8 flex flex-col items-center">

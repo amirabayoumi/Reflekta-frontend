@@ -11,7 +11,8 @@ const alef = Alef({
 
 export const metadata: Metadata = {
   title: "Reflekta",
-  description: "one world, many reflections.",
+  description:
+    "a cultural bridge in Belgium, connecting locals and newcomers through shared stories and experiences.",
   keywords: [
     "Reflekta",
     "community",
@@ -32,7 +33,8 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Reflekta",
-    description: "one world, many reflections.",
+    description:
+      "a cultural bridge in Belgium, connecting locals and newcomers through shared stories and experiences.",
     siteName: "Reflekta",
     images: [
       {
@@ -53,7 +55,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Add this to avoid unnecessary preloading */}
         <meta name="next-size-adjust" />
       </head>
       <body className={`${alef.variable}  antialiased`}>

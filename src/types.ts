@@ -155,3 +155,98 @@ export type Message = {
   type: string;
   message: string;
 };
+
+
+
+
+export type SearchParamsEventPage = {
+  location?: string;
+  category?: string;
+};
+
+
+
+export interface DetailPageParams {
+  id: string;
+  slug: string;
+}
+
+
+
+export interface EventsClientWrapperProps {
+  initialEvents: FormatedEvent[];
+  categories: CategoryData[];
+  locations: string[];
+  initialLocationFilter?: string;
+  initialCategoryFilter?: string;
+}
+
+export interface Event {
+  id: string | number;
+  title: string;
+  location: string;
+  startDate: string | number | Date;
+  latitude: number;
+  longitude: number;
+  categories: string[];
+}
+
+export interface MapProps {
+  events: Event[];
+  center: [number, number];
+  zoom: number;
+}
+
+export interface ReusableMapProps {
+  events: EventData[]; 
+  center: [number, number];
+  zoom: number;
+  className?: string;
+}
+
+
+export interface TicketGeneratorProps {
+  event: {
+    id: number | string;
+    title: string;
+    start_date: string;
+    location: string;
+    organizer?: string;
+  };
+}
+
+
+export interface CarouselItem {
+  imageUrl: string;
+  title: string;
+  link?: string;
+}
+
+export interface Carousel3DProps {
+  items?: CarouselItem[];
+  fixedRadius?: boolean;
+}
+
+
+export interface FloatingCirclesProps {
+  stories: Story[];
+}
+
+
+export interface LoginFormProps {
+  isShowLogin: boolean;
+  onClose: () => void;
+}
+
+
+export interface AuthContextType {
+  user: UserData | null;
+  userStories?: Story[] | null;
+  userComments?: StoryComment[] | null;
+  token: string | null;
+  isLoading: boolean;
+  error: string | null;
+  setToken: (token: string | null) => void;
+  logout: () => void;
+  refreshUserData: () => Promise<void>;
+}

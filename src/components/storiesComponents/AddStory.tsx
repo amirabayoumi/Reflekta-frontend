@@ -22,7 +22,6 @@ export default function ShareStoryButton() {
     initialState
   );
 
-  // If user is not logged in, show message instead of dialog
   if (!user) {
     return (
       <div className="bg-white/70 backdrop-blur-sm shadow-sm rounded-lg p-4 border border-gray-200">
@@ -40,7 +39,6 @@ export default function ShareStoryButton() {
     <Dialog
       onOpenChange={(open) => {
         if (open) {
-          // Reset state when dialog opens
           const formData = new FormData();
           formData.set("reset", "true");
           action(formData);
@@ -62,7 +60,6 @@ export default function ShareStoryButton() {
         </DialogHeader>
 
         <form action={action} className="mt-4">
-          {/* Use user_id from auth context instead of hardcoded value */}
           <input type="hidden" name="userId" value={user.id} />
           <div className="space-y-4">
             <div>

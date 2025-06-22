@@ -9,7 +9,6 @@ export default function NotFound() {
 
       <main className="flex-grow flex items-center justify-center px-4 mt-20">
         <div className="bg-card rounded-lg shadow-lg p-8 text-center max-w-md w-full border border-border">
-          {/* 404 Number */}
           <h2 className="text-6xl font-bold text-plum mb-4">404</h2>
 
           <h3 className="text-2xl font-semibold mb-4 text-foreground">

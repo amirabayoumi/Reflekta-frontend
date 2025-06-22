@@ -1,44 +1,42 @@
-import { NextResponse } from 'next/server';
-import nodemailer from 'nodemailer';
+import { NextResponse } from "next/server";
+import nodemailer from "nodemailer";
 
 export async function POST(request: Request) {
   try {
     const { name, email, message } = await request.json();
-    
 
     const emailServer = process.env.EMAIL_SERVER;
     const emailUser = process.env.EMAIL_USER;
     const emailPassword = process.env.EMAIL_PASSWORD;
-    
+
     if (!emailServer || !emailUser || !emailPassword) {
-      console.error('Email configuration is missing. Please check your .env.local file');
+      console.error(
+        "Email configuration is missing. Please check your .env.local file"
+      );
       return NextResponse.json(
         {
           success: false,
-          message: 'Email server not configured',
-          error: 'Missing email configuration'
+          message: "Email server not configured",
+          error: "Missing email configuration",
         },
         { status: 500 }
       );
     }
-    
- 
+
     const transporter = nodemailer.createTransport({
       host: emailServer,
-      port: parseInt(process.env.EMAIL_PORT || '587'),
-      secure: process.env.EMAIL_SECURE === 'true',
+      port: parseInt(process.env.EMAIL_PORT || "587"),
+      secure: process.env.EMAIL_SECURE === "true",
       auth: {
         user: emailUser,
         pass: emailPassword,
       },
     });
 
-
     const fromEmail = process.env.EMAIL_FROM || emailUser;
-    
 
     const toEmail = process.env.EMAIL_TO || emailUser;
-    
+
     // 1. Send the ContactForm to Admin
     await transporter.sendMail({
       from: fromEmail,
@@ -60,13 +58,13 @@ export async function POST(request: Request) {
         <p>${message}</p>
       `,
     });
-    
-    // 2. Send thank you email to the sender 
- await transporter.sendMail({
-  from: fromEmail,
-  to: email,
-  subject: `Thank you for contacting Reflekta Community`,
-  html: `
+
+    // 2. Send thank you email to the sender
+    await transporter.sendMail({
+      from: fromEmail,
+      to: email,
+      subject: `Thank you for contacting Reflekta Community`,
+      html: `
 <!DOCTYPE html>
 <html>
 <head>
@@ -122,19 +120,19 @@ export async function POST(request: Request) {
 
 
 `,
-});
+    });
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
-      message: 'Email sent successfully' 
+      message: "Email sent successfully",
     });
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error("Error sending email:", error);
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Failed to send email',
-        error: (error as Error).message
+      {
+        success: false,
+        message: "Failed to send email",
+        error: (error as Error).message,
       },
       { status: 500 }
     );

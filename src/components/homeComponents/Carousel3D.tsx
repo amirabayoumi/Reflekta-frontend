@@ -2,17 +2,9 @@
 import { useEffect, useState } from "react";
 import styles from "@/styles/Carousel3D.module.css";
 import Link from "next/link";
+import type { CarouselItem, Carousel3DProps } from "@/types";
 
-interface CarouselItem {
-  imageUrl: string;
-  title: string;
-  link?: string;
-}
 
-interface Carousel3DProps {
-  items?: CarouselItem[];
-  fixedRadius?: boolean;
-}
 
 const Carousel3D: React.FC<Carousel3DProps> = ({
   items = [],

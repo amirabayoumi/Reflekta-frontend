@@ -6,17 +6,13 @@ import ReusableMap from "@/components/eventsComponents/ReusableMap";
 import type { EventData, CategoryData } from "@/types";
 import type { Metadata } from "next";
 import { slugit } from "@/helper";
-
-interface PageParams {
-  id: string;
-  slug: string;
-}
+import type { DetailPageParams } from "@/types";
 
 const authToken = process.env.NEXT_PUBLIC_AUTH_TOKEN;
 export const generateMetadata = async ({
   params,
 }: {
-  params: Promise<PageParams>;
+  params: Promise<DetailPageParams>;
 }): Promise<Metadata> => {
   const { id } = await params;
 
@@ -79,7 +75,7 @@ export const generateMetadata = async ({
   };
 };
 
-const page = async ({ params }: { params: Promise<PageParams> }) => {
+const page = async ({ params }: { params: Promise<DetailPageParams> }) => {
   const { id } = await params;
 
   const rawEvent = await fetch(`https://inputoutput.be/api/events/${id}`, {
@@ -264,7 +260,7 @@ const page = async ({ params }: { params: Promise<PageParams> }) => {
 };
 
 // Generate static params for SSG
-export async function generateStaticParams(): Promise<PageParams[]> {
+export async function generateStaticParams(): Promise<DetailPageParams[]> {
   const response = await fetch("https://inputoutput.be/api/events", {
     headers: {
       "Content-Type": "application/json",

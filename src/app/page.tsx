@@ -8,10 +8,27 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Reflekta",
   description: "Reflekta - A Cultural Bridge in Belgium",
+  keywords: [
+    "Reflekta",
+    "community",
+    "events",
+    "integration",
+    "diversity",
+    "belgium",
+    "cultural exchange",
+    "social impact",
+    "local events",
+    "community building",
+    "cultural diversity",
+    "cultural integration",
+    "cultural events",
+  ],
   openGraph: {
     title: "Reflekta",
-    description: "Reflekta - A Cultural Bridge in Belgium",
+    description:
+      "Reflekta - A Cultural Bridge in Belgium, connecting locals and newcomers through shared stories and experiences",
     siteName: "Reflekta",
+
     images: [
       {
         url: "https://res.cloudinary.com/djuqnuesr/image/upload/v1746640579/R_4_jz8tja.png",
@@ -33,11 +50,10 @@ export default function Home() {
             <Image
               src="https://res.cloudinary.com/djuqnuesr/image/upload/q_auto,f_auto,w_1200/mario-purisic-jG1z5o7NCq4-unsplash_cqpwkj.jpg"
               priority
-              sizes="100vw"
+              fill
               alt="Background"
               className="object-cover w-full h-full"
-              width={2000}
-              height={1200}
+              sizes="100vw"
             />
           </div>
 
