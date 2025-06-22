@@ -11,8 +11,6 @@ import React, {
 import { fetchUserData, fetchUserComments, fetchUserStories } from "@/queries";
 import type { UserData, StoryComment, Story, AuthContextType } from "@/types";
 
-
-
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   token: null,
@@ -49,6 +47,23 @@ function encodeToken(token: string): string {
 function decodeToken(encoded: string): string {
   const xored = atob(encoded);
   return xorEncryptDecrypt(xored, SECRET);
+}
+
+// Helper functions for cookie management
+function setCookie(name: string, value: string, days = 7) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(
+    value
+  )}; expires=${expires}; path=/; SameSite=Strict`;
+}
+
+function getCookie(name: string): string | null {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+function deleteCookie(name: string) {
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict`;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -94,25 +109,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [token]);
 
-  // Encapsulate token and localStorage logic (now with hashing)
+  // Encapsulate token and cookie logic (now with hashing)
   const updateToken = useCallback((newToken: string | null) => {
     setToken(newToken);
     try {
       if (newToken) {
         const encoded = encodeToken(newToken);
-        localStorage.setItem("auth_token_encoded", encoded);
+        setCookie("auth_token_encoded", encoded);
       } else {
-        localStorage.removeItem("auth_token_encoded");
+        deleteCookie("auth_token_encoded");
       }
     } catch (e) {
-      console.error("localStorage error:", e);
+      console.error("Cookie error:", e);
     }
   }, []);
 
-  // Load token from localStorage on mount (decode if present)
+  // Load token from cookie on mount (decode if present)
   useEffect(() => {
     try {
-      const encoded = localStorage.getItem("auth_token_encoded");
+      const encoded = getCookie("auth_token_encoded");
       if (encoded) {
         const decoded = decodeToken(encoded);
         setToken(decoded);
@@ -120,7 +135,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setIsLoading(false);
       }
     } catch (e) {
-      console.error("Error accessing localStorage:", e);
+      console.error("Error accessing cookie:", e);
       setIsLoading(false);
     }
   }, []);
