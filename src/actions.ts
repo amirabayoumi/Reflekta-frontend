@@ -442,6 +442,17 @@ export async function loginUserAction(
     if (response.success && response.data?.token) {
       return { type: "success", message: "Successfully logged in!", token: response.data.token };
     } else {
+      // Check if the error is the specific "Invalid credentials" message
+      if (response.message === "Unauthorized" && 
+          response.data && 
+          response.data.error === "Invalid credentials") {
+        return { 
+          type: "error", 
+          message: "Invalid email or password. Please try again.", 
+          token: "" 
+        };
+      }
+      
       return { 
         type: "error", 
         message: response.message || "Invalid email or password", 
@@ -450,6 +461,41 @@ export async function loginUserAction(
     }
   } catch (error) {
     console.error("Login error:", error);
+    
+    // Check for the specific error structure from the API
+    interface ErrorWithResponse {
+      response?: {
+        data?: {
+          success?: boolean;
+          message?: string;
+          data?: {
+            error?: string;
+          }
+        };
+      };
+      message?: string;
+    }
+    
+    const typedError = error as ErrorWithResponse;
+    
+    if (typedError.response?.data) {
+      const responseData = typedError.response.data;
+      
+      // Check for the "Invalid credentials" error pattern
+      if (responseData.message === "Unauthorized" && 
+          responseData.data?.error === "Invalid credentials") {
+        return { 
+          type: "error", 
+          message: "Invalid email or password. Please try again.", 
+          token: "" 
+        };
+      }
+      
+      if (responseData.message) {
+        return { type: "error", message: responseData.message, token: "" };
+      }
+    }
+    
     let errorMessage = "Login failed. Please try again.";
     
     if (error && typeof error === "object" && "message" in error) {

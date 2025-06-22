@@ -72,7 +72,6 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
     const response: AxiosResponse<LoginResponse> = await axios.post(
       "https://inputoutput.be/api/login",
       userData,
-    
     );
 
     if (response.status !== 200) {
@@ -81,11 +80,18 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
       return { success: false, message };
     }
 
-    // Remove the cookie handling part since we're using pure token auth
-    // if (response.data.success && response.data.data?.token) {
-
-    //   console.log("Login successful, returning token");
-    // }
+    // Check for error response with "Invalid credentials" even if status is 200
+    if (
+      !response.data.success &&
+      response.data.message === "Unauthorized" &&
+      response.data.data &&
+      typeof response.data.data === "object" &&
+      "error" in response.data.data &&
+      (response.data.data as { error?: string }).error === "Invalid credentials"
+    ) {
+      console.log("Login failed: Invalid credentials");
+      return response.data; // Return the exact error structure from the API
+    }
 
     return response.data;
   } catch (error: unknown) {
@@ -100,7 +106,22 @@ export const loginUser = async (userData: userData): Promise<LoginResponse> => {
       typeof (error as { response: unknown }).response === "object" &&
       "data" in (error as { response: { data?: unknown } }).response
     ) {
-      message = JSON.stringify((error as { response: { data?: unknown } }).response.data);
+      const responseData = (error as { response: { data?: unknown } }).response.data;
+      
+      // If responseData is the exact format we're looking for, return it directly
+      if (typeof responseData === "object" && responseData !== null &&
+          "success" in responseData && "message" in responseData && "data" in responseData &&
+          !responseData.success && 
+          responseData.message === "Unauthorized" && 
+          typeof responseData.data === "object" && responseData.data !== null &&
+          "error" in responseData.data && 
+          responseData.data.error === "Invalid credentials") {
+        
+        console.log("Returning exact invalid credentials error");
+        return responseData as LoginResponse;
+      }
+      
+      message = JSON.stringify(responseData);
     } else if (error && typeof error === "object" && "message" in error) {
       message = (error as { message?: string }).message || message;
     }
@@ -333,7 +354,6 @@ export const editStory = async (id: number, storyData: editStoryData, token: str
     return null;
   }
 }
-
 
 // delete story
 export const deleteStory = async (id: number, token: string): Promise<boolean> => {
