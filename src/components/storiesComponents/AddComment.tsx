@@ -59,7 +59,7 @@ const AddComment = ({ storyId }: { storyId: number }) => {
                 className="min-h-[120px] resize-none border-gray-200 focus:border-[#553a5c] focus:ring-[#553a5c]"
               />
             </div>
-            <div className="flex justify-end">
+            <div className="flex flex-col items-end">
               <Button
                 type="submit"
                 className="bg-[#553a5c] hover:bg-[#886f80] text-white"
@@ -71,17 +71,20 @@ const AddComment = ({ storyId }: { storyId: number }) => {
                   "Add your Comment"
                 )}
               </Button>
-              <div
-                className={`mt-3 text-sm ${
-                  state.type === "error"
-                    ? "text-red-600"
-                    : state.type === "success"
-                    ? "text-green-600"
-                    : "text-gray-600"
-                }`}
-              >
-                {state.message}
-              </div>
+
+              {state.message && (
+                <div
+                  className={`mt-3 text-sm px-3 py-1.5 rounded-md ${
+                    state.type === "error"
+                      ? "bg-red-50 text-red-600"
+                      : state.type === "success"
+                      ? "bg-green-50 text-green-600"
+                      : "text-gray-600"
+                  }`}
+                >
+                  {state.message}
+                </div>
+              )}
             </div>
           </form>
         </CollapsibleContent>
