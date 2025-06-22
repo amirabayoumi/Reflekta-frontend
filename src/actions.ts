@@ -131,9 +131,13 @@ export async function addCommentToStoryAction(
       token 
     );
 
-    // Revalidate the path tags: ["story"]
+    // Revalidate ALL relevant tags - this is the key fix
+    revalidateTag("story");        
     revalidateTag("stories");
-    revalidateTag("user-data"); 
+    revalidateTag("user-comments"); 
+    revalidateTag("user-stories");  
+    revalidateTag("user-data");
+
     return { type: "success", message: "Comment added successfully!" };
   } catch (error) {
     console.error("Error adding comment:", error);
@@ -353,6 +357,7 @@ export async function uploadProfilePhotoAction(
   }
 }
 
+// Fix for deleteProfileAction - needs to revalidate story content too
 export async function deleteProfileAction(
   initialState: { type: string; message: string },
   formData: FormData
@@ -370,7 +375,13 @@ export async function deleteProfileAction(
       return { type: "error", message: "Failed to delete profile." };
     }
 
+    // Add these missing tags for consistency
     revalidateTag("user-data");
+    revalidateTag("stories");
+    revalidateTag("story");
+    revalidateTag("user-stories");
+    revalidateTag("user-comments");
+
     return { type: "success", message: "Profile deleted successfully!" };
   } catch (error) {
     console.error("Error deleting profile:", error);
