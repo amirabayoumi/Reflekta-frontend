@@ -25,6 +25,42 @@ const TicketGenerator = ({ event }: TicketGeneratorProps) => {
     initialState
   );
 
+  // Format dates for the ticket
+  const eventStartDate = new Date(event.start_date);
+  const eventEndDate = new Date(event.end_date);
+
+  // Format dates as readable strings
+  const formattedStartDate = eventStartDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  const formattedEndDate = eventEndDate.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  // Calculate duration in hours
+  const differenceMs = eventEndDate.getTime() - eventStartDate.getTime();
+  const totalHours = Math.ceil(differenceMs / (1000 * 60 * 60));
+
+  let formattedDuration = "";
+
+  if (totalHours < 24) {
+    formattedDuration = `${totalHours} ${totalHours === 1 ? "hour" : "hours"}`;
+  } else {
+    const totalDays = Math.ceil(totalHours / 24);
+    formattedDuration = `${totalDays} ${totalDays === 1 ? "day" : "days"}`;
+  }
+
   // Handle PDF download when data is received
   useEffect(() => {
     if (message.type === "success" && message.pdfData) {
@@ -79,6 +115,37 @@ const TicketGenerator = ({ event }: TicketGeneratorProps) => {
                 <div>
                   <form action={action}>
                     <input type="hidden" name="eventname" value={event.title} />
+                    <input
+                      type="hidden"
+                      name="eventLocation"
+                      value={event.location}
+                    />
+                    <input
+                      type="hidden"
+                      name="eventStartDate"
+                      value={formattedStartDate}
+                    />
+                    <input
+                      type="hidden"
+                      name="eventEndDate"
+                      value={formattedEndDate}
+                    />
+                    <input
+                      type="hidden"
+                      name="eventDuration"
+                      value={formattedDuration}
+                    />
+                    <input
+                      type="hidden"
+                      name="eventOrganizer"
+                      value={event.organizer || "Reflekta Community"}
+                    />
+                    <input
+                      type="hidden"
+                      name="userEmail"
+                      value={user?.email || ""}
+                    />
+
                     <div className="mb-4">
                       <label
                         htmlFor="numberOfAdults"

@@ -160,12 +160,18 @@ export const fetchUserData = async (token?: string): Promise<UserData | null> =>
 type Ticketdata = {
   eventName: string;
   numberOfAdults: number;
+  eventLocation?: string;
+  eventStartDate?: string;
+  eventEndDate?: string;
+  eventDuration?: string;
+  eventOrganizer?: string;
+  userEmail?: string;
 }
 
 export async function getTicketPdf(ticketData: Ticketdata): Promise<Blob> {
   try {
     const response = await fetch(
-      "https://pnfpkvxzqvzbybtwuzhf.supabase.co/functions/v1/direct-download-pdf-ticket",
+      "https://pnfpkvxzqvzbybtwuzhf.supabase.co/functions/v1/generate-event-ticket",
       {
         method: "POST",
         headers: {
@@ -184,7 +190,7 @@ export async function getTicketPdf(ticketData: Ticketdata): Promise<Blob> {
     const blob = await response.blob();
     return blob;
   } catch (error) {
-    console.error(" Error generating ticket PDF:", error);
+    console.error("Error generating ticket PDF:", error);
     throw error;
   }
 }

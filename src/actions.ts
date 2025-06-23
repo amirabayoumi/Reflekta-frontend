@@ -29,11 +29,22 @@ export async function downloadTicket(initialState: initialStateType, formData: F
 
     const eventName = formData.get("eventname") as string;
     const numberOfAdults = Number(formData.get("numberOfAdults") || 1);
-    
+    const eventLocation = formData.get("eventLocation") as string 
+    const eventStartDate = formData.get("eventStartDate") as string 
+    const eventEndDate = formData.get("eventEndDate") as string 
+    const eventDuration = formData.get("eventDuration") as string 
+    const eventOrganizer = formData.get("eventOrganizer") as string 
+    const userEmail = formData.get("userEmail") as string 
     // Generate the PDF blob on the server side
     const pdfBlob = await getTicketPdf({ 
       eventName, 
-      numberOfAdults 
+      numberOfAdults,
+      eventLocation,
+      eventStartDate,
+      eventEndDate,
+      eventDuration,
+      eventOrganizer,
+      userEmail
     });
     
     // Convert blob to base64 to pass to client
