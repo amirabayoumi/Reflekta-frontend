@@ -210,8 +210,12 @@ export interface TicketGeneratorProps {
     id: number | string;
     title: string;
     start_date: string;
+    end_date: string;
     location: string;
     organizer?: string;
+    duration?: string;
+    startDate?: string;
+    endDate?: string;
   };
 }
 
