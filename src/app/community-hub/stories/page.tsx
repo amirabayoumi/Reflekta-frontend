@@ -52,7 +52,7 @@ export default async function StoriesPage() {
     const response: Response = await fetch(
       "https://inputoutput.be/api/stories",
       {
-        next: { tags: ["stories"] },
+        next: { tags: ["stories"], revalidate: 60 }, // Revalidate every 60 seconds
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_AUTH_TOKEN}`,

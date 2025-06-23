@@ -88,7 +88,7 @@ const page = async ({ params }: { params: Promise<DetailPageParams> }) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
     },
-    next: { tags: ["story"] }, // Revalidate every hour
+    next: { tags: ["story"], revalidate: 60 }, // Revalidate every 60 seconds
   });
 
   if (!resp.ok) {
