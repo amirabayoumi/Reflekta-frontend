@@ -8,6 +8,15 @@
 
 ---
 
+## 🔗 Backend Repository
+
+👉 **Backend Repo:** [Reflekta Backend](https://github.com/amirabayoumi/laravel-Swagger-docs)  
+👉 **Backend Deployment:** Hosted on **AWS Lightsail**  [Live Link](https://inputoutput.be)
+
+> This Laravel RESTful API powers user authentication, stories, events, and all server-side functionality.
+
+---
+
 ## ✨ Features
 
 ### Stories Platform
